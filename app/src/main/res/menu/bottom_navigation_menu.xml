@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/gMap"
+        android:enabled="true"
+        android:icon="@drawable/common_google_signin_btn_icon_dark"
+        android:title="Map"/>
+    <item
+        android:id="@+id/lView"
+        android:enabled="true"
+        android:icon="@drawable/common_google_signin_btn_icon_dark_normal"
+        android:title="List"/>
+</menu>
