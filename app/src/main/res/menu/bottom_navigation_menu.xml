@@ -3,11 +3,21 @@
     <item
         android:id="@+id/gMap"
         android:enabled="true"
-        android:icon="@drawable/common_google_signin_btn_icon_dark"
+        android:icon="@android:drawable/ic_menu_mapmode"
         android:title="Map"/>
     <item
         android:id="@+id/lView"
         android:enabled="true"
-        android:icon="@drawable/common_google_signin_btn_icon_dark_normal"
+        android:icon="@android:drawable/ic_dialog_dialer"
         android:title="List"/>
+    <item
+        android:id="@+id/cCite"
+        android:enabled="true"
+        android:icon="?attr/actionModePasteDrawable"
+        android:title="My Site"/>
+    <item
+        android:id="@+id/uProfile"
+        android:enabled="true"
+        android:icon="?attr/actionModePasteDrawable"
+        android:title="Profile"/>
 </menu>

@@ -39,18 +39,25 @@ public class HomeActivity extends AppCompatActivity {
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             Fragment fragment;
-            Toast.makeText(HomeActivity.this, "Here", Toast.LENGTH_SHORT).show();
             switch (item.getItemId()) {
                 case R.id.gMap:
                     toolBar.setTitle("Google Map");
-                    Toast.makeText(HomeActivity.this, "Google Map", Toast.LENGTH_SHORT).show();
                     fragment = new MapsFragment();
                     loadFragment(fragment);
                     return true;
                 case R.id.lView:
                     toolBar.setTitle("List Site");
-                    Toast.makeText(HomeActivity.this, "List site", Toast.LENGTH_SHORT).show();
                     fragment = new SiteListFragment();
+                    loadFragment(fragment);
+                    return true;
+                case R.id.cCite:
+                    toolBar.setTitle("Create Site");
+                    fragment = new SiteCreateFragment();
+                    loadFragment(fragment);
+                    return true;
+                case R.id.uProfile:
+                    toolBar.setTitle("Profile");
+                    fragment = new ProfileFragment();
                     loadFragment(fragment);
                     return true;
             }
