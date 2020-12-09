@@ -33,7 +33,7 @@
         android:id="@+id/lLogin"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/action_sign_in"/>
+        android:text="Login"/>
 
     <Button
         android:id="@+id/lRegister"
@@ -42,7 +42,8 @@
         android:text="Register"/>
 
     <ProgressBar
-        android:id="@+id/loading"
+        android:id="@+id/lLoading"
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
@@ -51,6 +52,8 @@
         android:layout_marginEnd="32dp"
         android:layout_marginBottom="64dp"
         android:visibility="gone"
+        android:indeterminate="true"
+        android:indeterminateTint="@color/teal_700"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/password"
         app:layout_constraintStart_toStartOf="@+id/password"

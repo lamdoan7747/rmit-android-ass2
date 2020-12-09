@@ -8,6 +8,7 @@ import androidx.fragment.app.FragmentTransaction;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,6 +30,13 @@ import com.google.firebase.auth.FirebaseUser;
 public class LoginFragment extends Fragment {
 
     private FirebaseAuth mAuth;
+    private EditText emailEditText, passwordEditText;
+    private ProgressBar loadingProgressBar;
+    private Button loginButton, registerButton;
+
+    public LoginFragment() {
+        // Required empty public constructor
+    }
 
     @Nullable
     @Override
@@ -44,40 +52,63 @@ public class LoginFragment extends Fragment {
 
         mAuth = FirebaseAuth.getInstance();
 
-        final EditText emailEditText = view.findViewById(R.id.lEmail);
-        final EditText passwordEditText = view.findViewById(R.id.lPassword);
-        final ProgressBar loadingProgressBar = view.findViewById(R.id.loading);
+        init(view);
+        onClickListener();
+    }
 
-        final Button loginButton = view.findViewById(R.id.lLogin);
+    private void onClickListener() {
+        // On login click listener
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String email = emailEditText.getText().toString();
                 String password = passwordEditText.getText().toString();
 
-                signIn(email, password);
+                if (TextUtils.isEmpty(email)){
+                    emailEditText.setError("Input valid email");
+                    return;
+                }
+
+                if (TextUtils.isEmpty(password)){
+                    passwordEditText.setError("Input valid password");
+                    return;
+                }
+
+                logIn(email, password);
             }
         });
 
-        final Button registerButton = view.findViewById(R.id.lRegister);
+        // Navigate to register fragment
         registerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 loadFragment(new RegisterFragment());
             }
         });
+    }
+
+    private void init(View view) {
+        emailEditText = view.findViewById(R.id.lEmail);
+        passwordEditText = view.findViewById(R.id.lPassword);
+        loadingProgressBar = view.findViewById(R.id.lLoading);
+        loginButton = view.findViewById(R.id.lLogin);
+        registerButton = view.findViewById(R.id.lRegister);
 
     }
 
     private void loadFragment(Fragment fragment) {
         // Load fragment
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        transaction.setCustomAnimations(R.anim.slide_in_right,R.anim.slide_out_left);
         transaction.replace(R.id.authContainer, fragment);
         transaction.addToBackStack(null);
         transaction.commit();
     }
 
-    private void signIn(String email, String password) {
+    private void logIn(String email, String password) {
+
+        loadingProgressBar.setVisibility(View.VISIBLE);
+
         mAuth.signInWithEmailAndPassword(email,password)
                 .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
                     @Override
@@ -85,25 +116,18 @@ public class LoginFragment extends Fragment {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(getTag(), "signInWithEmail:success");
-                            Toast.makeText(getActivity(), "Authentication success.",
-                                    Toast.LENGTH_SHORT).show();
-                            FirebaseUser currentUser = mAuth.getCurrentUser();
-                            updateUI(currentUser);
+                            loadingProgressBar.setVisibility(View.GONE);
+
+                            startActivity(new Intent(getActivity(),HomeActivity.class));
+                            getActivity().finish();
+
                         } else {
                             // If sign in fails, display a message to the user.
+                            loadingProgressBar.setVisibility(View.GONE);
                             Log.d(getTag(), "signInWithEmail:failure", task.getException());
-                            Toast.makeText(getActivity(), "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getActivity(), "Error: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
-    }
-
-    private void updateUI(FirebaseUser currentUser) {
-        if(currentUser != null){
-            Toast.makeText(getActivity(),"Sign in successfully!",Toast.LENGTH_LONG).show();
-            startActivity(new Intent(getActivity(),HomeActivity.class));
-            getActivity().finish();
-        }
     }
 }

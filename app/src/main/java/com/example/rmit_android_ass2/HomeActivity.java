@@ -9,7 +9,11 @@ import androidx.fragment.app.FragmentTransaction;
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.MenuItem;
-import android.widget.Toast;
+
+import com.example.rmit_android_ass2.main.listView.ListViewFragment;
+import com.example.rmit_android_ass2.main.mapView.MapsFragment;
+import com.example.rmit_android_ass2.main.profileView.ProfileFragment;
+import com.example.rmit_android_ass2.main.siteView.SiteViewFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class HomeActivity extends AppCompatActivity {
@@ -19,7 +23,7 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_homescreen);
+        setContentView(R.layout.activity_home);
 
         toolBar = getSupportActionBar();
         BottomNavigationView navigationView = findViewById(R.id.bottom_navigation);
@@ -28,9 +32,6 @@ public class HomeActivity extends AppCompatActivity {
 
         toolBar.setTitle("Google Map");
         loadFragment(new MapsFragment());
-
-
-
     }
 
     private BottomNavigationView.OnNavigationItemSelectedListener onNavigationItemSelectedListener
@@ -47,12 +48,12 @@ public class HomeActivity extends AppCompatActivity {
                     return true;
                 case R.id.lView:
                     toolBar.setTitle("List Site");
-                    fragment = new SiteListFragment();
+                    fragment = new ListViewFragment();
                     loadFragment(fragment);
                     return true;
                 case R.id.cCite:
                     toolBar.setTitle("Create Site");
-                    fragment = new SiteCreateFragment();
+                    fragment = new SiteViewFragment();
                     loadFragment(fragment);
                     return true;
                 case R.id.uProfile:
@@ -69,6 +70,7 @@ public class HomeActivity extends AppCompatActivity {
     private void loadFragment(Fragment fragment) {
         // Load Fragment
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.setCustomAnimations(R.anim.slide_in_right,R.anim.slide_out_left,R.anim.slide_in_left,R.anim.slide_out_right);
         transaction.replace(R.id.frameContainer, fragment);
         transaction.addToBackStack(null);
         transaction.commit();

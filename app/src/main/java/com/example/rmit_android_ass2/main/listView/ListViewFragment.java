@@ -1,4 +1,4 @@
-package com.example.rmit_android_ass2;
+package com.example.rmit_android_ass2.main.listView;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -12,12 +12,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.rmit_android_ass2.dummy.DummyContent;
+import com.example.rmit_android_ass2.R;
+import com.example.rmit_android_ass2.main.listView.dummy.DummyContent;
 
 /**
  * A fragment representing a list of Items.
  */
-public class SiteListFragment extends Fragment {
+public class ListViewFragment extends Fragment {
 
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
@@ -28,13 +29,13 @@ public class SiteListFragment extends Fragment {
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public SiteListFragment() {
+    public ListViewFragment() {
     }
 
     // TODO: Customize parameter initialization
     @SuppressWarnings("unused")
-    public static SiteListFragment newInstance(int columnCount) {
-        SiteListFragment fragment = new SiteListFragment();
+    public static ListViewFragment newInstance(int columnCount) {
+        ListViewFragment fragment = new ListViewFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_COLUMN_COUNT, columnCount);
         fragment.setArguments(args);

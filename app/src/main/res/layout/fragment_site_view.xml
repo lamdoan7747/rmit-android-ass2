@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SiteCreateFragment">
+    tools:context=".main.siteView.SiteViewFragment">
 
     <!-- TODO: Update blank fragment layout -->
     <LinearLayout
@@ -13,12 +13,27 @@
         android:layout_gravity="center"
         android:orientation="vertical">
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="No database site"
+            android:textAlignment="center"
+            android:textSize="24dp"
+            android:visibility="invisible"/>
+
+
         <EditText
             android:id="@+id/siteName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Create cleaning site"
-            android:textSize="30dp" />
+            android:hint="Create cleaning site" />
+
+        <EditText
+            android:id="@+id/siteAddress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Address"/>
+
 
         <Button
             android:id="@+id/aButton"

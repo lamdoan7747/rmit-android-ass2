@@ -1,4 +1,4 @@
-package com.example.rmit_android_ass2;
+package com.example.rmit_android_ass2.main.listView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -7,7 +7,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.example.rmit_android_ass2.dummy.DummyContent.DummyItem;
+import com.example.rmit_android_ass2.R;
+import com.example.rmit_android_ass2.main.listView.dummy.DummyContent.DummyItem;
 
 import java.util.List;
 
@@ -26,7 +27,7 @@ public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecycl
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.fragment_site_list, parent, false);
+                .inflate(R.layout.fragment_list_view, parent, false);
         return new ViewHolder(view);
     }
 

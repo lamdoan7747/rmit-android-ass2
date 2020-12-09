@@ -1,13 +1,16 @@
 package com.example.rmit_android_ass2.auth;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -24,70 +27,37 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.Collection;
+
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link RegisterFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
 public class RegisterFragment extends Fragment {
 
-
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
-
-
-    private EditText editFname, editPassword, editEmail;
+    private EditText editFname, editPassword,
+            editEmail, editConfirmPassword;
     private Button register;
+    private ProgressBar loadingProgressBar;
+
+    public static final String EMAIL_REGEX_CHECK = "^([\\w-\\.]+){1,64}@([\\w&&[^_]]+){2,255}.[a-z]{2,}$";
+
 
     public RegisterFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment RegisterFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static RegisterFragment newInstance(String param1, String param2) {
-        RegisterFragment fragment = new RegisterFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
+    @Nullable
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-        mAuth = FirebaseAuth.getInstance();
-        db = FirebaseFirestore.getInstance();
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+    public View onCreateView(@NonNull LayoutInflater inflater,
+                             @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_register, container, false);
     }
 
@@ -95,25 +65,58 @@ public class RegisterFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        editFname = view.findViewById(R.id.rFname);
-        editPassword = view.findViewById(R.id.rPassword);
-        editEmail = view.findViewById(R.id.rEmail);
+        mAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
 
+        init(view);
+        onClickListener();
 
-        register = view.findViewById(R.id.rRegister);
+    }
+
+    private void onClickListener() {
+        // On register button clicked
         register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String email = editEmail.getText().toString();
-                String password = editPassword.getText().toString();
                 String fname = editFname.getText().toString();
+                String password = editPassword.getText().toString();
+                String confirmPassword = editConfirmPassword.getText().toString();
 
-                register(email,password, fname);
+                if (email.isEmpty() || !email.matches(EMAIL_REGEX_CHECK)) {
+                    editEmail.setError("Invalid Email");
+                    return;
+                }
+                if (fname.isEmpty() || fname.equals(" ")) {
+                    editFname.setError("Required");
+                    return;
+                }
+                if (password.isEmpty() || password.length() < 6) {
+                    editPassword.setError("Invalid Password");
+                    return;
+                }
+                if (!password.equals(confirmPassword) ) {
+                    editConfirmPassword.setError("Invalid Password");
+                    return;
+                }
+                registerAccount(email,password, fname);
             }
         });
     }
 
-    private void register(String email, String password, String fname) {
+    private void init(View view) {
+        editFname = view.findViewById(R.id.rFname);
+        editPassword = view.findViewById(R.id.rPassword);
+        editConfirmPassword = view.findViewById(R.id.rConfirmPassword);
+        editEmail = view.findViewById(R.id.rEmail);
+        register = view.findViewById(R.id.rRegister);
+        loadingProgressBar = view.findViewById(R.id.rLoading);
+    }
+
+    private void registerAccount(String email, String password, String fname) {
+
+        loadingProgressBar.setVisibility(View.VISIBLE);
+
         mAuth.createUserWithEmailAndPassword(email,password)
                 .addOnCompleteListener((Activity) getContext(), new OnCompleteListener<AuthResult>() {
                     @Override
@@ -123,22 +126,18 @@ public class RegisterFragment extends Fragment {
                             Log.d(getTag(), "createUserWithEmail:success");
 
                             // Get ID from User
-                            FirebaseUser uid = mAuth.getCurrentUser();
-                            String id = uid.getUid();
-
+                            FirebaseUser currentUser = mAuth.getCurrentUser();
 
                             // Add User to database
-                            User user = new User(id, fname, email);
-                            Log.w(getTag(),user.toString(), task.getException());
+                            assert currentUser != null;
+                            User user = new User(currentUser.getUid(), fname, email);
                             addUser(user);
-
-                            // Move to LoginFragment
-                            loadFragment(new LoginFragment());
-
+                            loadingProgressBar.setVisibility(View.GONE);
 
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(getTag(), "createUserWithEmail:failure", task.getException());
+                            loadingProgressBar.setVisibility(View.GONE);
                             Toast.makeText(getActivity(), "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
                         }
@@ -148,26 +147,25 @@ public class RegisterFragment extends Fragment {
 
     private void loadFragment(Fragment fragment) {
         FragmentTransaction ft = getFragmentManager().beginTransaction();
+        ft.setCustomAnimations(R.anim.slide_in_left,R.anim.slide_out_right);
         ft.replace(R.id.authContainer, fragment);
         ft.addToBackStack(null);
         ft.commit();
     }
 
     private void addUser(User user) {
+
         db.collection("users")
-                .add(user)
-                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                .document(user.getId())
+                .set(user)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
-                    public void onSuccess(DocumentReference documentReference) {
-                        Toast.makeText(getActivity(), "Add success", Toast.LENGTH_SHORT).show();
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(getActivity(), "Add failure", Toast.LENGTH_SHORT).show();
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            // Update UI
+                            loadFragment(new LoginFragment());
+                        }
                     }
                 });
-
     }
 }
