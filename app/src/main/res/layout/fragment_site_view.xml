@@ -1,47 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".main.siteView.SiteViewFragment">
 
-    <!-- TODO: Update blank fragment layout -->
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="50dp"
-        android:layout_gravity="center"
-        android:orientation="vertical">
+        android:orientation="horizontal">
 
         <TextView
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:text="No database site"
-            android:textAlignment="center"
-            android:textSize="24dp"
-            android:visibility="invisible"/>
+            android:layout_weight="1"
+            android:layout_marginLeft="20dp"
+            android:gravity="bottom|start"
+            android:text="Your Site"
+            android:textColor="@color/teal_700"
+            android:textStyle="bold"
+            android:textSize="30sp" />
 
-
-        <EditText
-            android:id="@+id/siteName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Create cleaning site" />
-
-        <EditText
-            android:id="@+id/siteAddress"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Address"/>
-
-
-        <Button
-            android:id="@+id/aButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Add" />
+        <TextView
+            android:id="@+id/createSite"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:layout_marginRight="20dp"
+            android:text="+"
+            android:gravity="bottom|end"
+            android:textColor="@color/teal_700"
+            android:textSize="30sp" />
 
     </LinearLayout>
 
+    <ListView
+        android:id="@+id/listSite"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:drawable="@color/teal_700"
+        android:state_pressed="true"
+        />
 
-</FrameLayout>
+
+</androidx.appcompat.widget.LinearLayoutCompat>
