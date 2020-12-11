@@ -17,6 +17,8 @@ import com.example.rmit_android_ass2.R;
 import com.example.rmit_android_ass2.model.CleaningSite;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -27,8 +29,10 @@ import com.google.firebase.firestore.FirebaseFirestore;
 public class SiteCreateFragment extends Fragment {
 
     private FirebaseFirestore db;
-    private EditText editName;
-    private Button aButton;
+    private FirebaseAuth mAuth;
+    private FirebaseUser currentUser;
+    private EditText editName, editAddress;
+    private Button aButton, bBack;
 
 
     public SiteCreateFragment() {
@@ -51,27 +55,50 @@ public class SiteCreateFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
+        db = FirebaseFirestore.getInstance();
+        mAuth = FirebaseAuth.getInstance();
+
         editName = (EditText) getView().findViewById(R.id.siteName);
+        editAddress = (EditText) getView().findViewById(R.id.siteAddress);
 
         aButton = (Button) getView().findViewById(R.id.aButton);
         aButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String siteName = editName.getText().toString();
-                createSite(siteName);
+                String siteAddress = editAddress.getText().toString();
+                CleaningSite cleaningSite = new CleaningSite();
+                cleaningSite.setName(siteName);
+                cleaningSite.setAddress(siteAddress);
+                createSite(cleaningSite);
+            }
+        });
+        
+        bBack = (Button) getView().findViewById(R.id.aBack);
+        bBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                    backToPrevious();
             }
         });
     }
 
-    private void createSite(String siteName) {
-        db = FirebaseFirestore.getInstance();
-        CleaningSite cleaningSite = new CleaningSite(siteName);
+    private void backToPrevious() {
+        getActivity().getSupportFragmentManager().popBackStack();
+    }
+
+    private void createSite(CleaningSite cleaningSite) {
+        currentUser = mAuth.getCurrentUser();
+        cleaningSite.setOwner(currentUser.getUid());
+
         db.collection("cleaningSites")
                 .add(cleaningSite)
                 .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                     @Override
                     public void onSuccess(DocumentReference documentReference) {
                         Toast.makeText(getActivity(),"Add success: " + documentReference.getId(), Toast.LENGTH_LONG).show();
+                        backToPrevious();
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
