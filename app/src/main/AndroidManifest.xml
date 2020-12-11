@@ -18,8 +18,7 @@
         android:theme="@style/Theme.Rmit_android_ass2">
         <activity
             android:name=".SplashActivity"
-            android:label="@string/title_activity_splash"
-            android:theme="@style/Theme.Rmit_android_ass2.NoActionBar">
+            android:label="@string/title_activity_splash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -39,7 +38,7 @@
             android:value="@string/google_maps_key" />
 
         <activity android:name=".HomeActivity" android:label="@string/title_activity_maps" />
-        <activity android:name=".auth.AuthActivity"></activity>
+        <activity android:name=".auth.AuthActivity" />
     </application>
 
 </manifest>
