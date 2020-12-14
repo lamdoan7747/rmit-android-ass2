@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -32,7 +33,13 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
+
         mAuth = FirebaseAuth.getInstance();
+
+        Toolbar toolBar = getView().findViewById(R.id.toolbarMaterial);
+        toolBar.setTitle("My Profile");
+
 
         logoutButton = getView().findViewById(R.id.logout);
         logoutButton.setOnClickListener(new View.OnClickListener() {

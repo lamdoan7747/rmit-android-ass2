@@ -10,13 +10,7 @@
     android:orientation="vertical"
     tools:context=".auth.AuthActivity">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbarMaterial"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:titleTextColor="@color/white"
-        android:elevation="10dp"
-        android:background="@color/teal_700"/>
+
 
     <FrameLayout
         android:id="@+id/frameContainer"

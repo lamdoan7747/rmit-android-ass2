@@ -17,7 +17,6 @@ import com.example.rmit_android_ass2.main.siteView.SiteViewFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class HomeActivity extends AppCompatActivity {
-    private ActionBar actionBar;
     private BottomNavigationView navigationView;
     private int startingPosition = 0;
 
@@ -42,10 +41,6 @@ public class HomeActivity extends AppCompatActivity {
             loadFragment(new MapsFragment(), 1);
         }
 
-        Toolbar toolBar = findViewById(R.id.toolbarMaterial);
-        setSupportActionBar(toolBar);
-        actionBar = getSupportActionBar();
-
         navigationView = findViewById(R.id.bottom_navigation);
         navigationView.setOnNavigationItemSelectedListener(onNavigationItemSelectedListener);
     }
@@ -59,22 +54,18 @@ public class HomeActivity extends AppCompatActivity {
             int newPosition = 0;
             switch (item.getItemId()) {
                 case R.id.gMap:
-                    actionBar.setTitle("Google Map");
                     fragment = new MapsFragment();
                     newPosition = 1;
                     break;
                 case R.id.lView:
-                    actionBar.setTitle("List Site");
                     fragment = new ListViewFragment();
                     newPosition = 2;
                     break;
                 case R.id.cCite:
-                    actionBar.setTitle("Create Site");
                     fragment = new SiteViewFragment();
                     newPosition = 3;
                     break;
                 case R.id.uProfile:
-                    actionBar.setTitle("Profile");
                     fragment = new ProfileFragment();
                     newPosition = 4;
                     break;
