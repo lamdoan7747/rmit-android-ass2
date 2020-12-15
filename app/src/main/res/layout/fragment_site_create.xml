@@ -22,6 +22,7 @@
             android:visibility="invisible"/>
 
 
+
         <EditText
             android:id="@+id/siteName"
             android:layout_width="match_parent"
@@ -34,17 +35,34 @@
             android:layout_height="wrap_content"
             android:hint="Address"/>
 
+
+
         <EditText
+            android:id="@+id/siteLatitude"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Date"/>
+            android:hint="Latitude"
+            android:enabled="false"/>
+
+        <EditText
+            android:id="@+id/siteLongitude"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Longitude"
+            android:enabled="false"/>
 
 
         <Button
             android:id="@+id/aButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Add" />
+            android:text="Create" />
+
+        <Button
+            android:id="@+id/aLocation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Add location" />
 
         <Button
             android:id="@+id/aBack"

@@ -1,24 +1,39 @@
 package com.example.rmit_android_ass2;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 
 import com.example.rmit_android_ass2.main.listView.ListViewFragment;
 import com.example.rmit_android_ass2.main.mapView.MapsFragment;
 import com.example.rmit_android_ass2.main.profileView.ProfileFragment;
 import com.example.rmit_android_ass2.main.siteView.SiteViewFragment;
+import com.google.android.gms.common.api.Status;
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.api.model.TypeFilter;
+import com.google.android.libraries.places.api.net.PlacesClient;
+import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
+import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Arrays;
 
 public class HomeActivity extends AppCompatActivity {
     private BottomNavigationView navigationView;
     private int startingPosition = 0;
+
 
     @Override
     public void onBackPressed() {
@@ -31,6 +46,13 @@ public class HomeActivity extends AppCompatActivity {
 //        } else {
 //            super.onBackPressed();
 //        }
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.v("TEST", "onActivityResult: " + requestCode);
     }
 
     @Override

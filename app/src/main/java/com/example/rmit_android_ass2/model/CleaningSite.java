@@ -3,8 +3,8 @@ package com.example.rmit_android_ass2.model;
 public class CleaningSite {
     private String name;
     private String address;
-    private String lat;
-    private String lon;
+    private Double lat;
+    private Double lng;
     private String owner;
 
     public CleaningSite() {
@@ -35,20 +35,20 @@ public class CleaningSite {
         this.address = address;
     }
 
-    public String getLat() {
+    public Double getLat() {
         return lat;
     }
 
-    public void setLat(String lat) {
+    public void setLat(Double lat) {
         this.lat = lat;
     }
 
-    public String getLon() {
-        return lon;
+    public Double getLng() {
+        return lng;
     }
 
-    public void setLon(String lon) {
-        this.lon = lon;
+    public void setLng(Double lng) {
+        this.lng = lng;
     }
 
     public String getOwner() {
