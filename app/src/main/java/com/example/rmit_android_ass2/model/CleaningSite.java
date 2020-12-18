@@ -1,11 +1,19 @@
 package com.example.rmit_android_ass2.model;
 
+import com.google.firebase.firestore.DocumentId;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class CleaningSite {
+    @DocumentId
+    private String _id;
     private String name;
     private String address;
     private Double lat;
     private Double lng;
     private String owner;
+    private ArrayList<User> followers;
 
     public CleaningSite() {
     }
@@ -13,6 +21,14 @@ public class CleaningSite {
     public CleaningSite(String name, String address) {
         this.name = name;
         this.address = address;
+    }
+
+    public String get_id() {
+        return _id;
+    }
+
+    public void set_id(String _id) {
+        this._id = _id;
     }
 
     public CleaningSite(String name) {
@@ -57,5 +73,13 @@ public class CleaningSite {
 
     public void setOwner(String owner) {
         this.owner = owner;
+    }
+
+    public ArrayList<User> getFollowers() {
+        return followers;
+    }
+
+    public void setFollowers(ArrayList<User> followers) {
+        this.followers = followers;
     }
 }

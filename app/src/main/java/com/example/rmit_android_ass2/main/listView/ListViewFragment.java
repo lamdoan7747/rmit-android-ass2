@@ -80,16 +80,11 @@ public class ListViewFragment extends Fragment {
                 public void onCallBack(List<CleaningSite> cleaningSites) {
                     LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
 
-                    if (mColumnCount <=1) {
-                        recyclerView.setLayoutManager(linearLayoutManager);
-                    } else {
-                        recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
-                    }
 
+                    recyclerView.setLayoutManager(linearLayoutManager);
                     recyclerView.addItemDecoration(new DividerItemDecoration(context, DividerItemDecoration.VERTICAL));
 
                     CleaningSiteRecyclerViewAdapter adapter = new CleaningSiteRecyclerViewAdapter(cleaningSiteList,context);
-
                     recyclerView.setAdapter(adapter);
                 }
             });
@@ -124,6 +119,7 @@ public class ListViewFragment extends Fragment {
         return view;
     }
 
+
     private void getAllSites(FirestoreCallBack firestoreCallBack) {
         currentUser = mAuth.getCurrentUser();
 
@@ -134,7 +130,7 @@ public class ListViewFragment extends Fragment {
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
-                                Log.d(getTag(), document.getId() + " => " + document.getData());
+                                Log.d("Site", document.getId() + " => " + document.getData());
                                 CleaningSite cloudSite = document.toObject(CleaningSite.class);
                                 cleaningSiteList.add(cloudSite);
                             }

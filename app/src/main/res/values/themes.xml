@@ -1,27 +1,18 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Theme.Rmit_android_ass2" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+    <style name="Theme.Rmit_android_ass2" parent="Theme.MaterialComponents.Light.NoActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/teal_700</item>
-        <item name="colorPrimaryDark">@color/white</item>
-        <item name="colorAccent">@color/teal_200</item>
+        <item name="colorPrimary">#577F67</item>
+        <item name="colorPrimaryDark">#5CAE88</item>
+        <item name="colorAccent">#6DB694</item>
         <!-- Secondary brand color. -->
         <item name="colorSecondary">@color/teal_200</item>
         <item name="colorSecondaryVariant">@color/teal_700</item>
         <item name="colorOnSecondary">@color/black</item>
         <!-- Status bar color. -->
-        <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
+        <item name="android:statusBarColor" tools:targetApi="l">#F1F6EF</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
         <!-- Customize your theme here. -->
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
+        <item name="android:colorBackground">#F1F6EF</item>
     </style>
-
-    <style name="Theme.Rmit_android_ass2.NoActionBar">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-    </style>
-
-    <style name="Theme.Rmit_android_ass2.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
-
-    <style name="Theme.Rmit_android_ass2.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 </resources>

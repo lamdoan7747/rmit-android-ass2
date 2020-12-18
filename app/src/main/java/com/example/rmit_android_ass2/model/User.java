@@ -20,6 +20,11 @@ public class User {
         this.email = email;
     }
 
+    public User(String fname, String email) {
+        this.fname = fname;
+        this.email = email;
+    }
+
     public String getId() {
         return _id;
     }

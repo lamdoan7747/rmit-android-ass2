@@ -109,8 +109,8 @@ public class SiteViewFragment extends Fragment {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 Log.d(getTag(), document.getId() + " => " + document.getData());
-                                CleaningSite cloudSite = document.toObject(CleaningSite.class);
-                                cleaningSiteList.add(cloudSite);
+                                CleaningSite cleaningSite = document.toObject(CleaningSite.class);
+                                cleaningSiteList.add(cleaningSite);
                             }
                             firestoreCallBack.onCallBack(cleaningSiteList);
                         } else {

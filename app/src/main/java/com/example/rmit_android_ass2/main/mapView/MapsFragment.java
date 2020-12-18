@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
@@ -15,6 +16,7 @@ import android.widget.SearchView;
 import android.widget.Toast;
 
 import com.example.rmit_android_ass2.R;
+import com.example.rmit_android_ass2.SiteDetailActivity;
 import com.example.rmit_android_ass2.main.listView.ListViewFragment;
 import com.example.rmit_android_ass2.model.CleaningSite;
 import com.google.android.gms.maps.CameraUpdate;
@@ -79,7 +81,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        mMap.setOnInfoWindowClickListener(this);
 
         // Add a marker in Sydney and move the camera
         LatLng rmit = new LatLng(10.729655, 106.693023);
@@ -120,11 +121,22 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
 
         // Load all site
         mMap.setOnMapLoadedCallback(this);
+        mMap.setOnInfoWindowClickListener(this);
     }
 
     @Override
     public void onInfoWindowClick(Marker marker) {
         Toast.makeText(getActivity(), "Info window clicked", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(getActivity(), SiteDetailActivity.class);
+        for (CleaningSite cleaningSite: cleaningSiteList){
+            if (cleaningSite.getName().equals(marker.getTitle())){
+                Log.d("GET_NAME", "Error getting documents: " + cleaningSite.getName());
+                Log.d("GET_NAME", "Error getting documents: " + marker.getTitle());
+                Log.d("GET_ID", "Error getting documents: " + cleaningSite.get_id());
+                intent.putExtra("siteId", cleaningSite.get_id());
+            }
+        }
+        startActivity(intent);
     }
 
     private void getAllSites(FirestoreCallBack firestoreCallBack) {
@@ -137,11 +149,15 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
-                                Log.d(getTag(), document.getId() + " => " + document.getData());
-                                CleaningSite cloudSite = document.toObject(CleaningSite.class);
-                                cleaningSiteList.add(cloudSite);
+                                Log.d("DOCUMENT_ID", document.getId() + " => " + document.getData());
+                                CleaningSite cleaningSite = document.toObject(CleaningSite.class);
+                                if (!cleaningSite.getOwner().equals(currentUser.getUid())){
+                                    cleaningSiteList.add(cleaningSite);
+                                }
                             }
+
                             firestoreCallBack.onCallBack(cleaningSiteList);
+
                         } else {
                             Log.d(getTag(), "Error getting documents: ", task.getException());
                         }
@@ -154,26 +170,31 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
         getAllSites(new FirestoreCallBack() {
             @Override
             public void onCallBack(List<CleaningSite> cleaningSites) {
-                List<LatLng> locations = new ArrayList<>();
+                if (cleaningSiteList.size() < 1) {
+                    Log.d("LIST_SIZE", "Don't have any site");
+                } else {
+                    List<LatLng> locations = new ArrayList<>();
 
-                // Get all location latlng
-                for (CleaningSite cleaningSite: cleaningSiteList){
-                    if (cleaningSite.getLat() == null || cleaningSite.getLng() == null){ continue; }
-                    locations.add(new LatLng(cleaningSite.getLat(),cleaningSite.getLng()));
+                    // Get all location latlng
+                    for (CleaningSite cleaningSite: cleaningSiteList){
+                        if (cleaningSite.getLat() == null || cleaningSite.getLng() == null){ continue; }
+                        locations.add(new LatLng(cleaningSite.getLat(),cleaningSite.getLng()));
+                        mMap.addMarker(new MarkerOptions()
+                                .position(new LatLng(cleaningSite.getLat(),cleaningSite.getLng()))
+                                .title(cleaningSite.getName())
+                                .snippet(cleaningSite.getAddress())
+                                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+                    }
+
+                    // Add all marker
+                    LatLngBounds.Builder builder = new LatLngBounds.Builder();
+                    builder.include(locations.get(0));
+                    builder.include(locations.get(locations.size() - 1));
+                    LatLngBounds bounds = builder.build();
+                    CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds,200);
+                    mMap.moveCamera(cu);
+                    mMap.animateCamera(CameraUpdateFactory.zoomTo(15), 200, null);
                 }
-
-                // Add all marker
-                for (LatLng latLng: locations){
-                    mMap.addMarker(new MarkerOptions().position(latLng));
-                }
-                LatLngBounds.Builder builder = new LatLngBounds.Builder();
-                builder.include(locations.get(0));
-                builder.include(locations.get(locations.size() - 1));
-                LatLngBounds bounds = builder.build();
-                CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds,200);
-                mMap.moveCamera(cu);
-                mMap.animateCamera(CameraUpdateFactory.zoomTo(15), 200, null);
-
             }
         });
     }
