@@ -4,6 +4,7 @@ package com.example.rmit_android_ass2.main.siteView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.rmit_android_ass2.R;

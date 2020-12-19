@@ -46,6 +46,8 @@
         android:layout_height="wrap_content"
         android:paddingLeft="16dp"
         android:paddingRight="16dp"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
         android:textSize="10sp"
         android:text="Chi tiết"
         />

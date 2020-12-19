@@ -3,7 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".main.siteView.SiteCreateFragment">
+    android:layout_centerVertical="true"
+    tools:context=".main.siteView.mySiteView.SiteEditFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -12,24 +13,16 @@
         android:layout_gravity="center"
         android:orientation="vertical">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="No database site"
-            android:textAlignment="center"
-            android:textSize="24dp"
-            android:visibility="invisible"/>
-
 
 
         <EditText
-            android:id="@+id/siteName"
+            android:id="@+id/editSiteName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Create cleaning site" />
 
         <EditText
-            android:id="@+id/siteAddress"
+            android:id="@+id/editSiteAddress"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Address"/>
@@ -37,14 +30,14 @@
 
 
         <EditText
-            android:id="@+id/siteLatitude"
+            android:id="@+id/editSiteLatitude"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Latitude"
             android:enabled="false"/>
 
         <EditText
-            android:id="@+id/siteLongitude"
+            android:id="@+id/editSiteLongitude"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Longitude"
@@ -52,22 +45,31 @@
 
 
         <Button
-            android:id="@+id/aButton"
+            android:id="@+id/editSiteButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Create" />
+            android:text="Save" />
 
         <Button
-            android:id="@+id/aLocation"
+            android:id="@+id/editSiteLocation"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Add location" />
 
         <Button
-            android:id="@+id/aBack"
+            android:id="@+id/editSiteBack"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Back" />
+
+        <androidx.core.widget.ContentLoadingProgressBar
+            android:id="@+id/editLoading"
+            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+            android:visibility="gone"
+            android:indeterminate="true"
+            android:layout_gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
     </LinearLayout>
 

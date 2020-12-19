@@ -53,8 +53,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:visibility="gone"
-            android:indeterminate="true"
-            android:indeterminateTint="@color/teal_700"/>
+            android:indeterminate="true" />
 
     </LinearLayout>
 

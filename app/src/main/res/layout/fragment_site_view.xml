@@ -20,7 +20,7 @@
             android:layout_marginLeft="20dp"
             android:gravity="bottom|start"
             android:text="Your Site"
-            android:textColor="@color/teal_700"
+            android:textColor="@color/primaryColor"
             android:textStyle="bold"
             android:textSize="30sp" />
 
@@ -32,7 +32,7 @@
             android:layout_marginRight="20dp"
             android:text="+"
             android:gravity="bottom|end"
-            android:textColor="@color/teal_700"
+            android:textColor="@color/primaryColor"
             android:textSize="30sp" />
 
     </LinearLayout>

@@ -183,7 +183,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
                                 .position(new LatLng(cleaningSite.getLat(),cleaningSite.getLng()))
                                 .title(cleaningSite.getName())
                                 .snippet(cleaningSite.getAddress())
-                                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.logo)));
                     }
 
                     // Add all marker

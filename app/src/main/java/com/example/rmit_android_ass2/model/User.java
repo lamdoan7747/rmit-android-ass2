@@ -1,6 +1,6 @@
 package com.example.rmit_android_ass2.model;
 
-public class User {
+public class User{
     private String _id;
     private String fname;
     private String email;

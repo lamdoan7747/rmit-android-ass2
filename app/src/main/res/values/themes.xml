@@ -2,7 +2,7 @@
     <!-- Base application theme. -->
     <style name="Theme.Rmit_android_ass2" parent="Theme.MaterialComponents.Light.NoActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">#577F67</item>
+        <item name="colorPrimary">@color/primaryColor</item>
         <item name="colorPrimaryDark">#5CAE88</item>
         <item name="colorAccent">#6DB694</item>
         <!-- Secondary brand color. -->

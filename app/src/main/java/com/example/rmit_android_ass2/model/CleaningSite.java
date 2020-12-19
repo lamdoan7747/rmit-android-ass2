@@ -2,10 +2,11 @@ package com.example.rmit_android_ass2.model;
 
 import com.google.firebase.firestore.DocumentId;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CleaningSite {
+public class CleaningSite implements Serializable {
     @DocumentId
     private String _id;
     private String name;

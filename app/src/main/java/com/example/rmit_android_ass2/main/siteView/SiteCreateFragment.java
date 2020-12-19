@@ -59,6 +59,8 @@ public class SiteCreateFragment extends Fragment {
     private EditText editName, editAddress, editLatitude, editLongitude;
     private Button aButton, bBack, aLocationButton;
 
+    private static String ACTION = "";
+
 
     public SiteCreateFragment() {
         // Required empty public constructor
@@ -91,8 +93,6 @@ public class SiteCreateFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-
-
         db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
 
@@ -115,6 +115,7 @@ public class SiteCreateFragment extends Fragment {
                 cleaningSite.setAddress(siteAddress);
                 cleaningSite.setLat(latitude);
                 cleaningSite.setLng(longitude);
+
                 createSite(cleaningSite);
             }
         });
