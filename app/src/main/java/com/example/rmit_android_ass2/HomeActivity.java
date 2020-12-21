@@ -15,9 +15,11 @@ import android.view.MenuItem;
 
 import com.example.rmit_android_ass2.main.listView.ListViewFragment;
 import com.example.rmit_android_ass2.main.mapView.MapsFragment;
+import com.example.rmit_android_ass2.main.mapView.direction.TaskLoadedCallback;
 import com.example.rmit_android_ass2.main.profileView.ProfileFragment;
 import com.example.rmit_android_ass2.main.siteView.SiteViewFragment;
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.model.TypeFilter;
@@ -30,7 +32,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 
-public class HomeActivity extends AppCompatActivity {
+public class HomeActivity extends AppCompatActivity{
     private BottomNavigationView navigationView;
     private int startingPosition = 0;
 
@@ -127,5 +129,4 @@ public class HomeActivity extends AppCompatActivity {
 
         return false;
     }
-
 }

@@ -7,7 +7,7 @@
     tools:context=".main.mapView.MapsFragment">
 
     <SearchView
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/searchMap"
         android:elevation="10dp"
@@ -16,6 +16,16 @@
         app:iconifiedByDefault="false"
         android:background="#FFFFFF">
     </SearchView>
+    <Button
+        android:id="@+id/directionMap"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom= "true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="10dp"
+        android:visibility="invisible"
+        android:text="Direction"
+        />
 
     <fragment
         android:id="@+id/map"
