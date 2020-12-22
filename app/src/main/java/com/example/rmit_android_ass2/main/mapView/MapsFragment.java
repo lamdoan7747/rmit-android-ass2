@@ -100,11 +100,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
 
     }
 
-    @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-
-    }
 
     private void getCurrentLocation() {
         // Initialize task location
@@ -126,6 +121,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
                             .fillColor(Color.argb(70,140,180,160))
                             .strokeColor(Color.GREEN)
                             .strokeWidth(2f);
+
                     // Zoom map
                     mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLocation,15));
 
@@ -133,6 +129,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
                     //mMap.addMarker(options);
                     mMap.addCircle(circles);
 
+                    // Setup direction for Google Map
                     mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                         @Override
                         public boolean onMarkerClick(Marker marker) {
@@ -183,6 +180,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
 
         // On click listener
         mMap.getUiSettings().setZoomControlsEnabled(true);
+        mMap.getUiSettings().setMapToolbarEnabled(false);
 
         // Load all site
         mMap.setOnMapLoadedCallback(this);

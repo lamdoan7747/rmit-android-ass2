@@ -75,6 +75,7 @@ public class ListViewFragment extends Fragment {
             mAuth = FirebaseAuth.getInstance();
 
             cleaningSiteList = new ArrayList<>();
+
             getAllSites(new FirestoreCallBack() {
                 @Override
                 public void onCallBack(List<CleaningSite> cleaningSites) {

@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_centerVertical="true"
-    tools:context=".main.siteView.mySiteView.SiteEditFragment">
+    tools:context=".main.siteView.mySiteView.MySiteEditFragment">
 
     <LinearLayout
         android:layout_width="match_parent"

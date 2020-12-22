@@ -19,22 +19,31 @@ import android.widget.TextView;
 
 import com.example.rmit_android_ass2.R;
 import com.example.rmit_android_ass2.model.CleaningSite;
+import com.example.rmit_android_ass2.model.User;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+
+import java.util.ArrayList;
 
 
 public class MySiteDetailFragment extends Fragment {
 
-    private Button editButton, deleteButton;
+    private Button editButton, deleteButton, getFollowerButton, insertButton;
     private TextView followerView;
 
     private FirebaseFirestore db;
     private FirebaseUser currentUser;
     private FirebaseAuth mAuth;
+
+    private ArrayList<User> followerList;
 
 
     public MySiteDetailFragment() {
@@ -60,6 +69,8 @@ public class MySiteDetailFragment extends Fragment {
 
         editButton = getView().findViewById(R.id.editSite);
         deleteButton = getView().findViewById(R.id.deleteSite);
+        getFollowerButton = getView().findViewById(R.id.getFollowerSite);
+        insertButton = getView().findViewById(R.id.insertSite);
         followerView = getView().findViewById(R.id.editViewFollower);
 
         db = FirebaseFirestore.getInstance();
@@ -69,10 +80,14 @@ public class MySiteDetailFragment extends Fragment {
         CleaningSite cleaningSite = (CleaningSite) intent.getExtras().get("cleaningSite");
         String cleaningSiteId = (String) cleaningSite.get_id();
 
+        // Get number of followers
+        followerList = new ArrayList<>();
+        getFollowers(cleaningSiteId);
+
         editButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                loadFragment(cleaningSiteId, new SiteEditFragment());
+                loadFragment(cleaningSiteId, new MySiteEditFragment());
             }
         });
 
@@ -98,6 +113,20 @@ public class MySiteDetailFragment extends Fragment {
                         }).create().show();
             }
         });
+
+        getFollowerButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                loadFragment(cleaningSiteId, new MySiteFollowerFragment());
+            }
+        });
+
+        insertButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                loadFragment(cleaningSiteId, new MySiteInsertDataFragment());
+            }
+        });
     }
 
     private void deleteSite(String cleaningSiteId) {
@@ -114,6 +143,27 @@ public class MySiteDetailFragment extends Fragment {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         Log.w("DELETE SITE", "Error deleting document", e);
+                    }
+                });
+    }
+
+    private void getFollowers(String cleaningSiteId) {
+        DocumentReference docRef = db.collection("cleaningSites").document(cleaningSiteId);
+        docRef.collection("followers")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                Log.d("FOLLOWER SIZE", document.getId() + " => " + document.getData());
+                                User user = document.toObject(User.class);
+                                followerList.add(user);
+                            }
+                            followerView.setText(String.format("%s followers", followerList.size()));
+                        } else {
+                            Log.d("FOLLOWER SIZE", "Error getting documents: ", task.getException());
+                        }
                     }
                 });
     }

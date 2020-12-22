@@ -36,7 +36,7 @@ import java.util.Map;
 import static android.app.Activity.RESULT_OK;
 
 
-public class SiteEditFragment extends Fragment {
+public class MySiteEditFragment extends Fragment {
 
     private static int REQUEST_CODE = 200;
 
@@ -50,7 +50,7 @@ public class SiteEditFragment extends Fragment {
     private String cleaningSiteId;
 
 
-    public SiteEditFragment() {
+    public MySiteEditFragment() {
         // Required empty public constructor
     }
 

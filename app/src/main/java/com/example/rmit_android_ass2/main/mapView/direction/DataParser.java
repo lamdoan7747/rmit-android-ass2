@@ -23,6 +23,7 @@ public class DataParser {
             for (int i = 0; i < jRoutes.length(); i++) {
                 jLegs = ((JSONObject) jRoutes.get(i)).getJSONArray("legs");
                 List path = new ArrayList<>();
+
                 /** Traversing all legs */
                 for (int j = 0; j < jLegs.length(); j++) {
                     jSteps = ((JSONObject) jLegs.get(j)).getJSONArray("steps");
@@ -48,6 +49,7 @@ public class DataParser {
         } catch (JSONException e) {
             e.printStackTrace();
         } catch (Exception e) {
+            e.printStackTrace();
         }
         return routes;
     }
