@@ -26,6 +26,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -64,7 +65,7 @@ public class SiteDetailActivity extends AppCompatActivity {
         userList = new ArrayList<>();
 
         Intent intent = getIntent();
-        String cleaningSiteId = (String) intent.getExtras().get("siteId");
+        String cleaningSiteId = (String) intent.getExtras().get("cleaningSiteId");
 
         Log.d("ACTIVITY_SITE_DETAIL", "Document data: " + cleaningSiteId);
         Log.d("ACTIVITY_SITE_DETAIL", "Document data: " + userId);
@@ -145,7 +146,6 @@ public class SiteDetailActivity extends AppCompatActivity {
         });
         }
 
-
     private void unfollowSite(String cleaningSiteId, User user) {
         DocumentReference docRef = db.collection("cleaningSites").document(cleaningSiteId);
         docRef.collection("followers")
@@ -156,12 +156,25 @@ public class SiteDetailActivity extends AppCompatActivity {
                     public void onSuccess(Void aVoid) {
                         Log.d("UNFOLLOW", "DocumentSnapshot successfully deleted!");
                         Toast.makeText(SiteDetailActivity.this, "Unfollowed!", Toast.LENGTH_SHORT).show();
+                        unsubscribeToSite(cleaningSiteId);
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         Log.w("UNFOLLOW", "Error deleting document", e);
+                    }
+                });
+    }
+
+    private void unsubscribeToSite(String cleaningSiteId) {
+        FirebaseMessaging.getInstance().unsubscribeFromTopic(cleaningSiteId)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            Toast.makeText(SiteDetailActivity.this, "Subscribed!", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 });
     }
@@ -178,6 +191,7 @@ public class SiteDetailActivity extends AppCompatActivity {
                     public void onSuccess(Void aVoid) {
                         Log.d("REGISTER", "DocumentSnapshot successfully deleted!");
                         Toast.makeText(SiteDetailActivity.this, "Registered!", Toast.LENGTH_SHORT).show();
+                        subscribeToSite(cleaningSiteId);
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -188,6 +202,18 @@ public class SiteDetailActivity extends AppCompatActivity {
                 });
 
 
+    }
+
+    private void subscribeToSite(String cleaningSiteId) {
+        FirebaseMessaging.getInstance().subscribeToTopic(cleaningSiteId)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            Toast.makeText(SiteDetailActivity.this, "Subscribed!", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
     }
 
     private void getSites(String cleaningSiteId, FirestoreCallBack firestoreCallBack) {

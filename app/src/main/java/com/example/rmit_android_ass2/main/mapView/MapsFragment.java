@@ -15,15 +15,19 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.SearchView;
 import android.widget.Toast;
 
+import com.arlib.floatingsearchview.FloatingSearchView;
+import com.arlib.floatingsearchview.suggestions.model.SearchSuggestion;
 import com.example.rmit_android_ass2.HomeActivity;
 import com.example.rmit_android_ass2.R;
 import com.example.rmit_android_ass2.SiteDetailActivity;
@@ -60,7 +64,7 @@ import java.util.List;
 public class MapsFragment extends Fragment implements OnMapReadyCallback,
         GoogleMap.OnInfoWindowClickListener, GoogleMap.OnMapLoadedCallback{
 
-    private SearchView searchMap;
+    private FloatingSearchView searchMap;
     private GoogleMap mMap;
     private SupportMapFragment mapFragment;
     private FusedLocationProviderClient client;
@@ -73,11 +77,14 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
     private FirebaseAuth mAuth;
     private FirebaseUser currentUser;
 
+    private List<String> mSuggestions =new ArrayList<>();
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
+
         return inflater.inflate(R.layout.fragment_maps, container, false);
     }
 
@@ -94,7 +101,33 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
         // Initialize fused location
         client = LocationServices.getFusedLocationProviderClient(getActivity());
 
-        searchMap = (SearchView) getView().findViewById(R.id.searchMap);
+        searchMap = (FloatingSearchView) getView().findViewById(R.id.floating_search_view);
+
+        searchMap.setOnQueryChangeListener(new FloatingSearchView.OnQueryChangeListener() {
+            @Override
+            public void onSearchTextChanged(String oldQuery, String newQuery) {
+                if (!oldQuery.equals("") && newQuery.equals("")) {
+                    searchMap.clearSuggestions();
+                } else {
+//                    searchMap.showProgress();
+//                    searchMap.swapSuggestions(getSuggestion(newQuery));
+//                    searchMap.hideProgress();
+                }
+            }
+        });
+        searchMap.setOnFocusChangeListener(new FloatingSearchView.OnFocusChangeListener() {
+            @Override
+            public void onFocus() {
+//                searchMap.showProgress();
+//                searchMap.swapSuggestions(getSuggestion(searchMap.getQuery()));
+//                searchMap.hideProgress();
+            }
+
+            @Override
+            public void onFocusCleared() {
+
+            }
+        });
 
         cleaningSiteList = new ArrayList<>();
 
@@ -238,7 +271,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
                 Log.d("GET_NAME", "Error getting documents: " + cleaningSite.getName());
                 Log.d("GET_NAME", "Error getting documents: " + marker.getTitle());
                 Log.d("GET_ID", "Error getting documents: " + cleaningSite.get_id());
-                intent.putExtra("siteId", cleaningSite.get_id());
+                intent.putExtra("cleaningSiteId", cleaningSite.get_id());
             }
         }
         startActivity(intent);
@@ -286,6 +319,12 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
                     for (CleaningSite cleaningSite: cleaningSiteList){
                         if (cleaningSite.getLat() == null || cleaningSite.getLng() == null){ continue; }
                         locations.add(new LatLng(cleaningSite.getLat(),cleaningSite.getLng()));
+
+                        // Set custom info Google map adapter
+                        CustomInfoWindowAdapter adapter = new CustomInfoWindowAdapter(getActivity());
+                        mMap.setInfoWindowAdapter(adapter);
+
+                        // Add marker for all sites
                         mMap.addMarker(new MarkerOptions()
                                 .position(new LatLng(cleaningSite.getLat(),cleaningSite.getLng()))
                                 .title(cleaningSite.getName())
@@ -301,6 +340,8 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
                     CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds,200);
                     mMap.moveCamera(cu);
                     mMap.animateCamera(CameraUpdateFactory.zoomTo(15), 200, null);
+
+
                 }
             }
         });

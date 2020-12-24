@@ -1,5 +1,6 @@
 package com.example.rmit_android_ass2.main.listView;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
@@ -29,9 +30,9 @@ public class CleaningSiteRecyclerViewAdapter extends RecyclerView.Adapter<Cleani
 
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(context)
-                .inflate(R.layout.fragment_list_view, parent, false);
+                        .inflate(R.layout.fragment_site_list_view, parent, false);
         return new ViewHolder(view);
     }
 
@@ -55,8 +56,8 @@ public class CleaningSiteRecyclerViewAdapter extends RecyclerView.Adapter<Cleani
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            siteName = (TextView) view.findViewById(R.id.siteNameListView);
-            addressName = (TextView) view.findViewById(R.id.addressListView);
+            siteName = mView.findViewById(R.id.siteNameListView);
+            addressName = mView.findViewById(R.id.addressListView);
         }
 
         @Override

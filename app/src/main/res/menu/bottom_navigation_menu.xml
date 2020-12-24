@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/gMap"
+        android:id="@+id/bottomNavigationHome"
+        android:enabled="true"
+        android:icon="@android:drawable/ic_dialog_dialer"
+        android:title="Home"/>
+    <item
+        android:id="@+id/bottomNavigationMap"
         android:enabled="true"
         android:icon="@android:drawable/ic_menu_mapmode"
         android:title="Map"/>
     <item
-        android:id="@+id/lView"
-        android:enabled="true"
-        android:icon="@android:drawable/ic_dialog_dialer"
-        android:title="List"/>
-    <item
-        android:id="@+id/cCite"
+        android:id="@+id/bottomNavigationMySite"
         android:enabled="true"
         android:icon="?attr/actionModePasteDrawable"
         android:title="My Site"/>
     <item
-        android:id="@+id/uProfile"
+        android:id="@+id/bottomNavigationProfile"
         android:enabled="true"
         android:icon="?attr/actionModePasteDrawable"
         android:title="Profile"/>

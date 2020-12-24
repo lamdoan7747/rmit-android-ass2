@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import com.example.rmit_android_ass2.R;
 import com.example.rmit_android_ass2.model.User;
+import com.example.rmit_android_ass2.notification.NotificationHelper;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -28,11 +29,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link MySiteInsertDataFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class MySiteInsertDataFragment extends Fragment {
 
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -79,7 +75,6 @@ public class MySiteInsertDataFragment extends Fragment {
         saveDataCollectionButton = getView().findViewById(R.id.saveDataCollection);
         backButton = getView().findViewById(R.id.backButton);
 
-        String data = inputDataEditText.getText().toString();
 
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -91,18 +86,19 @@ public class MySiteInsertDataFragment extends Fragment {
         saveDataCollectionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Double data = Double.parseDouble(inputDataEditText.getText().toString());
                 saveInput(cleaningSiteId, data);
             }
         });
 
     }
 
-    private void saveInput(String cleaningSiteId, String data) {
+    private void saveInput(String cleaningSiteId, Double data) {
         DocumentReference docRef = db.collection("cleaningSites").document(cleaningSiteId);
 
         Map<String, Object> results = new HashMap<>();
         results.put("timestamp", FieldValue.serverTimestamp());
-        results.put("amount", Double.parseDouble(data));
+        results.put("amount", data);
 
         docRef.collection("results")
                 .add(results)

@@ -4,7 +4,6 @@ package com.example.rmit_android_ass2.main.siteView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.rmit_android_ass2.R;
@@ -38,7 +37,7 @@ public class SiteListAdapter extends BaseAdapter {
     public View getView(int position, View view, ViewGroup viewGroup) {
         View viewSite;
         if (view == null) {
-            viewSite = View.inflate(viewGroup.getContext(), R.layout.fragment_list_view,null);
+            viewSite = View.inflate(viewGroup.getContext(), R.layout.fragment_site_list_view,null);
         } else viewSite = view;
 
         CleaningSite cleaningSite = (CleaningSite) getItem(position);

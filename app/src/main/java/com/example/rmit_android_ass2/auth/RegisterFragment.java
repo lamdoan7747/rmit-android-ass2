@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -44,6 +45,7 @@ public class RegisterFragment extends Fragment {
     private EditText editFname, editPassword,
             editEmail, editConfirmPassword;
     private Button register;
+    private TextView backToLogin;
     private ProgressBar loadingProgressBar;
 
     public static final String EMAIL_REGEX_CHECK = "^([\\w-\\.]+){1,64}@([\\w&&[^_]]+){2,255}.[a-z]{2,}$";
@@ -102,6 +104,13 @@ public class RegisterFragment extends Fragment {
                 registerAccount(email,password, fname);
             }
         });
+
+        backToLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                backToPrevious();
+            }
+        });
     }
 
     private void init(View view) {
@@ -111,6 +120,7 @@ public class RegisterFragment extends Fragment {
         editEmail = view.findViewById(R.id.rEmail);
         register = view.findViewById(R.id.rRegister);
         loadingProgressBar = view.findViewById(R.id.rLoading);
+        backToLogin = view.findViewById(R.id.backToLoginButton);
     }
 
     private void registerAccount(String email, String password, String fname) {
@@ -145,14 +155,6 @@ public class RegisterFragment extends Fragment {
                 });
     }
 
-    private void loadFragment(Fragment fragment) {
-        FragmentTransaction ft = getFragmentManager().beginTransaction();
-        ft.setCustomAnimations(R.anim.slide_in_left,R.anim.slide_out_right);
-        ft.replace(R.id.authContainer, fragment);
-        ft.addToBackStack(null);
-        ft.commit();
-    }
-
     private void addUser(User user) {
 
         db.collection("users")
@@ -163,9 +165,13 @@ public class RegisterFragment extends Fragment {
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()) {
                             // Update UI
-                            loadFragment(new LoginFragment());
+                            backToPrevious();
                         }
                     }
                 });
+    }
+
+    private void backToPrevious() {
+        getActivity().getSupportFragmentManager().popBackStack();
     }
 }

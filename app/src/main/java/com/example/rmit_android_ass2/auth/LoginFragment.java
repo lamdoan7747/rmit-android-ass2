@@ -99,7 +99,7 @@ public class LoginFragment extends Fragment {
     private void loadFragment(Fragment fragment) {
         // Load fragment
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
-        transaction.setCustomAnimations(R.anim.slide_in_right,R.anim.slide_out_left);
+        transaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_in_left,R.anim.slide_out_right);
         transaction.replace(R.id.authContainer, fragment);
         transaction.addToBackStack(null);
         transaction.commit();

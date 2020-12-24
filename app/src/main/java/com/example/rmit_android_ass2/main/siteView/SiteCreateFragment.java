@@ -38,8 +38,6 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Arrays;
 import java.util.List;
 

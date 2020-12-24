@@ -6,7 +6,6 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.example.rmit_android_ass2.R;
-import com.example.rmit_android_ass2.model.CleaningSite;
 import com.example.rmit_android_ass2.model.User;
 
 import java.util.ArrayList;
@@ -37,7 +36,7 @@ public class FollowerListAdapter extends BaseAdapter {
     public View getView(int position, View view, ViewGroup viewGroup) {
         View viewSite;
         if (view == null) {
-            viewSite = View.inflate(viewGroup.getContext(), R.layout.fragment_list_view,null);
+            viewSite = View.inflate(viewGroup.getContext(), R.layout.fragment_site_list_view,null);
         } else viewSite = view;
 
         User follower = (User) getItem(position);

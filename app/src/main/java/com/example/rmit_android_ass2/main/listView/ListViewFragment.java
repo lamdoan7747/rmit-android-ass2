@@ -1,24 +1,19 @@
 package com.example.rmit_android_ass2.main.listView;
 
-import android.content.Context;
-import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import com.example.rmit_android_ass2.R;
 import com.example.rmit_android_ass2.model.CleaningSite;
@@ -40,6 +35,7 @@ public class ListViewFragment extends Fragment {
 
     // TODO: Customize parameters
     private int mColumnCount = 1;
+    private static final String TAG = "RecycleView";
 
     private RecyclerView recyclerView;
     private CleaningSiteRecyclerViewAdapter adapter;
@@ -62,64 +58,33 @@ public class ListViewFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_site_list_list, container, false);
-
-        //loadingBar = view.findViewById(R.id.contentProgressLoadBar);
-
-        // Set the adapter
-        if (view instanceof RecyclerView) {
-            Context context = view.getContext();
-            RecyclerView recyclerView = (RecyclerView) view;
-
-            db = FirebaseFirestore.getInstance();
-            mAuth = FirebaseAuth.getInstance();
-
-            cleaningSiteList = new ArrayList<>();
-
-            getAllSites(new FirestoreCallBack() {
-                @Override
-                public void onCallBack(List<CleaningSite> cleaningSites) {
-                    LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
-
-
-                    recyclerView.setLayoutManager(linearLayoutManager);
-                    recyclerView.addItemDecoration(new DividerItemDecoration(context, DividerItemDecoration.VERTICAL));
-
-                    CleaningSiteRecyclerViewAdapter adapter = new CleaningSiteRecyclerViewAdapter(cleaningSiteList,context);
-                    recyclerView.setAdapter(adapter);
-                }
-            });
-
-
-
-//             Get data
-//            recyclerView.addOnScrollListener(new EndlessRecyclerViewScrollListener(linearLayoutManager) {
-//                @Override
-//                public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
-//                    new Handler().postDelayed(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            //loadingBar.setVisibility(View.VISIBLE);
-//
-//                            Toast.makeText(view.getContext(), "Loading More ...",
-//                                    Toast.LENGTH_SHORT).show();
-//
-//                            List<CleaningSite> list = new ArrayList<>();
-//                            for (int i = 0; i <= 5; i++) {
-//                                list.add(new CleaningSite("Mới "+ i, "1988"));
-//                            }
-//                            cleaningSiteList.addAll(list);
-//                            adapter.notifyDataSetChanged();
-//                            //loadingBar.setVisibility(View.GONE);
-//                        }
-//                    },1000);
-//                }
-//            });
-
-        }
-        return view;
+        return inflater.inflate(R.layout.fragment_site_list, container, false);
     }
 
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        db = FirebaseFirestore.getInstance();
+        mAuth = FirebaseAuth.getInstance();
+
+        recyclerView = getView().findViewById(R.id.recycleListView);
+
+        cleaningSiteList = new ArrayList<>();
+
+        getAllSites(new FirestoreCallBack() {
+            @Override
+            public void onCallBack(List<CleaningSite> cleaningSites) {
+                LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+
+                recyclerView.setHasFixedSize(true);
+                recyclerView.setLayoutManager(linearLayoutManager);
+                recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
+                CleaningSiteRecyclerViewAdapter adapter = new CleaningSiteRecyclerViewAdapter(cleaningSiteList,getContext());
+                Log.d(TAG,"Size list: " + cleaningSiteList.size());
+                recyclerView.setAdapter(adapter);
+            }
+        });
+    }
 
     private void getAllSites(FirestoreCallBack firestoreCallBack) {
         currentUser = mAuth.getCurrentUser();
