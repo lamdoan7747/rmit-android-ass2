@@ -49,7 +49,6 @@ public class MySiteFollowerFragment extends Fragment {
 
     private FirebaseFirestore db;
     private FirebaseAuth mAuth;
-    private FirebaseUser currentUser;
 
     private ListView listFollower;
     private FollowerListAdapter followerListAdapter;
@@ -80,8 +79,16 @@ public class MySiteFollowerFragment extends Fragment {
         db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
 
+        // Init follower list
         followerList = new ArrayList<>();
 
+        // Display follower list view
+        displayFollowerList(cleaningSiteId);
+
+
+    }
+
+    private void displayFollowerList(String cleaningSiteId) {
         getFollowers(cleaningSiteId, new FirestoreCallBack() {
             @Override
             public void onCallBack(List<User> followers) {
@@ -90,7 +97,7 @@ public class MySiteFollowerFragment extends Fragment {
                 listFollower.setAdapter(followerListAdapter);
                 listFollower.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
-                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                    public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
                         Toast.makeText(getActivity(),"DISPLAY FOLLOWER PROFILE", Toast.LENGTH_SHORT).show();
                     }
                 });
@@ -99,7 +106,6 @@ public class MySiteFollowerFragment extends Fragment {
     }
 
     private void getFollowers(String cleaningSiteId, FirestoreCallBack firestoreCallBack) {
-        currentUser = mAuth.getCurrentUser();
 
         db.collection("cleaningSites")
                 .document(cleaningSiteId)

@@ -3,7 +3,9 @@ package com.example.rmit_android_ass2.model;
 import com.google.firebase.firestore.DocumentId;
 
 import java.io.Serializable;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class CleaningSite implements Serializable {
@@ -11,10 +13,12 @@ public class CleaningSite implements Serializable {
     private String _id;
     private String name;
     private String address;
+    private Date date;
+    private String startTime;
+    private String endTime;
     private Double lat;
     private Double lng;
     private String owner;
-    private ArrayList<User> followers;
 
     public CleaningSite() {
     }
@@ -52,6 +56,30 @@ public class CleaningSite implements Serializable {
         this.address = address;
     }
 
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
+
+    public String getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(String startTime) {
+        this.startTime = startTime;
+    }
+
+    public String getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(String endTime) {
+        this.endTime = endTime;
+    }
+
     public Double getLat() {
         return lat;
     }
@@ -76,11 +104,4 @@ public class CleaningSite implements Serializable {
         this.owner = owner;
     }
 
-    public ArrayList<User> getFollowers() {
-        return followers;
-    }
-
-    public void setFollowers(ArrayList<User> followers) {
-        this.followers = followers;
-    }
 }

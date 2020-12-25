@@ -132,7 +132,7 @@ public class SiteViewFragment extends Fragment {
 
     private void loadFragment(Fragment fragment) {
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-        fragmentTransaction.setCustomAnimations(R.anim.slide_in_up,R.anim.slide_out_up);
+        fragmentTransaction.setCustomAnimations(R.anim.slide_in_up,R.anim.slide_out_up, R.anim.slide_in_down, R.anim.slide_out_down);
         fragmentTransaction.replace(R.id.frameContainer,fragment);
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();

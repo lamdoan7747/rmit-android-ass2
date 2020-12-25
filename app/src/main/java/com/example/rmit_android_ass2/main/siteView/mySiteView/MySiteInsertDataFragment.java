@@ -94,25 +94,27 @@ public class MySiteInsertDataFragment extends Fragment {
     }
 
     private void saveInput(String cleaningSiteId, Double data) {
-        DocumentReference docRef = db.collection("cleaningSites").document(cleaningSiteId);
-
+        // Set value for data collection with new timestamp and amount of garbage
         Map<String, Object> results = new HashMap<>();
         results.put("timestamp", FieldValue.serverTimestamp());
         results.put("amount", data);
 
-        docRef.collection("results")
+        // Add new data collection
+        db.collection("cleaningSites")
+                .document(cleaningSiteId)
+                .collection("results")
                 .add(results)
                 .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                     @Override
                     public void onSuccess(DocumentReference documentReference) {
-                        Toast.makeText(getActivity(),"Add success: " + documentReference.getId(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(getActivity(),"Add success: " + documentReference.getId(), Toast.LENGTH_SHORT).show();
                         backToPrevious();
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(getActivity(),"Failure: " + e.toString(),Toast.LENGTH_LONG).show();
+                        Toast.makeText(getActivity(),"Failure: " + e.toString(),Toast.LENGTH_SHORT).show();
                     }
                 });
     }

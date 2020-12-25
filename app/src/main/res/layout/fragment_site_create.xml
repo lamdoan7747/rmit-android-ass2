@@ -5,6 +5,31 @@
     android:layout_height="match_parent"
     tools:context=".main.siteView.SiteCreateFragment">
 
+    <androidx.appcompat.widget.Toolbar
+        android:layout_width="match_parent"
+        android:layout_height="50dp">
+
+        <ImageButton
+            android:id="@+id/backButtonToolbarSiteCreate"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:layout_gravity="center|start"
+            android:background="@color/backgroundColor"
+            android:src="@drawable/ic_back_arrow"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textColor="@color/primaryColor"
+            android:text="Site create" />
+
+    </androidx.appcompat.widget.Toolbar>
+
+
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -23,51 +48,130 @@
 
 
         <EditText
-            android:id="@+id/siteName"
+            android:id="@+id/siteNameSiteCreate"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Create cleaning site" />
+            android:layout_height="40dp"
+            android:layout_margin="5dp"
+            android:paddingStart="15dp"
+            android:paddingEnd="15dp"
+            android:elevation="5dp"
+            android:background="@drawable/white_rectangle_background"
+            android:hint="Site name" />
 
         <EditText
-            android:id="@+id/siteAddress"
+            android:id="@+id/siteAddressSiteCreate"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="40dp"
+            android:paddingStart="15dp"
+            android:paddingEnd="15dp"
+            android:layout_margin="5dp"
+            android:elevation="5dp"
+            android:background="@drawable/white_rectangle_background"
             android:hint="Address"/>
 
-
-
         <EditText
-            android:id="@+id/siteLatitude"
+            android:id="@+id/siteDateSiteCreate"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:paddingStart="15dp"
+            android:paddingEnd="15dp"
+            android:layout_margin="5dp"
+            android:elevation="5dp"
+            android:background="@drawable/white_rectangle_background"
+            android:hint="Date"/>
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Latitude"
-            android:enabled="false"/>
+            android:orientation="horizontal">
 
-        <EditText
-            android:id="@+id/siteLongitude"
+            <EditText
+                android:id="@+id/siteStartTimeSiteCreate"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginVertical="5dp"
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp"
+                android:layout_margin="5dp"
+                android:elevation="5dp"
+                android:layout_weight="1"
+                android:background="@drawable/white_rectangle_background"
+                android:hint="From"/>
+
+            <EditText
+                android:id="@+id/siteEndTimeSiteCreate"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginVertical="5dp"
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp"
+                android:elevation="5dp"
+                android:layout_margin="5dp"
+                android:layout_weight="1"
+                android:background="@drawable/white_rectangle_background"
+                android:hint="To"/>
+
+        </LinearLayout>
+
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Longitude"
-            android:enabled="false"/>
+            android:orientation="horizontal">
 
+            <EditText
+                android:id="@+id/siteLatitudeSiteCreate"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginVertical="5dp"
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp"
+                android:elevation="5dp"
+                android:layout_margin="5dp"
+                android:layout_weight="1"
+                android:hint="Latitude"
+                android:background="@drawable/white_rectangle_background"
+                android:enabled="false"/>
 
-        <Button
-            android:id="@+id/aButton"
+            <EditText
+                android:id="@+id/siteLongitudeSiteCreate"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginVertical="5dp"
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp"
+                android:elevation="5dp"
+                android:layout_margin="5dp"
+                android:layout_weight="1"
+                android:hint="Longitude"
+                android:background="@drawable/white_rectangle_background"
+                android:enabled="false"/>
+
+        </LinearLayout>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/addLocationSiteCreate"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Create" />
-
-        <Button
-            android:id="@+id/aLocation"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="40dp"
+            android:layout_margin="5dp"
+            android:background="@drawable/white_rectangle_background"
+            android:backgroundTint="@color/white"
+            android:textColor="@color/primaryColor"
+            android:elevation="5dp"
             android:text="Add location" />
 
+
         <Button
-            android:id="@+id/aBack"
+            android:id="@+id/createSiteSiteCreate"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Back" />
+            android:layout_height="40dp"
+            android:layout_margin="5dp"
+            android:background="@drawable/white_rectangle_background"
+
+            android:text="Create" />
+
+
+
 
     </LinearLayout>
 

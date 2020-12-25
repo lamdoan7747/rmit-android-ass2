@@ -95,6 +95,8 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
         db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
 
+        cleaningSiteList = new ArrayList<>();
+
         mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
@@ -129,7 +131,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
             }
         });
 
-        cleaningSiteList = new ArrayList<>();
 
     }
 
@@ -211,14 +212,14 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        // On click listener
+        // Setting UI for google map
         mMap.getUiSettings().setZoomControlsEnabled(true);
         mMap.getUiSettings().setMapToolbarEnabled(false);
+        mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 
         // Load all site
         mMap.setOnMapLoadedCallback(this);
         mMap.setOnInfoWindowClickListener(this);
-        mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 
         // Check permission
         if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
@@ -232,33 +233,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
             ActivityCompat.requestPermissions(getActivity(),
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 44);
         }
-
-//        // On Search map
-//        searchMap.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-//            @Override
-//            public boolean onQueryTextSubmit(String s) {
-//                String location = searchMap.getQuery().toString();
-//                List<Address> addressList = null;
-//                if (location!=null||!location.equals("")){
-//                    Geocoder geocoder = new Geocoder(getActivity());
-//                    try {
-//                        addressList = geocoder.getFromLocationName(location,1);
-//                    } catch (IOException e){
-//                        e.printStackTrace();
-//                    }
-//                    Address address = addressList.get(0);
-//                    LatLng latLng = new LatLng(address.getLatitude(),address.getLongitude());
-//                    mMap.addMarker(new MarkerOptions().position(latLng).title(location));
-//                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,15));
-//                }
-//                return false;
-//            }
-//            @Override
-//            public boolean onQueryTextChange(String s) {
-//                return false;
-//            }
-//        });
-
 
     }
 
@@ -278,7 +252,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
     }
 
 
-
     private void getAllSites(FirestoreCallBack firestoreCallBack) {
         currentUser = mAuth.getCurrentUser();
 
@@ -295,7 +268,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
                                     cleaningSiteList.add(cleaningSite);
                                 }
                             }
-
                             firestoreCallBack.onCallBack(cleaningSiteList);
 
                         } else {
@@ -359,7 +331,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
         // Output format
         String output = "json";
         // Building the url to the web service
-        String url = "https://maps.googleapis.com/maps/api/directions/" + output + "?" + parameters + "&key=" + getString(R.string.google_maps_key);
+        String url = String.format("https://maps.googleapis.com/maps/api/directions/%s?%s&key=%s", output, parameters, getString(R.string.google_maps_key));
         return url;
     }
 
