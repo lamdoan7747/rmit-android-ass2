@@ -10,7 +10,6 @@
         android:id="@+id/editFrameContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_centerVertical="true"
         android:layout_weight="1" />
 
 </RelativeLayout>

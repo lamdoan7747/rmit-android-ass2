@@ -7,6 +7,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatButton;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -15,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.example.rmit_android_ass2.R;
@@ -37,6 +39,7 @@ import java.util.ArrayList;
 public class MySiteDetailFragment extends Fragment {
 
     private Button editButton, deleteButton, getFollowerButton, insertButton;
+    private ImageButton backButton, buttonSiteOption;
     private TextView followerView;
 
     private FirebaseFirestore db;
@@ -67,11 +70,11 @@ public class MySiteDetailFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        editButton = getView().findViewById(R.id.editSite);
-        deleteButton = getView().findViewById(R.id.deleteSite);
-        getFollowerButton = getView().findViewById(R.id.getFollowerSite);
-        insertButton = getView().findViewById(R.id.insertSite);
-        followerView = getView().findViewById(R.id.editViewFollower);
+        insertButton = getView().findViewById(R.id.insertSiteMySiteDetail);
+        followerView = getView().findViewById(R.id.editViewFollowerMySiteDetail);
+        buttonSiteOption = getView().findViewById(R.id.optionSiteMySiteDetail);
+        backButton = getView().findViewById(R.id.backButtonToolbarMySiteDetail);
+
 
         db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
@@ -84,40 +87,10 @@ public class MySiteDetailFragment extends Fragment {
         followerList = new ArrayList<>();
         getFollowers(cleaningSiteId);
 
-        editButton.setOnClickListener(new View.OnClickListener() {
+        backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                loadFragment(cleaningSiteId, new MySiteEditFragment());
-            }
-        });
-
-        deleteButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
-                alertDialogBuilder
-                        .setTitle("Confirm Delete")
-                        .setMessage("Do you want to delete this site?")
-                        .setMessage("All information included followers would be deleted!")
-                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                deleteSite(cleaningSiteId);
-                            }
-                        })
-                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                dialogInterface.dismiss();
-                            }
-                        }).create().show();
-            }
-        });
-
-        getFollowerButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                loadFragment(cleaningSiteId, new MySiteFollowerFragment());
+                backToPrevious();
             }
         });
 
@@ -127,24 +100,17 @@ public class MySiteDetailFragment extends Fragment {
                 loadFragment(cleaningSiteId, new MySiteInsertDataFragment());
             }
         });
+
+        buttonSiteOption.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                loadFragment(cleaningSiteId, new MySiteOptionFragment());
+            }
+        });
     }
 
-    private void deleteSite(String cleaningSiteId) {
-        DocumentReference docRef = db.collection("cleaningSites").document(cleaningSiteId);
-        docRef.delete()
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.d("DELETE SITE", "DocumentSnapshot successfully deleted!");
-                        getActivity().finish();
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w("DELETE SITE", "Error deleting document", e);
-                    }
-                });
+    private void backToPrevious() {
+        getActivity().finish();
     }
 
     private void getFollowers(String cleaningSiteId) {
@@ -176,7 +142,7 @@ public class MySiteDetailFragment extends Fragment {
 
         // Start transaction with new fragment
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-        fragmentTransaction.setCustomAnimations(R.anim.slide_in_up,R.anim.slide_out_up);
+        fragmentTransaction.setCustomAnimations(R.anim.slide_in_up,R.anim.slide_out_up, R.anim.slide_in_down, R.anim.slide_out_down);
         fragmentTransaction.replace(R.id.editFrameContainer,fragment);
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();

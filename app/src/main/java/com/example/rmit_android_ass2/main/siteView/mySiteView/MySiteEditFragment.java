@@ -42,7 +42,6 @@ public class MySiteEditFragment extends Fragment {
 
     private FirebaseFirestore db;
     private FirebaseAuth mAuth;
-    private FirebaseUser currentUser;
 
     private EditText editName, editAddress, editLatitude, editLongitude;
     private Button editSiteButton, editSiteBack, editSiteLocation;

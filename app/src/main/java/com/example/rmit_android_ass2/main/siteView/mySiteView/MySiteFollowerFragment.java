@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -53,6 +54,8 @@ public class MySiteFollowerFragment extends Fragment {
     private ListView listFollower;
     private FollowerListAdapter followerListAdapter;
 
+    private ImageButton backButton;
+
     public MySiteFollowerFragment() {
         // Required empty public constructor
     }
@@ -79,6 +82,14 @@ public class MySiteFollowerFragment extends Fragment {
         db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
 
+        backButton = getView().findViewById(R.id.backButtonToolbarMySiteFollower);
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                backToPrevious();
+            }
+        });
+
         // Init follower list
         followerList = new ArrayList<>();
 
@@ -86,6 +97,10 @@ public class MySiteFollowerFragment extends Fragment {
         displayFollowerList(cleaningSiteId);
 
 
+    }
+
+    private void backToPrevious() {
+        getActivity().getSupportFragmentManager().popBackStack();
     }
 
     private void displayFollowerList(String cleaningSiteId) {

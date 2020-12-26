@@ -8,9 +8,11 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.rmit_android_ass2.model.CleaningResult;
 import com.example.rmit_android_ass2.model.CleaningSite;
 import com.example.rmit_android_ass2.model.User;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -34,6 +36,7 @@ import java.util.List;
 public class SiteDetailActivity extends AppCompatActivity {
 
     private Button register, unfollow;
+    private ImageButton backButton;
     private TextView follower;
 
     private FirebaseFirestore db;
@@ -44,6 +47,7 @@ public class SiteDetailActivity extends AppCompatActivity {
     private final String UNFOLLOW = "UNFOLLOW";
 
     private ArrayList<User> userList;
+    private ArrayList<CleaningResult> cleaningResults;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,15 +61,26 @@ public class SiteDetailActivity extends AppCompatActivity {
         currentUser = mAuth.getCurrentUser();
         String userId = currentUser.getUid();
 
-        register = findViewById(R.id.siteRegister);
+        register = (Button) findViewById(R.id.siteRegister);
         unfollow = findViewById(R.id.siteUnfollow);
-
         follower = findViewById(R.id.viewFollower);
+        backButton = findViewById(R.id.backButtonToolbarSiteDetail);
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(SiteDetailActivity.this, HomeActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+                finish();
+            }
+        });
 
         userList = new ArrayList<>();
+        cleaningResults = new ArrayList<>();
 
         Intent intent = getIntent();
-        String cleaningSiteId = (String) intent.getExtras().get("cleaningSiteId");
+        CleaningSite cleaningSite = (CleaningSite) intent.getExtras().get("cleaningSite");
+        String cleaningSiteId = cleaningSite.get_id();
 
         Log.d("ACTIVITY_SITE_DETAIL", "Document data: " + cleaningSiteId);
         Log.d("ACTIVITY_SITE_DETAIL", "Document data: " + userId);
@@ -86,10 +101,17 @@ public class SiteDetailActivity extends AppCompatActivity {
 
         getFolowers(cleaningSiteId);
 
-        getSites(cleaningSiteId, new FirestoreCallBack() {
+        getSites(cleaningSiteId, new OnSiteCallBack() {
             @Override
             public void onCallBack(CleaningSite cleaningSite) {
                 Log.d("CLEANING SITE", "Document data: " + cleaningSite.get_id());
+            }
+        });
+
+        getResults(cleaningSiteId, new OnResultCallBack() {
+            @Override
+            public void onCallBack(List<CleaningResult> cleaningResult) {
+
             }
         });
 
@@ -105,7 +127,6 @@ public class SiteDetailActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
-
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 Log.d("FOLLOWER SIZE", document.getId() + " => " + document.getData());
                                 User user = document.toObject(User.class);
@@ -216,7 +237,7 @@ public class SiteDetailActivity extends AppCompatActivity {
                 });
     }
 
-    private void getSites(String cleaningSiteId, FirestoreCallBack firestoreCallBack) {
+    private void getSites(String cleaningSiteId, OnSiteCallBack onSiteCallBack) {
         DocumentReference docRef = db.collection("cleaningSites").document(cleaningSiteId);
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -226,7 +247,6 @@ public class SiteDetailActivity extends AppCompatActivity {
                     if (document.exists()) {
                         CleaningSite cleaningSite = document.toObject(CleaningSite.class);
                         Log.d("CLEANING SITE", "Document data: " + cleaningSite.get_id());
-
                     } else {
                         Log.d("CLEANING SITE", "Cannot get any document:" + task.getException());
                     }
@@ -237,7 +257,31 @@ public class SiteDetailActivity extends AppCompatActivity {
         });
     }
 
-    private interface FirestoreCallBack{
+    private void getResults(String cleaningSiteId, OnResultCallBack onResultCallBack) {
+        DocumentReference docRef = db.collection("cleaningSites").document(cleaningSiteId);
+        docRef.collection("results")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document: task.getResult()){
+                                CleaningResult cleaningResult = document.toObject(CleaningResult.class);
+                                Log.d("CLEANING SITE", "Document data: " + cleaningResult.getId());
+
+                                cleaningResults.add(cleaningResult);
+                            }
+                            onResultCallBack.onCallBack(cleaningResults);
+                        }
+                    }
+                });
+    }
+
+    private interface OnSiteCallBack{
         void onCallBack(CleaningSite cleaningSite);
+    }
+
+    private interface OnResultCallBack{
+        void onCallBack(List<CleaningResult> cleaningResult);
     }
 }

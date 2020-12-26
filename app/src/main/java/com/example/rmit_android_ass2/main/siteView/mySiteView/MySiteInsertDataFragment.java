@@ -11,10 +11,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import com.example.rmit_android_ass2.R;
+import com.example.rmit_android_ass2.model.CleaningResult;
 import com.example.rmit_android_ass2.model.User;
 import com.example.rmit_android_ass2.notification.NotificationHelper;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -36,15 +38,11 @@ public class MySiteInsertDataFragment extends Fragment {
 
     private String cleaningSiteId;
 
-    private ArrayList<User> followerList;
-
     private FirebaseFirestore db;
-    private FirebaseAuth mAuth;
-    private FirebaseUser currentUser;
 
-    private EditText inputDataEditText;
-    private Button saveDataCollectionButton, backButton;
-    private FollowerListAdapter followerListAdapter;
+    private EditText inputAmount, inputDate;
+    private Button saveDataCollectionButton;
+    private ImageButton backButton;
 
     public MySiteInsertDataFragment() {
         // Required empty public constructor
@@ -71,9 +69,10 @@ public class MySiteInsertDataFragment extends Fragment {
 
         db = FirebaseFirestore.getInstance();
 
-        inputDataEditText = getView().findViewById(R.id.inputDataCollection);
+        inputAmount = getView().findViewById(R.id.inputAmountCollection);
+        inputDate = getView().findViewById(R.id.inputDateCollection);
         saveDataCollectionButton = getView().findViewById(R.id.saveDataCollection);
-        backButton = getView().findViewById(R.id.backButton);
+        backButton = getView().findViewById(R.id.backButtonToolbarMySiteInsertData);
 
 
         backButton.setOnClickListener(new View.OnClickListener() {
@@ -86,18 +85,18 @@ public class MySiteInsertDataFragment extends Fragment {
         saveDataCollectionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Double data = Double.parseDouble(inputDataEditText.getText().toString());
-                saveInput(cleaningSiteId, data);
+                saveDataCollection(cleaningSiteId);
             }
         });
 
     }
 
-    private void saveInput(String cleaningSiteId, Double data) {
+    private void saveDataCollection(String cleaningSiteId) {
         // Set value for data collection with new timestamp and amount of garbage
-        Map<String, Object> results = new HashMap<>();
-        results.put("timestamp", FieldValue.serverTimestamp());
-        results.put("amount", data);
+        Double data = Double.parseDouble(inputAmount.getText().toString());
+
+        // Set result object
+        CleaningResult results = new CleaningResult(FieldValue.serverTimestamp(),data);
 
         // Add new data collection
         db.collection("cleaningSites")

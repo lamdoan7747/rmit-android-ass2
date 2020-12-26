@@ -25,7 +25,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                android:src="@drawable/ic_launcher_background"
+                android:src="@drawable/app_logo"
                 android:background="@drawable/white_rectangle_background"/>
 
             <TextView
@@ -36,7 +36,7 @@
                 android:layout_marginTop="0dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginBottom="8dp"
-                android:text="CLeaning Site"
+                android:text="Cleaning Site"
                 android:textColor="@android:color/black"
                 android:textSize="20sp"
                 app:layout_constraintBottom_toBottomOf="parent"

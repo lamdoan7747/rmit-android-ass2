@@ -245,7 +245,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
                 Log.d("GET_NAME", "Error getting documents: " + cleaningSite.getName());
                 Log.d("GET_NAME", "Error getting documents: " + marker.getTitle());
                 Log.d("GET_ID", "Error getting documents: " + cleaningSite.get_id());
-                intent.putExtra("cleaningSiteId", cleaningSite.get_id());
+                intent.putExtra("cleaningSite", cleaningSite);
             }
         }
         startActivity(intent);

@@ -5,37 +5,67 @@
     android:layout_height="match_parent"
     tools:context=".main.siteView.mySiteView.MySiteInsertDataFragment">
 
+    <androidx.appcompat.widget.Toolbar
+        android:layout_width="match_parent"
+        android:layout_height="50dp">
+
+        <ImageButton
+            android:id="@+id/backButtonToolbarMySiteInsertData"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:layout_gravity="center|start"
+            android:background="@color/backgroundColor"
+            android:src="@drawable/ic_back_arrow"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textColor="@color/primaryColor"
+            android:text="Data Collection" />
+
+    </androidx.appcompat.widget.Toolbar>
+
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="30dp"
         android:orientation="vertical"
         android:layout_gravity="center">
 
         <EditText
-            android:id="@+id/inputDataCollection"
+            android:id="@+id/inputAmountCollection"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:gravity="center"
+            android:layout_height="40dp"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/white_rectangle_background_button"
             android:inputType="number"
-            android:hint="Input data" />
+            android:paddingHorizontal="15dp"
+            android:elevation="5dp"
+            android:hint="Amount" />
+
+        <EditText
+            android:id="@+id/inputDateCollection"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/white_rectangle_background_button"
+            android:inputType="number"
+            android:paddingHorizontal="15dp"
+            android:elevation="5dp"
+            android:hint="Date" />
 
         <Button
             android:id="@+id/saveDataCollection"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
             android:layout_gravity="center"
             android:gravity="center"
+            android:background="@drawable/white_rectangle_background_button"
+            android:elevation="5dp"
             android:text="Save"/>
-
-        <Button
-            android:id="@+id/backButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:text="Back"/>
-
     </LinearLayout>
 
 

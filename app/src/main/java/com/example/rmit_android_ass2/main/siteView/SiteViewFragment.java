@@ -73,7 +73,7 @@ public class SiteViewFragment extends Fragment {
             @Override
             public void onCallBack(List<CleaningSite> cleaningSites) {
                 siteListAdapter = new SiteListAdapter(cleaningSiteList);
-                listSite = getView().findViewById(R.id.listSite);
+                listSite = getView().findViewById(R.id.listMySite);
                 listSite.setAdapter(siteListAdapter);
                 listSite.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override

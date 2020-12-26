@@ -1,5 +1,6 @@
 package com.example.rmit_android_ass2.main.listView;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -13,9 +14,15 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.example.rmit_android_ass2.R;
+import com.example.rmit_android_ass2.SiteDetailActivity;
+import com.example.rmit_android_ass2.main.siteView.SiteListAdapter;
+import com.example.rmit_android_ass2.main.siteView.mySiteView.MySiteActivity;
 import com.example.rmit_android_ass2.model.CleaningSite;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -37,8 +44,8 @@ public class ListViewFragment extends Fragment {
     private int mColumnCount = 1;
     private static final String TAG = "RecycleView";
 
-    private RecyclerView recyclerView;
-    private CleaningSiteRecyclerViewAdapter adapter;
+    private ListView cleaningSiteListView;
+    private SiteListAdapter siteListAdapter;
     private ArrayList<CleaningSite> cleaningSiteList;
     private int page = 1, limit = 10;
     private ProgressBar loadingBar;
@@ -67,26 +74,35 @@ public class ListViewFragment extends Fragment {
         db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
 
-        recyclerView = getView().findViewById(R.id.recycleListView);
 
         cleaningSiteList = new ArrayList<>();
 
-        getAllSites(new FirestoreCallBack() {
+        getAllSites(new OnSiteCallBack() {
             @Override
             public void onCallBack(List<CleaningSite> cleaningSites) {
-                LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
 
-                recyclerView.setHasFixedSize(true);
-                recyclerView.setLayoutManager(linearLayoutManager);
-                recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
-                CleaningSiteRecyclerViewAdapter adapter = new CleaningSiteRecyclerViewAdapter(cleaningSiteList,getContext());
                 Log.d(TAG,"Size list: " + cleaningSiteList.size());
-                recyclerView.setAdapter(adapter);
+
+                cleaningSiteListView = getView().findViewById(R.id.cleaningSiteListView);
+
+                siteListAdapter = new SiteListAdapter(cleaningSiteList);
+                cleaningSiteListView.setAdapter(siteListAdapter);
+                cleaningSiteListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                        Log.d("TEST ON ITEM CLICK","WORK");
+                        Toast.makeText(getActivity(),"Clicked!",Toast.LENGTH_SHORT).show();
+                        CleaningSite cleaningSite = (CleaningSite) siteListAdapter.getItem(position);
+                        Intent intent = new Intent(getActivity(), SiteDetailActivity.class);
+                        intent.putExtra("cleaningSite", cleaningSite);
+                        startActivity(intent);
+                    }
+                });
             }
         });
     }
 
-    private void getAllSites(FirestoreCallBack firestoreCallBack) {
+    private void getAllSites(OnSiteCallBack onSiteCallBack) {
         currentUser = mAuth.getCurrentUser();
 
         db.collection("cleaningSites")
@@ -100,7 +116,7 @@ public class ListViewFragment extends Fragment {
                                 CleaningSite cloudSite = document.toObject(CleaningSite.class);
                                 cleaningSiteList.add(cloudSite);
                             }
-                            firestoreCallBack.onCallBack(cleaningSiteList);
+                            onSiteCallBack.onCallBack(cleaningSiteList);
                         } else {
                             Log.d(getTag(), "Error getting documents: ", task.getException());
                         }
@@ -109,7 +125,7 @@ public class ListViewFragment extends Fragment {
     }
 
 
-    private interface FirestoreCallBack{
+    private interface OnSiteCallBack{
         void onCallBack(List<CleaningSite> cleaningSites);
     }
 }

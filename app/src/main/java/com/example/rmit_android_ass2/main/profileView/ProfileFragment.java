@@ -37,9 +37,6 @@ public class ProfileFragment extends Fragment {
 
         mAuth = FirebaseAuth.getInstance();
 
-        Toolbar toolBar = getView().findViewById(R.id.toolbarMaterial);
-        toolBar.setTitle("My Profile");
-
 
         logoutButton = getView().findViewById(R.id.logout);
         logoutButton.setOnClickListener(new View.OnClickListener() {

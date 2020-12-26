@@ -45,7 +45,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="15dp"
-            android:background="@drawable/white_rectangle_background"
+            android:background="@drawable/white_rectangle_background_button"
             android:orientation="horizontal"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@id/textHello">
@@ -59,7 +59,8 @@
                 android:inputType="text"
                 android:paddingStart="15dp"
                 android:paddingEnd="15dp"
-                android:importantForAutofill="no"/>
+                android:importantForAutofill="no"
+                android:enabled="false"/>
 
             <ImageView
                 android:layout_width="40dp"
@@ -73,11 +74,12 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <ScrollView
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:overScrollMode="never"
         android:layout_marginTop="5dp"
+        android:fillViewport="true"
+        android:scrollbars="none"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/layoutHeader">
         <LinearLayout
@@ -89,7 +91,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingTop="20dp"
+                android:paddingTop="10dp"
                 android:orientation="horizontal">
 
                 <TextView
@@ -115,17 +117,22 @@
                     android:textSize="16sp" />
 
             </LinearLayout>
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recycleListView"
-                android:name="com.example.rmit_android_ass2.SiteListFragment"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingTop="5dp"
-                app:layoutManager="LinearLayoutManager"
-                tools:listitem="@layout/fragment_site_list_view" />
+                android:layout_height="wrap_content">
+
+                <ListView
+                    android:id="@+id/cleaningSiteListView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="5dp"/>
+
+            </LinearLayout>
+
         </LinearLayout>
-    </ScrollView>
+
+
+    </androidx.core.widget.NestedScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>
 
 
