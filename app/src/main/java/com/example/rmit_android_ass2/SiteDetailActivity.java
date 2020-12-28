@@ -57,6 +57,7 @@ public class SiteDetailActivity extends AppCompatActivity {
     private ArrayList<CleaningResult> cleaningResults;
 
     private ResultListAdapter resultListAdapter;
+    private String cleaningSiteId;
 
 
     @Override
@@ -68,17 +69,20 @@ public class SiteDetailActivity extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
         currentUser = mAuth.getCurrentUser();
+        assert currentUser != null;
         String userId = currentUser.getUid();
 
         Intent intent = getIntent();
-        CleaningSite cleaningSite = (CleaningSite) intent.getExtras().get("cleaningSite");
-        String cleaningSiteId = cleaningSite.get_id();
+        if (intent.getExtras().get("cleaningSite") != null) {
+            CleaningSite cleaningSite = (CleaningSite) intent.getExtras().get("cleaningSite");
+            cleaningSiteId = cleaningSite.get_id();
+        } else {
+            cleaningSiteId = (String) intent.getExtras().get("cleaningSiteId");
+        }
 
         renderView();
         onClickListener(cleaningSiteId, userId);
 
-        Log.d(TAG, "Cleaning site name: " + cleaningSite.getName());
-        Log.d(TAG, "User id: " + userId);
 
         // GET FOLLOWER OF THE SITE
         followers = new ArrayList<>();

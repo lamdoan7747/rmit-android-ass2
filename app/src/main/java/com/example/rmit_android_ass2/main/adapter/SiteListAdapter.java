@@ -42,7 +42,7 @@ public class SiteListAdapter extends BaseAdapter {
 
         CleaningSite cleaningSite = (CleaningSite) getItem(position);
         ((TextView) viewSite.findViewById(R.id.siteNameListView)).setText(String.format("%s",cleaningSite.getName()));
-        ((TextView) viewSite.findViewById(R.id.addressListView)).setText(String.format("%s",cleaningSite.getAddress()));
+        ((TextView) viewSite.findViewById(R.id.siteAddressListView)).setText(String.format("%s",cleaningSite.getAddress()));
 
         return viewSite;
     }

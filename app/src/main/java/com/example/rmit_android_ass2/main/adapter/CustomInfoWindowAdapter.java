@@ -1,4 +1,4 @@
-package com.example.rmit_android_ass2.main.mapView;
+package com.example.rmit_android_ass2.main.adapter;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;

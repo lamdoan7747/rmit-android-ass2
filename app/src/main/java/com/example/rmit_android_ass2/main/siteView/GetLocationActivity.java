@@ -8,12 +8,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.Toast;
 
-import com.example.rmit_android_ass2.HomeActivity;
 import com.example.rmit_android_ass2.R;
-import com.example.rmit_android_ass2.main.mapView.CustomInfoWindowAdapter;
-import com.example.rmit_android_ass2.main.mapView.MapsFragment;
+import com.example.rmit_android_ass2.main.adapter.CustomInfoWindowAdapter;
 import com.example.rmit_android_ass2.model.CleaningSite;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;

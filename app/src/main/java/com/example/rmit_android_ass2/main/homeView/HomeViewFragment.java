@@ -12,11 +12,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.rmit_android_ass2.HomeActivity;
 import com.example.rmit_android_ass2.R;
+import com.example.rmit_android_ass2.SearchActivity;
 import com.example.rmit_android_ass2.SiteDetailActivity;
 import com.example.rmit_android_ass2.main.adapter.SiteListAdapter;
 import com.example.rmit_android_ass2.model.CleaningSite;
@@ -38,13 +42,13 @@ public class HomeViewFragment extends Fragment {
 
     // TODO: Customize parameters
     private int mColumnCount = 1;
-    private static final String TAG = "RecycleView";
+    private static final String TAG = "HOME_FRAGMENT";
 
     private ListView cleaningSiteListView;
     private SiteListAdapter siteListAdapter;
     private ArrayList<CleaningSite> cleaningSiteList;
-    private int page = 1, limit = 10;
-    private ProgressBar loadingBar;
+
+    private TextView searchButton;
 
     private FirebaseFirestore db;
     private FirebaseAuth mAuth;
@@ -70,30 +74,37 @@ public class HomeViewFragment extends Fragment {
         db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
 
+        searchButton = requireView().findViewById(R.id.searchHomeView);
+        searchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), SearchActivity.class);
+                startActivity(intent);
+                requireActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+            }
+        });
 
         cleaningSiteList = new ArrayList<>();
-
         getAllSites(new OnSiteCallBack() {
             @Override
             public void onCallBack(List<CleaningSite> cleaningSites) {
 
                 Log.d(TAG,"Size list: " + cleaningSiteList.size());
 
-                cleaningSiteListView = getView().findViewById(R.id.cleaningSiteListView);
+                cleaningSiteListView = requireView().findViewById(R.id.cleaningSiteHomeView);
 
                 siteListAdapter = new SiteListAdapter(cleaningSiteList);
                 cleaningSiteListView.setAdapter(siteListAdapter);
                 cleaningSiteListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                        Log.d("TEST ON ITEM CLICK","WORK");
+                        Log.d(TAG,"WORK");
                         Toast.makeText(getActivity(),"Clicked!",Toast.LENGTH_SHORT).show();
                         CleaningSite cleaningSite = (CleaningSite) siteListAdapter.getItem(position);
                         Intent intent = new Intent(getActivity(), SiteDetailActivity.class);
                         intent.putExtra("cleaningSite", cleaningSite);
                         startActivity(intent);
                         requireActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-
                     }
                 });
             }
@@ -110,13 +121,13 @@ public class HomeViewFragment extends Fragment {
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
-                                Log.d("Site", document.getId() + " => " + document.getData());
+                                Log.d(TAG, document.getId() + " => " + document.getData());
                                 CleaningSite cloudSite = document.toObject(CleaningSite.class);
                                 cleaningSiteList.add(cloudSite);
                             }
                             onSiteCallBack.onCallBack(cleaningSiteList);
                         } else {
-                            Log.d(getTag(), "Error getting documents: ", task.getException());
+                            Log.d(TAG, "Error getting documents: ", task.getException());
                         }
                     }
                 });

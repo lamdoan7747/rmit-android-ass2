@@ -15,4 +15,13 @@
         <!-- Customize your theme here. -->
         <item name="android:colorBackground">@color/backgroundColor</item>
     </style>
+
+    <style name="Theme.Rmit_android_ass2.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="Theme.Rmit_android_ass2.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="Theme.Rmit_android_ass2.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 </resources>
