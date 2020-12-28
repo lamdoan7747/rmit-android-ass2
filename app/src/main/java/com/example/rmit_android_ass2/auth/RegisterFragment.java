@@ -1,9 +1,7 @@
 package com.example.rmit_android_ass2.auth;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,22 +15,15 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 
 import com.example.rmit_android_ass2.R;
 import com.example.rmit_android_ass2.model.User;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-
-import java.util.Collection;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -42,9 +33,9 @@ public class RegisterFragment extends Fragment {
 
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
-    private EditText editFname, editPassword,
-            editEmail, editConfirmPassword;
-    private Button register;
+    private EditText fnameRegister, passwordRegister,
+            emailRegister, confirmPasswordRegister;
+    private Button registerButton;
     private TextView backToLogin;
     private ProgressBar loadingProgressBar;
 
@@ -55,12 +46,13 @@ public class RegisterFragment extends Fragment {
         // Required empty public constructor
     }
 
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_register, container, false);
+        return inflater.inflate(R.layout.fragment_auth_register, container, false);
     }
 
     @Override
@@ -70,35 +62,36 @@ public class RegisterFragment extends Fragment {
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
-        init(view);
+        renderView(view);
         onClickListener();
 
     }
 
+
     private void onClickListener() {
         // On register button clicked
-        register.setOnClickListener(new View.OnClickListener() {
+        registerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String email = editEmail.getText().toString();
-                String fname = editFname.getText().toString();
-                String password = editPassword.getText().toString();
-                String confirmPassword = editConfirmPassword.getText().toString();
+                String email = emailRegister.getText().toString();
+                String fname = fnameRegister.getText().toString();
+                String password = passwordRegister.getText().toString();
+                String confirmPassword = confirmPasswordRegister.getText().toString();
 
                 if (email.isEmpty() || !email.matches(EMAIL_REGEX_CHECK)) {
-                    editEmail.setError("Invalid Email");
+                    emailRegister.setError("Invalid Email");
                     return;
                 }
                 if (fname.isEmpty() || fname.equals(" ")) {
-                    editFname.setError("Required");
+                    fnameRegister.setError("Required");
                     return;
                 }
                 if (password.isEmpty() || password.length() < 6) {
-                    editPassword.setError("Invalid Password");
+                    passwordRegister.setError("Invalid Password");
                     return;
                 }
                 if (!password.equals(confirmPassword) ) {
-                    editConfirmPassword.setError("Invalid Password");
+                    confirmPasswordRegister.setError("Invalid Password");
                     return;
                 }
                 registerAccount(email,password, fname);
@@ -113,15 +106,17 @@ public class RegisterFragment extends Fragment {
         });
     }
 
-    private void init(View view) {
-        editFname = view.findViewById(R.id.rFname);
-        editPassword = view.findViewById(R.id.rPassword);
-        editConfirmPassword = view.findViewById(R.id.rConfirmPassword);
-        editEmail = view.findViewById(R.id.rEmail);
-        register = view.findViewById(R.id.rRegister);
-        loadingProgressBar = view.findViewById(R.id.rLoading);
-        backToLogin = view.findViewById(R.id.backToLoginButton);
+
+    private void renderView(View view) {
+        fnameRegister = view.findViewById(R.id.fnameRegister);
+        passwordRegister = view.findViewById(R.id.passwordRegister);
+        confirmPasswordRegister = view.findViewById(R.id.confirmPasswordRegister);
+        emailRegister = view.findViewById(R.id.emailRegister);
+        registerButton = view.findViewById(R.id.registerButtonRegister);
+        loadingProgressBar = view.findViewById(R.id.loadingBarRegister);
+        backToLogin = view.findViewById(R.id.backToLoginRegister);
     }
+
 
     private void registerAccount(String email, String password, String fname) {
 
@@ -156,7 +151,6 @@ public class RegisterFragment extends Fragment {
     }
 
     private void addUser(User user) {
-
         db.collection("users")
                 .document(user.getId())
                 .set(user)

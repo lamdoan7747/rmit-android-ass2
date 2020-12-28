@@ -1,9 +1,9 @@
 package com.example.rmit_android_ass2.model;
 
+import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentId;
 
 import java.io.Serializable;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -13,7 +13,7 @@ public class CleaningSite implements Serializable {
     private String _id;
     private String name;
     private String address;
-    private Date date;
+    private transient Timestamp date;
     private String startTime;
     private String endTime;
     private Double lat;
@@ -56,11 +56,11 @@ public class CleaningSite implements Serializable {
         this.address = address;
     }
 
-    public Date getDate() {
+    public Timestamp getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(Timestamp date) {
         this.date = date;
     }
 

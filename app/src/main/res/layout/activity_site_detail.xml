@@ -54,14 +54,15 @@
                 android:background="@drawable/app_logo"/>
 
             <TextView
+                android:id="@+id/siteNameSiteDetail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textStyle="bold"
-                android:textSize="24sp"
-                android:layout_marginTop="15dp"
                 android:layout_marginStart="15dp"
+                android:layout_marginTop="15dp"
+                android:text="Cleaning Downtown"
                 android:textColor="@color/dark_gray"
-                android:text="Cleaning Downtown"/>
+                android:textSize="24sp"
+                android:textStyle="bold" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -69,17 +70,18 @@
                 android:orientation="horizontal">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:id="@+id/siteDateSiteDetail"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="start|center"
                     android:layout_marginStart="15dp"
-                    android:text="Fri, 20 October"
                     android:layout_weight="1"
+                    android:text="Fri, 20 October"
                     android:textColor="@color/dark_gray"
-                    android:textSize="12sp"/>
+                    android:textSize="12sp" />
 
                 <TextView
-                    android:id="@+id/viewFollower"
+                    android:id="@+id/viewFollowerSiteDetail"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center|right"
@@ -114,12 +116,14 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="top"
                         android:text="Hosted by"/>
+
                     <TextView
+                        android:id="@+id/siteHostSiteDetail"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="bottom"
-                        android:textStyle="bold"
-                        android:text="Lam Doan"/>
+                        android:text="Lam Doan"
+                        android:textStyle="bold" />
                 </LinearLayout>
 
 
@@ -132,12 +136,11 @@
                 android:orientation="horizontal">
 
                 <Button
-                    android:id="@+id/siteRegister"
+                    android:id="@+id/siteRegisterButtonSiteDetail"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="10dp"
                     android:layout_weight="1"
-                    android:background="@color/primaryColor"
                     android:text="Register" />
 
                 <androidx.appcompat.widget.AppCompatButton
@@ -145,9 +148,10 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
                     android:layout_weight="1"
-                    android:background="@color/white"
                     android:textColor="@color/primaryColor"
-                    android:text="Direction"/>
+                    android:backgroundTint="@color/white"
+                    android:text="Direction"
+                    tools:targetApi="lollipop" />
             </LinearLayout>
 
             <LinearLayout
@@ -179,23 +183,30 @@
 
             </LinearLayout>
 
-
-            <LinearLayout
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-
-                <ListView
-                    android:id="@+id/listResults"
-                    android:name="com.example.rmit_android_ass2.SiteListFragment"
+                <TextView
+                    android:id="@+id/viewNoRecordSiteDetail"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="15dp"
-                    android:nestedScrollingEnabled="true"
-                    android:background="@drawable/white_rectangle_background"
-                    tools:listitem="@layout/fragment_result_list_view" />
-
-
-            </LinearLayout>
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:textSize="24sp"
+                    android:text="No activity yet!"
+                    android:visibility="invisible"/>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <ListView
+                        android:id="@+id/listResultSiteDetail"
+                        android:name="com.example.rmit_android_ass2.SiteListFragment"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:nestedScrollingEnabled="true"
+                        tools:listitem="@layout/list_view_result" />
+                </LinearLayout>
+            </RelativeLayout>
         </LinearLayout>
     </ScrollView>
 
@@ -210,7 +221,6 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
-
             <Button
                 android:id="@+id/siteUnfollow"
                 android:layout_width="wrap_content"

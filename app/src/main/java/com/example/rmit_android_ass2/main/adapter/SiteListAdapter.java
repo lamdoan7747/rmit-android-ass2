@@ -1,4 +1,4 @@
-package com.example.rmit_android_ass2.main.siteView;
+package com.example.rmit_android_ass2.main.adapter;
 
 
 import android.view.View;
@@ -37,7 +37,7 @@ public class SiteListAdapter extends BaseAdapter {
     public View getView(int position, View view, ViewGroup viewGroup) {
         View viewSite;
         if (view == null) {
-            viewSite = View.inflate(viewGroup.getContext(), R.layout.fragment_site_list_view,null);
+            viewSite = View.inflate(viewGroup.getContext(), R.layout.list_view_site,null);
         } else viewSite = view;
 
         CleaningSite cleaningSite = (CleaningSite) getItem(position);

@@ -1,4 +1,4 @@
-package com.example.rmit_android_ass2.main.siteView.mySiteView;
+package com.example.rmit_android_ass2.main.adapter;
 
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,7 +36,7 @@ public class FollowerListAdapter extends BaseAdapter {
     public View getView(int position, View view, ViewGroup viewGroup) {
         View viewSite;
         if (view == null) {
-            viewSite = View.inflate(viewGroup.getContext(), R.layout.fragment_site_list_view,null);
+            viewSite = View.inflate(viewGroup.getContext(), R.layout.list_view_site,null);
         } else viewSite = view;
 
         User follower = (User) getItem(position);

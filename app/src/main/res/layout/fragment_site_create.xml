@@ -24,7 +24,7 @@
             android:textSize="24sp"
             android:textStyle="bold"
             android:textColor="@color/primaryColor"
-            android:text="Site create" />
+            android:text="Create Site" />
 
     </androidx.appcompat.widget.Toolbar>
 
@@ -36,15 +36,6 @@
         android:layout_margin="50dp"
         android:layout_gravity="center"
         android:orientation="vertical">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="No database site"
-            android:textAlignment="center"
-            android:textSize="24dp"
-            android:visibility="invisible"/>
-
 
 
         <EditText

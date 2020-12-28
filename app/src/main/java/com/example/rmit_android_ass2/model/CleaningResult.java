@@ -3,37 +3,42 @@ package com.example.rmit_android_ass2.model;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentId;
 import com.google.firebase.firestore.FieldValue;
+import com.google.firebase.firestore.ServerTimestamp;
 
 import java.io.Serializable;
+import java.sql.Time;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class CleaningResult implements Serializable {
     @DocumentId
-    private int id;
-    private FieldValue dateCleaning;
+    private String id;
+
+    @ServerTimestamp
+    private Timestamp dateCleaning;
+
     private Double amount;
 
     public CleaningResult() {
     }
 
-    public CleaningResult(FieldValue dateCleaning, Double amount) {
-        this.dateCleaning = dateCleaning;
+    public CleaningResult(Double amount) {
         this.amount = amount;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
-    public FieldValue getDateCleaning() {
+    public Timestamp getDateCleaning() {
         return dateCleaning;
     }
 
-    public void setDateCleaning(FieldValue dateCleaning) {
+    public void setDateCleaning(Timestamp dateCleaning) {
         this.dateCleaning = dateCleaning;
     }
 

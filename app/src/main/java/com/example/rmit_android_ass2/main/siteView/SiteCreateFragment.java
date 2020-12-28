@@ -1,7 +1,6 @@
 package com.example.rmit_android_ass2.main.siteView;
 
 import android.annotation.SuppressLint;
-import android.app.ActionBar;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
@@ -11,7 +10,6 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import android.util.Log;
@@ -27,25 +25,20 @@ import android.widget.Toast;
 
 import com.example.rmit_android_ass2.R;
 import com.example.rmit_android_ass2.model.CleaningSite;
-import com.google.android.gms.common.api.Status;
-import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 
-import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
 
 /**
@@ -53,6 +46,8 @@ import static android.app.Activity.RESULT_OK;
  * create an instance of this fragment.
  */
 public class SiteCreateFragment extends Fragment {
+
+    private static final String TAG = "SITE_CREATE_FRAGMENT";
     // Request code for startActivityForResult() to get location
     private static int REQUEST_CODE = 200;
 
@@ -66,7 +61,7 @@ public class SiteCreateFragment extends Fragment {
             editLongitude, editDate, editStartTime, editEndTime;
 
     private Button createSiteButton, addLocationButton;
-    private ImageButton backButtonToolbar;
+    private ImageButton backButton;
 
 
     public SiteCreateFragment() {
@@ -103,7 +98,7 @@ public class SiteCreateFragment extends Fragment {
         db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
 
-        renderView(getView());
+        renderView(requireView());
         clickListener();
     }
 
@@ -123,12 +118,13 @@ public class SiteCreateFragment extends Fragment {
 
                 try {
                     Date siteDateFormat = new SimpleDateFormat("dd/MM/yyyy").parse(siteDate);
+                    Timestamp timestampDateFormat = new Timestamp(siteDateFormat);
 
                     // Declare all object function of cleaning site
                     CleaningSite cleaningSite = new CleaningSite();
                     cleaningSite.setName(siteName);
                     cleaningSite.setAddress(siteAddress);
-                    cleaningSite.setDate(siteDateFormat);
+                    cleaningSite.setDate(timestampDateFormat);
                     cleaningSite.setStartTime(startTime);
                     cleaningSite.setEndTime(endTime);
                     cleaningSite.setLat(latitude);
@@ -140,14 +136,10 @@ public class SiteCreateFragment extends Fragment {
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
-
-
-
-
             }
         });
 
-        backButtonToolbar.setOnClickListener(new View.OnClickListener() {
+        backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 backToPrevious();
@@ -190,7 +182,6 @@ public class SiteCreateFragment extends Fragment {
                     @SuppressLint("DefaultLocale")
                     @Override
                     public void onTimeSet(TimePicker timePicker, int hourOfDay, int minute) {
-                        showToast(timePicker.toString());
                         editStartTime.setText(String.format("%d:%d", hourOfDay, minute));
                     }
                 },hour,minute,android.text.format.DateFormat.is24HourFormat(getContext()));
@@ -218,27 +209,24 @@ public class SiteCreateFragment extends Fragment {
     }
 
     private void renderView(View view){
-        editName = (EditText) view.findViewById(R.id.siteNameSiteCreate);
-        editAddress = (EditText) view.findViewById(R.id.siteAddressSiteCreate);
-        editLatitude = (EditText) view.findViewById(R.id.siteLatitudeSiteCreate);
-        editLongitude = (EditText) view.findViewById(R.id.siteLongitudeSiteCreate);
-        editDate = (EditText) view.findViewById(R.id.siteDateSiteCreate);
-        editStartTime = (EditText) view.findViewById(R.id.siteStartTimeSiteCreate);
-        editEndTime = (EditText) view.findViewById(R.id.siteEndTimeSiteCreate);
+        editName = view.findViewById(R.id.siteNameSiteCreate);
+        editAddress = view.findViewById(R.id.siteAddressSiteCreate);
+        editLatitude = view.findViewById(R.id.siteLatitudeSiteCreate);
+        editLongitude = view.findViewById(R.id.siteLongitudeSiteCreate);
+        editDate = view.findViewById(R.id.siteDateSiteCreate);
+        editStartTime = view.findViewById(R.id.siteStartTimeSiteCreate);
+        editEndTime = view.findViewById(R.id.siteEndTimeSiteCreate);
 
-        createSiteButton = (Button) view.findViewById(R.id.createSiteSiteCreate);
-        backButtonToolbar = (ImageButton) view.findViewById(R.id.backButtonToolbarSiteCreate);
-        addLocationButton = (Button) view.findViewById(R.id.addLocationSiteCreate);
+        createSiteButton = view.findViewById(R.id.createSiteSiteCreate);
+        addLocationButton = view.findViewById(R.id.addLocationSiteCreate);
+        backButton = view.findViewById(R.id.backButtonToolbarSiteCreate);
 
-    }
-
-    private void backToPrevious() {
-        getActivity().getSupportFragmentManager().popBackStack();
     }
 
     private void createSite(CleaningSite cleaningSite) {
         currentUser = mAuth.getCurrentUser();
-        cleaningSite.setOwner(currentUser.getUid());
+        if (currentUser != null)
+            cleaningSite.setOwner(currentUser.getUid());
 
         db.collection("cleaningSites")
                 .add(cleaningSite)
@@ -257,7 +245,7 @@ public class SiteCreateFragment extends Fragment {
                 });
     }
 
-    private void showToast(String msg){
-        Toast.makeText(getContext(),msg,Toast.LENGTH_SHORT).show();
+    private void backToPrevious() {
+        requireActivity().getSupportFragmentManager().popBackStack();
     }
 }

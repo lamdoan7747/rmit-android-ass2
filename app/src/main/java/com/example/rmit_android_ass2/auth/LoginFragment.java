@@ -24,7 +24,6 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 
 
 public class LoginFragment extends Fragment {
@@ -43,7 +42,7 @@ public class LoginFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_login, container, false);
+        return inflater.inflate(R.layout.fragment_auth_login, container, false);
     }
 
     @Override
@@ -52,7 +51,7 @@ public class LoginFragment extends Fragment {
 
         mAuth = FirebaseAuth.getInstance();
 
-        init(view);
+        renderView(view);
         onClickListener();
     }
 
@@ -87,7 +86,7 @@ public class LoginFragment extends Fragment {
         });
     }
 
-    private void init(View view) {
+    private void renderView(View view) {
         emailEditText = view.findViewById(R.id.lEmail);
         passwordEditText = view.findViewById(R.id.lPassword);
         loadingProgressBar = view.findViewById(R.id.lLoading);

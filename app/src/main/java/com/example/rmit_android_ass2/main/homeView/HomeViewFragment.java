@@ -1,4 +1,4 @@
-package com.example.rmit_android_ass2.main.listView;
+package com.example.rmit_android_ass2.main.homeView;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -6,9 +6,6 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -21,8 +18,7 @@ import android.widget.Toast;
 
 import com.example.rmit_android_ass2.R;
 import com.example.rmit_android_ass2.SiteDetailActivity;
-import com.example.rmit_android_ass2.main.siteView.SiteListAdapter;
-import com.example.rmit_android_ass2.main.siteView.mySiteView.MySiteActivity;
+import com.example.rmit_android_ass2.main.adapter.SiteListAdapter;
 import com.example.rmit_android_ass2.model.CleaningSite;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -38,7 +34,7 @@ import java.util.List;
 /**
  * A fragment representing a list of Items.
  */
-public class ListViewFragment extends Fragment {
+public class HomeViewFragment extends Fragment {
 
     // TODO: Customize parameters
     private int mColumnCount = 1;
@@ -58,14 +54,14 @@ public class ListViewFragment extends Fragment {
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public ListViewFragment() {
+    public HomeViewFragment() {
     }
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_site_list, container, false);
+        return inflater.inflate(R.layout.fragment_home_view, container, false);
     }
 
     @Override
@@ -96,6 +92,8 @@ public class ListViewFragment extends Fragment {
                         Intent intent = new Intent(getActivity(), SiteDetailActivity.class);
                         intent.putExtra("cleaningSite", cleaningSite);
                         startActivity(intent);
+                        requireActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+
                     }
                 });
             }

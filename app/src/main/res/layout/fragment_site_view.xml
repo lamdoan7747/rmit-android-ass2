@@ -27,7 +27,7 @@
                     android:layout_weight="1"
                     android:layout_marginLeft="20dp"
                     android:gravity="bottom|start"
-                    android:text="Your Site"
+                    android:text="My Site"
                     android:textColor="@color/primaryColor"
                     android:textStyle="bold"
                     android:textSize="30sp" />
@@ -37,7 +37,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:layout_marginRight="20dp"
+                    android:layout_marginRight="16dp"
                     android:text="+"
                     android:gravity="bottom|end"
                     android:textColor="@color/primaryColor"
@@ -48,11 +48,7 @@
             <ListView
                 android:id="@+id/listMySite"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                android:state_pressed="true"
-                />
+                android:layout_height="wrap_content"/>
         </LinearLayout>
     </ScrollView>
 

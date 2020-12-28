@@ -6,7 +6,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".main.listView.ListViewFragment"
+    tools:context=".main.homeView.HomeViewFragment"
     >
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -98,7 +98,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:layout_marginLeft="25dp"
+                    android:layout_marginLeft="16dp"
                     android:gravity="bottom|start"
                     android:text="Cleaning sites"
                     android:textColor="@color/primaryColor"
@@ -110,7 +110,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:layout_marginRight="25dp"
+                    android:layout_marginRight="16dp"
                     android:text="more >"
                     android:gravity="bottom|end"
                     android:textColor="@color/primaryColor"
@@ -125,6 +125,7 @@
                     android:id="@+id/cleaningSiteListView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:nestedScrollingEnabled="true"
                     android:paddingTop="5dp"/>
 
             </LinearLayout>

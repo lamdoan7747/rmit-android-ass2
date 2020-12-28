@@ -21,6 +21,7 @@ import com.example.rmit_android_ass2.model.User;
 import com.example.rmit_android_ass2.notification.NotificationHelper;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
@@ -69,12 +70,11 @@ public class MySiteInsertDataFragment extends Fragment {
 
         db = FirebaseFirestore.getInstance();
 
-        inputAmount = getView().findViewById(R.id.inputAmountCollection);
-        inputDate = getView().findViewById(R.id.inputDateCollection);
-        saveDataCollectionButton = getView().findViewById(R.id.saveDataCollection);
-        backButton = getView().findViewById(R.id.backButtonToolbarMySiteInsertData);
+        renderView(requireView());
+        onClickListener();
+    }
 
-
+    private void onClickListener() {
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -88,15 +88,20 @@ public class MySiteInsertDataFragment extends Fragment {
                 saveDataCollection(cleaningSiteId);
             }
         });
+    }
 
+    private void renderView(View view){
+        inputAmount = view.findViewById(R.id.inputAmountCollection);
+        inputDate = view.findViewById(R.id.inputDateCollection);
+        saveDataCollectionButton = view.findViewById(R.id.saveDataCollection);
+        backButton = view.findViewById(R.id.backButtonToolbarMySiteInsertData);
     }
 
     private void saveDataCollection(String cleaningSiteId) {
         // Set value for data collection with new timestamp and amount of garbage
         Double data = Double.parseDouble(inputAmount.getText().toString());
 
-        // Set result object
-        CleaningResult results = new CleaningResult(FieldValue.serverTimestamp(),data);
+        CleaningResult results = new CleaningResult(data);
 
         // Add new data collection
         db.collection("cleaningSites")
@@ -119,7 +124,7 @@ public class MySiteInsertDataFragment extends Fragment {
     }
 
     private void backToPrevious() {
-        getActivity().getSupportFragmentManager().popBackStack();
+        requireActivity().getSupportFragmentManager().popBackStack();
     }
 
 }

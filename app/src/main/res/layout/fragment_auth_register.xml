@@ -42,7 +42,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <EditText
-            android:id="@+id/rEmail"
+            android:id="@+id/emailRegister"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_marginHorizontal="10dp"
@@ -56,7 +56,7 @@
             android:hint="Email"/>
 
         <EditText
-            android:id="@+id/rFname"
+            android:id="@+id/fnameRegister"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_marginHorizontal="10dp"
@@ -70,7 +70,7 @@
             android:hint="Name"/>
 
         <EditText
-            android:id="@+id/rPassword"
+            android:id="@+id/passwordRegister"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_marginHorizontal="10dp"
@@ -84,7 +84,7 @@
             android:hint="Password"/>
 
         <EditText
-            android:id="@+id/rConfirmPassword"
+            android:id="@+id/confirmPasswordRegister"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_marginHorizontal="10dp"
@@ -98,7 +98,7 @@
             android:hint="Confirm Password"/>
 
         <Button
-            android:id="@+id/rRegister"
+            android:id="@+id/registerButtonRegister"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
@@ -132,7 +132,7 @@
             android:text="Already had account?" />
 
         <TextView
-            android:id="@+id/backToLoginButton"
+            android:id="@+id/backToLoginRegister"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
@@ -154,7 +154,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
         <ProgressBar
-            android:id="@+id/rLoading"
+            android:id="@+id/loadingBarRegister"
             style="@style/Widget.AppCompat.ProgressBar.Horizontal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

@@ -18,6 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.rmit_android_ass2.R;
+import com.example.rmit_android_ass2.main.adapter.SiteListAdapter;
 import com.example.rmit_android_ass2.main.siteView.mySiteView.MySiteActivity;
 import com.example.rmit_android_ass2.model.CleaningSite;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -36,6 +37,8 @@ import java.util.List;
  * create an instance of this fragment.
  */
 public class SiteViewFragment extends Fragment {
+
+    private static final String TAG = "SITE_VIEW_FRAGMENT";
 
     private ArrayList<CleaningSite> cleaningSiteList;
     private FirebaseFirestore db;
@@ -78,8 +81,7 @@ public class SiteViewFragment extends Fragment {
                 listSite.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                        Log.d("TEST ON ITEM CLICK","WORK");
-                        Toast.makeText(getActivity(),"Clicked!",Toast.LENGTH_SHORT).show();
+                        Log.d(TAG,"Item: " + position);
                         CleaningSite cleaningSite = (CleaningSite) siteListAdapter.getItem(position);
                         Intent intent = new Intent(getActivity(), MySiteActivity.class);
                         intent.putExtra("cleaningSite", cleaningSite);
@@ -114,13 +116,14 @@ public class SiteViewFragment extends Fragment {
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
-                                Log.d(getTag(), document.getId() + " => " + document.getData());
                                 CleaningSite cleaningSite = document.toObject(CleaningSite.class);
                                 cleaningSiteList.add(cleaningSite);
                             }
                             firestoreCallBack.onCallBack(cleaningSiteList);
+                            Log.d(TAG, "Site list => " + cleaningSiteList.size());
+
                         } else {
-                            Log.d(getTag(), "Error getting documents: ", task.getException());
+                            Log.d(TAG, "Error getting documents: ", task.getException());
                         }
                     }
                 });
@@ -131,7 +134,7 @@ public class SiteViewFragment extends Fragment {
     }
 
     private void loadFragment(Fragment fragment) {
-        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+        FragmentTransaction fragmentTransaction = requireActivity().getSupportFragmentManager().beginTransaction();
         fragmentTransaction.setCustomAnimations(R.anim.slide_in_up,R.anim.slide_out_up, R.anim.slide_in_down, R.anim.slide_out_down);
         fragmentTransaction.replace(R.id.frameContainer,fragment);
         fragmentTransaction.addToBackStack(null);

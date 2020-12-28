@@ -6,6 +6,29 @@
     android:layout_centerVertical="true"
     tools:context=".main.siteView.mySiteView.MySiteEditFragment">
 
+    <androidx.appcompat.widget.Toolbar
+        android:layout_width="match_parent"
+        android:layout_height="50dp">
+
+        <ImageButton
+            android:id="@+id/backButtonToolbarSiteEdit"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:layout_gravity="center|start"
+            android:background="@color/backgroundColor"
+            android:src="@drawable/ic_back_arrow"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textColor="@color/primaryColor"
+            android:text="Edit Site" />
+
+    </androidx.appcompat.widget.Toolbar>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -16,51 +39,128 @@
 
 
         <EditText
-            android:id="@+id/editSiteName"
+            android:id="@+id/siteNameSiteEdit"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Create cleaning site" />
+            android:layout_height="40dp"
+            android:layout_margin="5dp"
+            android:paddingStart="15dp"
+            android:paddingEnd="15dp"
+            android:elevation="5dp"
+            android:background="@drawable/white_rectangle_background"
+            android:hint="Site name" />
 
         <EditText
-            android:id="@+id/editSiteAddress"
+            android:id="@+id/siteAddressSiteEdit"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="40dp"
+            android:paddingStart="15dp"
+            android:paddingEnd="15dp"
+            android:layout_margin="5dp"
+            android:elevation="5dp"
+            android:background="@drawable/white_rectangle_background"
             android:hint="Address"/>
 
-
-
         <EditText
-            android:id="@+id/editSiteLatitude"
+            android:id="@+id/siteDateSiteEdit"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Latitude"
-            android:enabled="false"/>
+            android:layout_height="40dp"
+            android:paddingStart="15dp"
+            android:paddingEnd="15dp"
+            android:layout_margin="5dp"
+            android:elevation="5dp"
+            android:background="@drawable/white_rectangle_background"
+            android:hint="Date"/>
 
-        <EditText
-            android:id="@+id/editSiteLongitude"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Longitude"
-            android:enabled="false"/>
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/siteStartTimeSiteEdit"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginVertical="5dp"
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp"
+                android:layout_margin="5dp"
+                android:elevation="5dp"
+                android:layout_weight="1"
+                android:background="@drawable/white_rectangle_background"
+                android:hint="From"/>
+
+            <EditText
+                android:id="@+id/siteEndTimeSiteEdit"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginVertical="5dp"
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp"
+                android:elevation="5dp"
+                android:layout_margin="5dp"
+                android:layout_weight="1"
+                android:background="@drawable/white_rectangle_background"
+                android:hint="To"/>
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/siteLatitudeSiteEdit"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginVertical="5dp"
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp"
+                android:elevation="5dp"
+                android:layout_margin="5dp"
+                android:layout_weight="1"
+                android:hint="Latitude"
+                android:background="@drawable/white_rectangle_background"
+                android:enabled="false"/>
+
+            <EditText
+                android:id="@+id/siteLongitudeSiteEdit"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginVertical="5dp"
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp"
+                android:elevation="5dp"
+                android:layout_margin="5dp"
+                android:layout_weight="1"
+                android:hint="Longitude"
+                android:background="@drawable/white_rectangle_background"
+                android:enabled="false"/>
+
+        </LinearLayout>
+
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/siteLocationSiteEdit"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_margin="5dp"
+            android:background="@drawable/white_rectangle_background"
+            android:backgroundTint="@color/white"
+            android:textColor="@color/primaryColor"
+            android:elevation="5dp"
+            android:text="Get new location" />
 
 
         <Button
-            android:id="@+id/editSiteButton"
+            android:id="@+id/editSiteSiteEdit"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Save" />
+            android:layout_height="40dp"
+            android:layout_margin="5dp"
+            android:background="@drawable/white_rectangle_background"
+            android:text="Create" />
 
-        <Button
-            android:id="@+id/editSiteLocation"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Add location" />
-
-        <Button
-            android:id="@+id/editSiteBack"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Back" />
 
         <androidx.core.widget.ContentLoadingProgressBar
             android:id="@+id/editLoading"

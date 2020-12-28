@@ -64,6 +64,7 @@ import java.util.List;
 public class MapsFragment extends Fragment implements OnMapReadyCallback,
         GoogleMap.OnInfoWindowClickListener, GoogleMap.OnMapLoadedCallback{
 
+    private static final String TAG = "MAP_FRAGMENT";
     private FloatingSearchView searchMap;
     private GoogleMap mMap;
     private SupportMapFragment mapFragment;
@@ -98,13 +99,13 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
         cleaningSiteList = new ArrayList<>();
 
         mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
+        if (mapFragment != null)
+            mapFragment.getMapAsync(this);
 
         // Initialize fused location
-        client = LocationServices.getFusedLocationProviderClient(getActivity());
+        client = LocationServices.getFusedLocationProviderClient(requireActivity());
 
-        searchMap = (FloatingSearchView) getView().findViewById(R.id.floating_search_view);
-
+        searchMap = requireView().findViewById(R.id.floating_search_view);
         searchMap.setOnQueryChangeListener(new FloatingSearchView.OnQueryChangeListener() {
             @Override
             public void onSearchTextChanged(String oldQuery, String newQuery) {
@@ -151,7 +152,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
                     // MarkerOptions options = new MarkerOptions().position(latLng).title("I'm here");
                     CircleOptions circles = new CircleOptions()
                             .center(currentLocation)
-                            .radius(100)
+                            .radius(500)
                             .fillColor(Color.argb(70,140,180,160))
                             .strokeColor(Color.GREEN)
                             .strokeWidth(2f);
@@ -169,7 +170,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
                         public boolean onMarkerClick(Marker marker) {
                             @SuppressLint("MissingPermission")
                             LatLng newLocation = marker.getPosition();
-                            Button direction = getView().findViewById(R.id.directionMap);
+                            Button direction = requireView().findViewById(R.id.directionMap);
                             direction.setVisibility(View.VISIBLE);
                             direction.setOnClickListener(new View.OnClickListener() {
                                 @Override
@@ -180,7 +181,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
                                         public void onTaskDone(Object... values) {
                                             if (currentPolyline != null)
                                                 currentPolyline.remove();
-                                            currentPolyline = mMap.addPolyline((PolylineOptions) values[0]);
+                                            mMap.addPolyline((PolylineOptions) values[0]).setColor(Color.rgb(87,127,103));
                                         }
                                     }).execute(url, "driving");
                                 }
@@ -222,7 +223,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
         mMap.setOnInfoWindowClickListener(this);
 
         // Check permission
-        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+        if (ActivityCompat.checkSelfPermission(requireActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
             // When permission granted
             // Call method get location
             mMap.setMyLocationEnabled(true);
@@ -230,29 +231,26 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
         } else {
             // When permission denied
             // Request permission
-            ActivityCompat.requestPermissions(getActivity(),
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 44);
+            ActivityCompat.requestPermissions(requireActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 44);
         }
 
     }
 
     @Override
     public void onInfoWindowClick(Marker marker) {
-        Toast.makeText(getActivity(), "Info window clicked", Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(getActivity(), SiteDetailActivity.class);
         for (CleaningSite cleaningSite: cleaningSiteList){
             if (cleaningSite.getName().equals(marker.getTitle())){
-                Log.d("GET_NAME", "Error getting documents: " + cleaningSite.getName());
-                Log.d("GET_NAME", "Error getting documents: " + marker.getTitle());
-                Log.d("GET_ID", "Error getting documents: " + cleaningSite.get_id());
+                Log.d(TAG, "Get cleaning site: " + cleaningSite.get_id());
                 intent.putExtra("cleaningSite", cleaningSite);
             }
         }
         startActivity(intent);
+        requireActivity().overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_left);
     }
 
 
-    private void getAllSites(FirestoreCallBack firestoreCallBack) {
+    private void getSites(OnSiteCallBack onSiteCallBack) {
         currentUser = mAuth.getCurrentUser();
 
         db.collection("cleaningSites")
@@ -262,16 +260,17 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
-                                Log.d("DOCUMENT_ID", document.getId() + " => " + document.getData());
                                 CleaningSite cleaningSite = document.toObject(CleaningSite.class);
                                 if (!cleaningSite.getOwner().equals(currentUser.getUid())){
                                     cleaningSiteList.add(cleaningSite);
                                 }
                             }
-                            firestoreCallBack.onCallBack(cleaningSiteList);
+                            onSiteCallBack.onCallBack(cleaningSiteList);
+                            Log.d(TAG, "Site list => " + cleaningSiteList.size());
+
 
                         } else {
-                            Log.d(getTag(), "Error getting documents: ", task.getException());
+                            Log.d(TAG, "Error getting documents: ", task.getException());
                         }
                     }
                 });
@@ -279,11 +278,11 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
 
     @Override
     public void onMapLoaded() {
-        getAllSites(new FirestoreCallBack() {
+        getSites(new OnSiteCallBack() {
             @Override
             public void onCallBack(List<CleaningSite> cleaningSites) {
                 if (cleaningSiteList.size() < 1) {
-                    Log.d("LIST_SIZE", "Don't have any site");
+                    Log.d(TAG, "Don't have any site");
                 } else {
                     List<LatLng> locations = new ArrayList<>();
 
@@ -303,17 +302,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
                                 .snippet(cleaningSite.getAddress())
                                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.logo)));
                     }
-
-                    // Add all marker
-                    LatLngBounds.Builder builder = new LatLngBounds.Builder();
-                    builder.include(locations.get(0));
-                    builder.include(locations.get(locations.size() - 1));
-                    LatLngBounds bounds = builder.build();
-                    CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds,200);
-                    mMap.moveCamera(cu);
-                    mMap.animateCamera(CameraUpdateFactory.zoomTo(15), 200, null);
-
-
                 }
             }
         });
@@ -337,7 +325,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
 
 
 
-    private interface FirestoreCallBack{
+    private interface OnSiteCallBack{
         void onCallBack(List<CleaningSite> cleaningSites);
     }
 }

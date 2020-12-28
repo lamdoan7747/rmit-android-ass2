@@ -7,11 +7,14 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.rmit_android_ass2.main.adapter.ResultListAdapter;
 import com.example.rmit_android_ass2.model.CleaningResult;
 import com.example.rmit_android_ass2.model.CleaningSite;
 import com.example.rmit_android_ass2.model.User;
@@ -21,23 +24,27 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.messaging.FirebaseMessaging;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class SiteDetailActivity extends AppCompatActivity {
 
-    private Button register, unfollow;
+    private static final String TAG = "ACTIVITY_SITE_DETAIL";
+
+    private Button registerButton, unfollowButton;
     private ImageButton backButton;
-    private TextView follower;
+    private TextView viewFollower, siteName, siteDate,
+            siteHost, siteStartTime, siteEndTime, viewNoRecord;
+    private ListView listResult;
 
     private FirebaseFirestore db;
     private FirebaseAuth mAuth;
@@ -46,80 +53,100 @@ public class SiteDetailActivity extends AppCompatActivity {
     private final String REGISTER = "REGISTER";
     private final String UNFOLLOW = "UNFOLLOW";
 
-    private ArrayList<User> userList;
+    private ArrayList<User> followers;
     private ArrayList<CleaningResult> cleaningResults;
+
+    private ResultListAdapter resultListAdapter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_site_detail);
 
-        register = findViewById(R.id.siteRegister);
 
         db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
         currentUser = mAuth.getCurrentUser();
         String userId = currentUser.getUid();
 
-        register = (Button) findViewById(R.id.siteRegister);
-        unfollow = findViewById(R.id.siteUnfollow);
-        follower = findViewById(R.id.viewFollower);
-        backButton = findViewById(R.id.backButtonToolbarSiteDetail);
-        backButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(SiteDetailActivity.this, HomeActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(intent);
-                finish();
-            }
-        });
-
-        userList = new ArrayList<>();
-        cleaningResults = new ArrayList<>();
-
         Intent intent = getIntent();
         CleaningSite cleaningSite = (CleaningSite) intent.getExtras().get("cleaningSite");
         String cleaningSiteId = cleaningSite.get_id();
 
-        Log.d("ACTIVITY_SITE_DETAIL", "Document data: " + cleaningSiteId);
-        Log.d("ACTIVITY_SITE_DETAIL", "Document data: " + userId);
+        renderView();
+        onClickListener(cleaningSiteId, userId);
 
-        register.setOnClickListener(new View.OnClickListener() {
+        Log.d(TAG, "Cleaning site name: " + cleaningSite.getName());
+        Log.d(TAG, "User id: " + userId);
+
+        // GET FOLLOWER OF THE SITE
+        followers = new ArrayList<>();
+        getFollowers(cleaningSiteId);
+
+        // GET SITE DETAIL
+        getSiteDetail(cleaningSiteId);
+
+        // GET SITE RESULT
+        cleaningResults = new ArrayList<>();
+        getResults(cleaningSiteId, new OnResultCallBack() {
+            @Override
+            public void onCallBack(List<CleaningResult> cleaningResult) {
+                if (cleaningResult.size() < 1) {
+                    viewNoRecord.setVisibility(View.VISIBLE);
+                }
+
+                resultListAdapter = new ResultListAdapter(cleaningResults);
+                listResult = findViewById(R.id.listResultSiteDetail);
+                listResult.setAdapter(resultListAdapter);
+                listResult.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                        Log.d(TAG, "Position: " + position);
+                    }
+                });
+            }
+        });
+    }
+
+    private void onClickListener(String cleaningSiteId, String userId) {
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+                overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+            }
+        });
+
+        registerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 actionSite(userId, cleaningSiteId, REGISTER);
             }
         });
 
-        unfollow.setOnClickListener(new View.OnClickListener() {
+        unfollowButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 actionSite(userId, cleaningSiteId, UNFOLLOW);
             }
         });
+    }
 
-        getFolowers(cleaningSiteId);
+    private void renderView(){
+        registerButton = findViewById(R.id.siteRegisterButtonSiteDetail);
+        unfollowButton = findViewById(R.id.siteUnfollow);
+        backButton = findViewById(R.id.backButtonToolbarSiteDetail);
 
-        getSites(cleaningSiteId, new OnSiteCallBack() {
-            @Override
-            public void onCallBack(CleaningSite cleaningSite) {
-                Log.d("CLEANING SITE", "Document data: " + cleaningSite.get_id());
-            }
-        });
-
-        getResults(cleaningSiteId, new OnResultCallBack() {
-            @Override
-            public void onCallBack(List<CleaningResult> cleaningResult) {
-
-            }
-        });
-
-
+        viewFollower = findViewById(R.id.viewFollowerSiteDetail);
+        viewNoRecord = findViewById(R.id.viewNoRecordSiteDetail);
+        siteName = findViewById(R.id.siteNameSiteDetail);
+        siteDate = findViewById(R.id.siteDateSiteDetail);
+        siteHost = findViewById(R.id.siteHostSiteDetail);
 
     }
 
-    private void getFolowers(String cleaningSiteId) {
+    private void getFollowers(String cleaningSiteId) {
         DocumentReference docRef = db.collection("cleaningSites").document(cleaningSiteId);
         docRef.collection("followers")
                 .get()
@@ -128,13 +155,14 @@ public class SiteDetailActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
-                                Log.d("FOLLOWER SIZE", document.getId() + " => " + document.getData());
                                 User user = document.toObject(User.class);
-                                userList.add(user);
+                                followers.add(user);
                             }
-                            follower.setText(String.format("%s followers", userList.size()));
+                            viewFollower.setText(String.format("%s followers", followers.size()));
+                            Log.d(TAG, "Follower size => " + followers.size());
+
                         } else {
-                            Log.d("FOLLOWER SIZE", "Error getting documents: ", task.getException());
+                            Log.d(TAG, "Error getting follower: ", task.getException());
                         }
                     }
                 });
@@ -158,14 +186,14 @@ public class SiteDetailActivity extends AppCompatActivity {
                                 break;
                         }
                     } else {
-                        Log.d("CLEANING SITE", "Cannot get any document:" + task.getException());
+                        Log.d(TAG, "Cannot get any document:" + task.getException());
                     }
                 } else {
-                    Log.d("ON FAILURE", "get failed with ", task.getException());
+                    Log.d(TAG, "get failed with ", task.getException());
                 }
             }
         });
-        }
+    }
 
     private void unfollowSite(String cleaningSiteId, User user) {
         DocumentReference docRef = db.collection("cleaningSites").document(cleaningSiteId);
@@ -175,7 +203,7 @@ public class SiteDetailActivity extends AppCompatActivity {
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        Log.d("UNFOLLOW", "DocumentSnapshot successfully deleted!");
+                        Log.d(TAG, "Site successfully delete follower!");
                         Toast.makeText(SiteDetailActivity.this, "Unfollowed!", Toast.LENGTH_SHORT).show();
                         unsubscribeToSite(cleaningSiteId);
                     }
@@ -183,7 +211,7 @@ public class SiteDetailActivity extends AppCompatActivity {
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Log.w("UNFOLLOW", "Error deleting document", e);
+                        Log.w(TAG, "Error deleting follower", e);
                     }
                 });
     }
@@ -210,7 +238,7 @@ public class SiteDetailActivity extends AppCompatActivity {
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        Log.d("REGISTER", "DocumentSnapshot successfully deleted!");
+                        Log.d(TAG, "Site successfully added new follower!");
                         Toast.makeText(SiteDetailActivity.this, "Registered!", Toast.LENGTH_SHORT).show();
                         subscribeToSite(cleaningSiteId);
                     }
@@ -218,7 +246,7 @@ public class SiteDetailActivity extends AppCompatActivity {
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Log.d("REGISTER","Fail!");
+                        Log.d(TAG,"Error add new follower!");
                     }
                 });
 
@@ -231,13 +259,14 @@ public class SiteDetailActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()) {
+                            Log.d(TAG, "Site successfully registered!");
                             Toast.makeText(SiteDetailActivity.this, "Subscribed!", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
     }
 
-    private void getSites(String cleaningSiteId, OnSiteCallBack onSiteCallBack) {
+    private void getSiteDetail(String cleaningSiteId) {
         DocumentReference docRef = db.collection("cleaningSites").document(cleaningSiteId);
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -246,7 +275,21 @@ public class SiteDetailActivity extends AppCompatActivity {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
                         CleaningSite cleaningSite = document.toObject(CleaningSite.class);
-                        Log.d("CLEANING SITE", "Document data: " + cleaningSite.get_id());
+                        Log.d(TAG, "Site id: " + cleaningSite.get_id());
+
+                        siteName.setText(cleaningSite.getName());
+
+                        if (cleaningSite.getDate() != null){
+                            Date dateFormat = cleaningSite.getDate().toDate();
+                            String simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy").format(dateFormat);
+                            siteDate.setText(simpleDateFormat);
+                        }
+
+                        // Set host name
+                        String hostId = cleaningSite.getOwner();
+                        setHostName(hostId);
+
+
                     } else {
                         Log.d("CLEANING SITE", "Cannot get any document:" + task.getException());
                     }
@@ -267,18 +310,31 @@ public class SiteDetailActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document: task.getResult()){
                                 CleaningResult cleaningResult = document.toObject(CleaningResult.class);
-                                Log.d("CLEANING SITE", "Document data: " + cleaningResult.getId());
 
                                 cleaningResults.add(cleaningResult);
                             }
                             onResultCallBack.onCallBack(cleaningResults);
+                            Log.d(TAG, "Result data: " + cleaningResults.size());
                         }
                     }
                 });
     }
 
-    private interface OnSiteCallBack{
-        void onCallBack(CleaningSite cleaningSite);
+    private void setHostName(String userId){
+        db.collection("users")
+                .document(userId)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if (task.isSuccessful()) {
+                            DocumentSnapshot document = task.getResult();
+                            User user = document.toObject(User.class);
+                            Log.d(TAG,"Host name: " + user.getFname());
+                            siteHost.setText(user.getFname());
+                        }
+                    }
+                });
     }
 
     private interface OnResultCallBack{

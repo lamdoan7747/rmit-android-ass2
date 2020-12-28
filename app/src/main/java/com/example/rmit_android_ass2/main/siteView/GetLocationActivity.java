@@ -38,6 +38,7 @@ import java.util.List;
 
 public class GetLocationActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnInfoWindowClickListener, GoogleMap.OnMapLoadedCallback {
 
+    private static final String TAG = "GET_LOCATION_ACTIVITY";
     private GoogleMap mMap;
 
     private ArrayList<CleaningSite> cleaningSiteList;
@@ -145,16 +146,17 @@ public class GetLocationActivity extends FragmentActivity implements OnMapReadyC
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
-                                Log.d("DOCUMENT_ID", document.getId() + " => " + document.getData());
                                 CleaningSite cleaningSite = document.toObject(CleaningSite.class);
                                 if (cleaningSite.getOwner().equals(currentUser.getUid())){
                                     cleaningSiteList.add(cleaningSite);
                                 }
                             }
                             firestoreCallBack.onCallBack(cleaningSiteList);
+                            Log.d(TAG,"Size list => " + cleaningSiteList.size());
+
 
                         } else {
-                            Log.d("GET DOCUMENT", "Error getting documents: ", task.getException());
+                            Log.d(TAG, "Error getting documents: ", task.getException());
                         }
                     }
                 });
@@ -166,7 +168,7 @@ public class GetLocationActivity extends FragmentActivity implements OnMapReadyC
             @Override
             public void onCallBack(List<CleaningSite> cleaningSites) {
                 if (cleaningSiteList.size() < 1) {
-                    Log.d("LIST_SIZE", "Don't have any site");
+                    Log.d(TAG, "Don't have any site");
                 } else {
                     List<LatLng> locations = new ArrayList<>();
 

@@ -1,5 +1,6 @@
 package com.example.rmit_android_ass2.model;
 
+
 public class User{
     private String _id;
     private String fname;
@@ -8,10 +9,6 @@ public class User{
     private String address;
 
     public User() {
-    }
-
-    public User(String fname) {
-        this.fname = fname;
     }
 
     public User(String _id, String fname, String email) {
