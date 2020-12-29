@@ -21,15 +21,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 public class HomeActivity extends AppCompatActivity{
 
     private static final String TAG = "HOME_ACTIVITY";
-    private BottomNavigationView navigationView;
     private int startingPosition = 0;
-
-
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-    }
 
 
     @Override
@@ -51,7 +43,7 @@ public class HomeActivity extends AppCompatActivity{
             loadFragment(new HomeViewFragment(), 1);
         }
 
-        navigationView = findViewById(R.id.bottom_navigation);
+        BottomNavigationView navigationView = findViewById(R.id.bottom_navigation);
         navigationView.setOnNavigationItemSelectedListener(onNavigationItemSelectedListener);
     }
 

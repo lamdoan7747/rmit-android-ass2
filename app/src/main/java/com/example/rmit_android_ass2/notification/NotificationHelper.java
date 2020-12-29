@@ -36,7 +36,6 @@ public class NotificationHelper {
         }
     }
 
-
     public static void displayNotification(Context context, String title, String body, String cleaningSiteId){
 
         Intent intent = new Intent(context, SiteDetailActivity.class);

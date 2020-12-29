@@ -20,10 +20,15 @@ import android.widget.Toast;
 
 import com.example.rmit_android_ass2.HomeActivity;
 import com.example.rmit_android_ass2.R;
+import com.example.rmit_android_ass2.main.admin.AdminActivity;
+import com.example.rmit_android_ass2.model.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 
 public class LoginFragment extends Fragment {
@@ -32,6 +37,9 @@ public class LoginFragment extends Fragment {
     private EditText emailEditText, passwordEditText;
     private ProgressBar loadingProgressBar;
     private Button loginButton, registerButton;
+
+    private FirebaseFirestore db;
+    private FirebaseUser currentUser;
 
     public LoginFragment() {
         // Required empty public constructor
@@ -50,6 +58,7 @@ public class LoginFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         mAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
 
         renderView(view);
         onClickListener();
@@ -114,17 +123,44 @@ public class LoginFragment extends Fragment {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
+
+
+
                             Log.d(getTag(), "signInWithEmail:success");
                             loadingProgressBar.setVisibility(View.GONE);
 
-                            startActivity(new Intent(getActivity(),HomeActivity.class));
-                            getActivity().finish();
+                            // Get user id to check if user is admin
+                            currentUser = mAuth.getCurrentUser();
+                            assert currentUser != null;
+                            String userId = currentUser.getUid();
+                            // Method check if isAdmin in Firebase
+                            checkAdmin(userId);
 
                         } else {
                             // If sign in fails, display a message to the user.
                             loadingProgressBar.setVisibility(View.GONE);
                             Log.d(getTag(), "signInWithEmail:failure", task.getException());
                             Toast.makeText(getActivity(), "Error: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+    }
+
+    private void checkAdmin(String userId) {
+        db.collection("users").document(userId)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if (task.isSuccessful()) {
+                            DocumentSnapshot document = task.getResult();
+                            // If document check having a boolean field admin is true
+                            if (document.getBoolean("isAdmin") != null){
+                                startActivity(new Intent(getActivity(), AdminActivity.class));
+                            } else {
+                                startActivity(new Intent(getActivity(),HomeActivity.class));
+                            }
+                            getActivity().finish();
                         }
                     }
                 });

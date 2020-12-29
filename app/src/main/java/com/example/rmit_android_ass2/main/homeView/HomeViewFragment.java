@@ -122,8 +122,8 @@ public class HomeViewFragment extends Fragment {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 Log.d(TAG, document.getId() + " => " + document.getData());
-                                CleaningSite cloudSite = document.toObject(CleaningSite.class);
-                                cleaningSiteList.add(cloudSite);
+                                CleaningSite cleaningSite = document.toObject(CleaningSite.class);
+                                cleaningSiteList.add(cleaningSite);
                             }
                             onSiteCallBack.onCallBack(cleaningSiteList);
                         } else {

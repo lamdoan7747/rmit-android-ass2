@@ -18,9 +18,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Rmit_android_ass2">
         <activity
+            android:name=".main.admin.AdminActivity"
+            android:label="@string/title_activity_admin"
+            android:theme="@style/Theme.Rmit_android_ass2.NoActionBar"></activity>
+        <activity
             android:name=".SearchActivity"
             android:label="@string/title_activity_search"
-            android:theme="@style/Theme.Rmit_android_ass2.NoActionBar"></activity>
+            android:theme="@style/Theme.Rmit_android_ass2.NoActionBar" />
         <activity android:name=".main.siteView.mySiteView.MySiteActivity" />
         <activity android:name=".SiteDetailActivity" />
         <!--

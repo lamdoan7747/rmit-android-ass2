@@ -25,8 +25,11 @@ import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Transaction;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -112,6 +115,7 @@ public class MySiteInsertDataFragment extends Fragment {
                     @Override
                     public void onSuccess(DocumentReference documentReference) {
                         Toast.makeText(getActivity(),"Add success: " + documentReference.getId(), Toast.LENGTH_SHORT).show();
+                        updateAmount(cleaningSiteId, data);
                         backToPrevious();
                     }
                 })
@@ -121,6 +125,20 @@ public class MySiteInsertDataFragment extends Fragment {
                         Toast.makeText(getActivity(),"Failure: " + e.toString(),Toast.LENGTH_SHORT).show();
                     }
                 });
+    }
+
+    private void updateAmount(String cleaningSiteId, Double data) {
+        db.runTransaction(new Transaction.Function<Void>() {
+            @Nullable
+            @Override
+            public Void apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
+                DocumentReference docRef = db.collection("cleaningSites").document(cleaningSiteId);
+                DocumentSnapshot document = transaction.get(docRef);
+                Double addFollower = document.getDouble("totalAmount") + data;
+                transaction.update(docRef,"totalAmount", addFollower);
+                return null;
+            }
+        });
     }
 
     private void backToPrevious() {

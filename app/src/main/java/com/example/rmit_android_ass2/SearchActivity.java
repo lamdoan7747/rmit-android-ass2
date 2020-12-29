@@ -36,6 +36,7 @@ public class SearchActivity extends AppCompatActivity {
     private SearchSiteListAdapter searchSiteAdapter;
 
     private String mLastQuery = "";
+    private final int limit = 3;
     private String cleaningSiteId;
 
     private FirebaseFirestore db;
@@ -47,6 +48,7 @@ public class SearchActivity extends AppCompatActivity {
         setContentView(R.layout.activity_search);
 
         searchView = (FloatingSearchView) findViewById(R.id.floating_search_view);
+        searchView.setSearchFocused(true);
         //searchSiteList = (RecyclerView) findViewById(R.id.search_results_list);
 
         setupFloatingSearch();
@@ -62,9 +64,9 @@ public class SearchActivity extends AppCompatActivity {
             public void onSearchTextChanged(String oldQuery, final String newQuery) {
 
                 if (!oldQuery.equals("") && newQuery.equals("")) {
+                    mLastQuery = "";
                     searchView.clearSuggestions();
                 } else {
-
                     //this shows the top left circular progress
                     //you can call it where ever you want, but
                     //it makes sense to do it when loading something in
@@ -75,7 +77,6 @@ public class SearchActivity extends AppCompatActivity {
                     getSites(new OnSiteCallBack() {
                         @Override
                         public void onCallBack(List<SiteSuggestion> siteSuggestions) {
-                            final int limit = 5;
                             List<SiteSuggestion> suggestionList = new ArrayList<>();
                             for(SiteSuggestion siteSuggestion:siteSuggestions){
                                 if(siteSuggestion.getBody().toLowerCase().contains(newQuery.toLowerCase())){
@@ -85,8 +86,8 @@ public class SearchActivity extends AppCompatActivity {
                                     }
                                 }
                             }
+                            mLastQuery = newQuery;
                             searchView.swapSuggestions(suggestionList);
-
                         }
                     });
                     //let the users know that the background
@@ -111,14 +112,15 @@ public class SearchActivity extends AppCompatActivity {
 
                 Log.d(TAG, "onSuggestionClicked()");
                 mLastQuery = searchSuggestion.getBody();
+                searchView.clearSearchFocus();
             }
 
             @Override
-            public void onSearchAction(String query) {
+            public void onSearchAction(String currentQuery) {
+                mLastQuery = currentQuery;
                 Log.d(TAG, "onSearchAction()");
             }
         });
-
 
         searchView.setOnFocusChangeListener(new FloatingSearchView.OnFocusChangeListener() {
             @Override
@@ -129,7 +131,6 @@ public class SearchActivity extends AppCompatActivity {
                 getSites(new OnSiteCallBack() {
                     @Override
                     public void onCallBack(List<SiteSuggestion> siteSuggestions) {
-                        final int limit = 5;
                         List<SiteSuggestion> suggestionList=new ArrayList<>();
                         for(SiteSuggestion siteSuggestion:siteSuggestions){
                             if(siteSuggestion.getBody().toLowerCase().contains(searchView.getQuery().toLowerCase())){
@@ -171,7 +172,6 @@ public class SearchActivity extends AppCompatActivity {
     }
 
     private void getSites(OnSiteCallBack onSiteCallBack) {
-        List<CleaningSite> cleaningSites = new ArrayList<>();
         List<SiteSuggestion> siteSuggestions = new ArrayList<>();
         db = FirebaseFirestore.getInstance();
         db.collection("cleaningSites")

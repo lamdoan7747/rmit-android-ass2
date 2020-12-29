@@ -19,12 +19,15 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.arlib.floatingsearchview.FloatingSearchView;
+import com.arlib.floatingsearchview.suggestions.model.SearchSuggestion;
 import com.example.rmit_android_ass2.R;
+import com.example.rmit_android_ass2.SearchActivity;
 import com.example.rmit_android_ass2.SiteDetailActivity;
 import com.example.rmit_android_ass2.main.adapter.CustomInfoWindowAdapter;
 import com.example.rmit_android_ass2.main.mapView.direction.FetchDirectionURL;
 import com.example.rmit_android_ass2.main.mapView.direction.TaskLoadedCallback;
 import com.example.rmit_android_ass2.model.CleaningSite;
+import com.example.rmit_android_ass2.model.SiteSuggestion;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -60,6 +63,9 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
     private FusedLocationProviderClient client;
 
     private Polyline currentPolyline;
+
+    private String mLastQuery = "";
+    private final int limit = 3;
 
     private ArrayList<CleaningSite> cleaningSiteList;
 
@@ -99,29 +105,94 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
             @Override
             public void onSearchTextChanged(String oldQuery, String newQuery) {
                 if (!oldQuery.equals("") && newQuery.equals("")) {
+                    mLastQuery = "";
                     searchMap.clearSuggestions();
                 } else {
-//                    searchMap.showProgress();
-//                    searchMap.swapSuggestions(getSuggestion(newQuery));
-//                    searchMap.hideProgress();
+                    searchMap.showProgress();
+                    getSuggestionSites(new OnSiteSuggestionCallBack() {
+                        @Override
+                        public void onCallBack(List<SiteSuggestion> siteSuggestions) {
+                            List<SiteSuggestion> suggestionList = new ArrayList<>();
+                            for(SiteSuggestion siteSuggestion:siteSuggestions){
+                                if(siteSuggestion.getBody().toLowerCase().contains(newQuery.toLowerCase())){
+                                    suggestionList.add(siteSuggestion);
+                                    if (suggestionList.size() == limit) {
+                                        break;
+                                    }
+                                }
+                            }
+                            mLastQuery = newQuery;
+                            searchMap.swapSuggestions(suggestionList);
+                        }
+                    });
+                    //let the users know that the background
+                    //process has completed
+                    searchMap.hideProgress();
                 }
             }
         });
+
+        searchMap.setOnSearchListener(new FloatingSearchView.OnSearchListener() {
+            @Override
+            public void onSuggestionClicked(final SearchSuggestion searchSuggestion) {
+                getSites(new OnSiteCallBack() {
+                    @Override
+                    public void onCallBack(List<CleaningSite> cleaningSites) {
+                        for (CleaningSite cleaningSite: cleaningSites){
+                            SiteSuggestion siteSuggestion = (SiteSuggestion) searchSuggestion;
+                            String cleaningSiteId = siteSuggestion.getCleaningSiteId();
+                            if (cleaningSite.get_id().equals(cleaningSiteId)){
+                                LatLng searchLocation = new LatLng(cleaningSite.getLat(),cleaningSite.getLng());
+                                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(searchLocation,20));
+                                mLastQuery = searchSuggestion.getBody();
+                                searchMap.clearSearchFocus();
+                            }
+                        }
+                    }
+                });
+            }
+
+            @Override
+            public void onSearchAction(String currentQuery) {
+                mLastQuery = currentQuery;
+                Log.d(TAG, "onSearchAction()");
+            }
+        });
+
         searchMap.setOnFocusChangeListener(new FloatingSearchView.OnFocusChangeListener() {
             @Override
             public void onFocus() {
-//                searchMap.showProgress();
-//                searchMap.swapSuggestions(getSuggestion(searchMap.getQuery()));
-//                searchMap.hideProgress();
+                searchMap.showProgress();
+                //show suggestions when search bar gains focus (typically history suggestions)
+                //searchView.swapSuggestions(DataHelper.getHistory(SearchActivity.this, 3));
+                getSuggestionSites(new OnSiteSuggestionCallBack() {
+                    @Override
+                    public void onCallBack(List<SiteSuggestion> siteSuggestions) {
+                        List<SiteSuggestion> suggestionList=new ArrayList<>();
+                        for(SiteSuggestion siteSuggestion:siteSuggestions){
+                            if(siteSuggestion.getBody().toLowerCase().contains(searchMap.getQuery().toLowerCase())){
+                                suggestionList.add(siteSuggestion);
+                                if (suggestionList.size() == limit) {
+                                    break;
+                                }
+                            }
+                        }
+                        searchMap.swapSuggestions(suggestionList);
+                    }
+                });
+                searchMap.hideProgress();
             }
 
             @Override
             public void onFocusCleared() {
+                //set the title of the bar so that when focus is returned a new query begins
+                searchMap.setSearchBarTitle(mLastQuery);
 
+                //you can also set setSearchText(...) to make keep the query there when not focused and when focus returns
+                searchMap.setSearchText(mLastQuery);
+                Log.d(TAG, "onFocusCleared()");
             }
         });
-
-
     }
 
 
@@ -168,9 +239,10 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
                                     new FetchDirectionURL(getActivity(), new TaskLoadedCallback() {
                                         @Override
                                         public void onTaskDone(Object... values) {
-                                            if (currentPolyline != null)
+                                            if (currentPolyline != null) {
                                                 currentPolyline.remove();
-                                            mMap.addPolyline((PolylineOptions) values[0]).setColor(Color.rgb(87,127,103));
+                                            }
+                                            currentPolyline = mMap.addPolyline((PolylineOptions) values[0]);
                                         }
                                     }).execute(url, "driving");
                                 }
@@ -210,6 +282,10 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
         // Load all site
         mMap.setOnMapLoadedCallback(this);
         mMap.setOnInfoWindowClickListener(this);
+
+        // Set custom info Google map adapter
+        CustomInfoWindowAdapter adapter = new CustomInfoWindowAdapter(getActivity());
+        mMap.setInfoWindowAdapter(adapter);
 
         // Check permission
         if (ActivityCompat.checkSelfPermission(requireActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
@@ -265,6 +341,33 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
                 });
     }
 
+    private void getSuggestionSites(OnSiteSuggestionCallBack onSiteSuggestionCallBack){
+        List<SiteSuggestion> siteSuggestions = new ArrayList<>();
+        currentUser = mAuth.getCurrentUser();
+
+        db.collection("cleaningSites")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                CleaningSite cleaningSite = document.toObject(CleaningSite.class);
+                                if (!cleaningSite.getOwner().equals(currentUser.getUid())){
+                                    siteSuggestions.add(new SiteSuggestion(cleaningSite.getName(), cleaningSite.get_id()));
+                                }
+                            }
+                            onSiteSuggestionCallBack.onCallBack(siteSuggestions);
+                            Log.d(TAG, "Site list => " + cleaningSiteList.size());
+
+
+                        } else {
+                            Log.d(TAG, "Error getting documents: ", task.getException());
+                        }
+                    }
+                });
+    }
+
     @Override
     public void onMapLoaded() {
         getSites(new OnSiteCallBack() {
@@ -279,10 +382,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
                     for (CleaningSite cleaningSite: cleaningSiteList){
                         if (cleaningSite.getLat() == null || cleaningSite.getLng() == null){ continue; }
                         locations.add(new LatLng(cleaningSite.getLat(),cleaningSite.getLng()));
-
-                        // Set custom info Google map adapter
-                        CustomInfoWindowAdapter adapter = new CustomInfoWindowAdapter(getActivity());
-                        mMap.setInfoWindowAdapter(adapter);
 
                         // Add marker for all sites
                         mMap.addMarker(new MarkerOptions()
@@ -316,5 +415,9 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
 
     private interface OnSiteCallBack{
         void onCallBack(List<CleaningSite> cleaningSites);
+    }
+
+    private interface OnSiteSuggestionCallBack{
+        void onCallBack(List<SiteSuggestion> siteSuggestions);
     }
 }

@@ -19,6 +19,8 @@ public class CleaningSite implements Serializable {
     private Double lat;
     private Double lng;
     private String owner;
+    private long follower;
+    private double totalAmount;
 
     public CleaningSite() {
     }
@@ -104,4 +106,19 @@ public class CleaningSite implements Serializable {
         this.owner = owner;
     }
 
+    public long getFollower() {
+        return follower;
+    }
+
+    public void setFollower(long follower) {
+        this.follower = follower;
+    }
+
+    public double getTotalAmount() {
+        return totalAmount;
+    }
+
+    public void setTotalAmount(double totalAmount) {
+        this.totalAmount = totalAmount;
+    }
 }

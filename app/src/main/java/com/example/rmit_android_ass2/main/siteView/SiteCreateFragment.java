@@ -113,6 +113,9 @@ public class SiteCreateFragment extends Fragment {
                 Double latitude = Double.valueOf(editLatitude.getText().toString());
                 Double longitude = Double.valueOf(editLongitude.getText().toString());
                 String siteDate = editDate.getText().toString();
+                if (siteDate == null) {
+                    editDate.setError("Required!");
+                }
                 String startTime = editStartTime.getText().toString();
                 String endTime = editEndTime.getText().toString();
 

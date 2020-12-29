@@ -112,4 +112,5 @@
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
     <string name="title_activity_get_location">Map</string>
     <string name="title_activity_search">SearchActivity</string>
+    <string name="title_activity_admin">AdminActivity</string>
 </resources>

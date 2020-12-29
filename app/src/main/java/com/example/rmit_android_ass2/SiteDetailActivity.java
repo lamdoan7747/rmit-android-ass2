@@ -1,6 +1,7 @@
 package com.example.rmit_android_ass2;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -27,8 +28,10 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.Transaction;
 import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.text.SimpleDateFormat;
@@ -210,6 +213,7 @@ public class SiteDetailActivity extends AppCompatActivity {
                         Log.d(TAG, "Site successfully delete follower!");
                         Toast.makeText(SiteDetailActivity.this, "Unfollowed!", Toast.LENGTH_SHORT).show();
                         unsubscribeToSite(cleaningSiteId);
+                        actionFollower(cleaningSiteId, UNFOLLOW);
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -218,6 +222,34 @@ public class SiteDetailActivity extends AppCompatActivity {
                         Log.w(TAG, "Error deleting follower", e);
                     }
                 });
+    }
+
+    private void actionFollower(String cleaningSiteId, String action) {
+        db.runTransaction(new Transaction.Function<Long>() {
+            @Nullable
+            @Override
+            public Long apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
+                DocumentReference docRef = db.collection("cleaningSites").document(cleaningSiteId);
+                DocumentSnapshot document = transaction.get(docRef);
+                switch (action){
+                    case REGISTER:
+                        long addFollower = document.getLong("follower") + 1;
+                        transaction.update(docRef,"follower",addFollower);
+                        return addFollower;
+                    case UNFOLLOW:
+                        long removeFollower = document.getLong("follower") - 1;
+                        transaction.update(docRef,"follower",removeFollower);
+                        return removeFollower;
+                    default:
+                        throw new IllegalStateException("Unexpected value: " + action);
+                }
+            }
+        }).addOnSuccessListener(new OnSuccessListener<Long>() {
+            @Override
+            public void onSuccess(Long result) {
+                viewFollower.setText(String.format("%s followers", result));
+            }
+        });
     }
 
     private void unsubscribeToSite(String cleaningSiteId) {
@@ -245,6 +277,7 @@ public class SiteDetailActivity extends AppCompatActivity {
                         Log.d(TAG, "Site successfully added new follower!");
                         Toast.makeText(SiteDetailActivity.this, "Registered!", Toast.LENGTH_SHORT).show();
                         subscribeToSite(cleaningSiteId);
+                        actionFollower(cleaningSiteId,REGISTER);
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -253,9 +286,8 @@ public class SiteDetailActivity extends AppCompatActivity {
                         Log.d(TAG,"Error add new follower!");
                     }
                 });
-
-
     }
+
 
     private void subscribeToSite(String cleaningSiteId) {
         FirebaseMessaging.getInstance().subscribeToTopic(cleaningSiteId)
