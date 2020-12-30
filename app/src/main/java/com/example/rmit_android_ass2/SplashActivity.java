@@ -23,6 +23,7 @@ import android.view.View;
 
 public class SplashActivity extends AppCompatActivity {
 
+    // Google Firebase declaration
     private FirebaseAuth mAuth;
     private FirebaseUser currentUser;
     private FirebaseFirestore db;
@@ -33,14 +34,25 @@ public class SplashActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 
+        /*
+         *   Represents a Cloud Firestore database and
+         *   is the entry point for all Cloud Firestore
+         *   operations.
+         */
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
         currentUser = mAuth.getCurrentUser();
 
+        /*
+        *   Start a new thread to delay when open the app
+        *   delay 1,5s
+        *   when delay, call checkAdmin function to start the right Activity
+        *   if cannot get any user login, return to the Auth Activity to login
+        */
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                if (currentUser != null){
+                if (currentUser != null) {
                     String userId = currentUser.getUid();
                     checkAdmin(userId);
                 } else {
@@ -51,6 +63,13 @@ public class SplashActivity extends AppCompatActivity {
         }, 1500);
     }
 
+    /**
+     * Function to check if user is admin
+     * if Success, start admin flow activity
+     * if Failure, start user flow activity
+     *
+     * @param userId: get userId to query in Firebase
+     */
     private void checkAdmin(String userId) {
         db.collection("users").document(userId)
                 .get()
@@ -59,8 +78,8 @@ public class SplashActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                         if (task.isSuccessful()) {
                             DocumentSnapshot document = task.getResult();
-                            // If document check having a boolean field admin is true
-                            if (document.getBoolean("isAdmin") != null){
+                            // If document check having a boolean field admin is not null
+                            if (document.getBoolean("isAdmin") != null) {
                                 startActivity(new Intent(SplashActivity.this, AdminActivity.class));
                             } else {
                                 startActivity(new Intent(SplashActivity.this, HomeActivity.class));

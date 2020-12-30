@@ -12,8 +12,12 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+@SuppressWarnings("deprecation")
+@SuppressLint("StaticFieldLeak")
 public class FetchDirectionURL extends AsyncTask<String, Void, String> {
-    @SuppressLint("StaticFieldLeak")
+    // Constant declaration
+    private final String TAG = "FETCH_DIRECTION_URL";
+
     Context mContext;
     String directionMode = "driving";
     PointsParser parserTask;
@@ -32,9 +36,9 @@ public class FetchDirectionURL extends AsyncTask<String, Void, String> {
         try {
             // Fetching the data from web service
             data = downloadUrl(strings[0]);
-            Log.d("mylog", "Background task data " + data.toString());
+            Log.d(TAG, "Background task data " + data.toString());
         } catch (Exception e) {
-            Log.d("Background Task", e.toString());
+            Log.d(TAG, "Exception: " + e.toString());
         }
         return data;
     }
@@ -66,10 +70,10 @@ public class FetchDirectionURL extends AsyncTask<String, Void, String> {
                 sb.append(line);
             }
             data = sb.toString();
-            Log.d("mylog", "Downloaded URL: " + data.toString());
+            Log.d(TAG, "Downloaded URL: " + data);
             br.close();
         } catch (Exception e) {
-            Log.d("mylog", "Exception downloading URL: " + e.toString());
+            Log.d(TAG, "Exception downloading URL: " + e.toString());
         } finally {
             iStream.close();
             urlConnection.disconnect();

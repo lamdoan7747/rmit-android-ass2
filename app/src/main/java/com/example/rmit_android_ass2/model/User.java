@@ -1,9 +1,12 @@
 package com.example.rmit_android_ass2.model;
 
 
+import com.google.firebase.firestore.DocumentId;
+
 public class User{
-    private String _id;
-    private String fname;
+    @DocumentId
+    private String id;
+    private String name;
     private String email;
     private String mobile;
     private String address;
@@ -11,31 +14,31 @@ public class User{
     public User() {
     }
 
-    public User(String _id, String fname, String email) {
-        this._id = _id;
-        this.fname = fname;
+    public User(String id, String name, String email) {
+        this.id = id;
+        this.name = name;
         this.email = email;
     }
 
-    public User(String fname, String email) {
-        this.fname = fname;
+    public User(String name, String email) {
+        this.name = name;
         this.email = email;
     }
 
     public String getId() {
-        return _id;
+        return id;
     }
 
     public void setId(String id) {
-        this._id = id;
+        this.id = id;
     }
 
-    public String getFname() {
-        return fname;
+    public String getName() {
+        return name;
     }
 
-    public void setFname(String fname) {
-        this.fname = fname;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getEmail() {

@@ -48,18 +48,21 @@ import static android.app.Activity.RESULT_OK;
 
 
 public class MySiteEditFragment extends Fragment {
+    // Constant declaration
+    private final String TAG = "MY_SITE_EDIT_FRAGMENT";
+    private final String SITE_ID = "cleaningSiteId";
+    private final int REQUEST_CODE = 200;
 
-    private static String TAG = "MY_SITE_EDIT_FRAGMENT";
-    private static int REQUEST_CODE = 200;
-
+    // Google Firebase declaration
     private FirebaseFirestore db;
-    private FirebaseAuth mAuth;
 
+    // Android view declaration
     private EditText editName, editAddress, editLatitude,
             editLongitude, editDate, editStartTime, editEndTime;
     private Button editSiteButton, editSiteLocationButton;
-    private ImageButton editSiteBackButton;
+    private ImageButton backButton;
 
+    // Utils variable declaration
     private String cleaningSiteId;
 
 
@@ -70,20 +73,28 @@ public class MySiteEditFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null){
-            cleaningSiteId = getArguments().getString("cleaningSiteId");
+
+        // Get message cleaningSiteId from previous fragment
+        if (getArguments() != null) {
+            cleaningSiteId = getArguments().getString(SITE_ID);
         }
     }
 
+    /*
+     *   Setup onActivityResult to return intent date
+     *   -> Get latitude, longitude
+     *   -> Cast to Double
+     *   -> Display lat, lng to UI
+     */
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
-            if (data != null){
+            if (data != null) {
                 Double latitude = (Double) data.getExtras().get("lat");
                 Double longitude = (Double) data.getExtras().get("lng");
                 editLatitude.setText(String.format("%s", latitude));
-                editLongitude.setText(String.format("%s",longitude));
+                editLongitude.setText(String.format("%s", longitude));
             }
         }
     }
@@ -100,24 +111,38 @@ public class MySiteEditFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        /*
+         *   Represents a Cloud Firestore database and
+         *   is the entry point for all Cloud Firestore
+         *   operations.
+         */
         db = FirebaseFirestore.getInstance();
-        mAuth = FirebaseAuth.getInstance();
 
+        // Initiate view for the activity
         renderView(requireView());
+
+        // Set all events on touchable
         onClickListener();
 
-        // Display current site detail
+        // Display current site detail to UI
         displayCurrentSite(cleaningSiteId);
     }
 
     private void onClickListener() {
-        editSiteBackButton.setOnClickListener(new View.OnClickListener() {
+        // Back button to return the previous fragment
+        backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                backToPrevious();
+                requireActivity().getSupportFragmentManager().popBackStack();
             }
         });
 
+        /*
+         *   Edit button will display a dialog with a message
+         *   to confirm if you want to update the site
+         *   -> OK, trigger updateSite()
+         *   -> Cancel, cancel dialog
+         */
         editSiteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -141,14 +166,17 @@ public class MySiteEditFragment extends Fragment {
             }
         });
 
+        // Edit site location will start new map activity to get location with REQUEST_CODE
         editSiteLocationButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getActivity(), GetLocationActivity.class);
-                startActivityForResult(intent,REQUEST_CODE);
+                startActivityForResult(intent, REQUEST_CODE);
             }
         });
 
+        // Edit date will popup a DatePicker dialog to set Date
+        // When finish, set the date to the UI
         editDate.setOnClickListener(new View.OnClickListener() {
             @Override
             @RequiresApi(api = Build.VERSION_CODES.N)
@@ -166,6 +194,8 @@ public class MySiteEditFragment extends Fragment {
             }
         });
 
+        // Edit start time will popup a TimePicker dialog to set time
+        // When finish, set the time to the UI
         editStartTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -179,11 +209,13 @@ public class MySiteEditFragment extends Fragment {
                     public void onTimeSet(TimePicker timePicker, int hourOfDay, int minute) {
                         editStartTime.setText(String.format("%d:%d", hourOfDay, minute));
                     }
-                },hour,minute,android.text.format.DateFormat.is24HourFormat(getContext()));
+                }, hour, minute, android.text.format.DateFormat.is24HourFormat(getContext()));
                 timePickerDialog.show();
             }
         });
 
+        // Edit end time will popup a TimePicker dialog to set time
+        // When finish, set the time to the UI
         editEndTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -197,14 +229,19 @@ public class MySiteEditFragment extends Fragment {
                     public void onTimeSet(TimePicker timePicker, int hourOfDay, int minute) {
                         editEndTime.setText(String.format("%d:%d", hourOfDay, minute));
                     }
-                },hour,minute,android.text.format.DateFormat.is24HourFormat(getContext()));
+                }, hour, minute, android.text.format.DateFormat.is24HourFormat(getContext()));
                 timePickerDialog.show();
             }
         });
     }
 
+    /**
+     * Function to initiate all the view with the right id
+     *
+     * @param view view get from UI
+     */
     private void renderView(View view) {
-        editName =view.findViewById(R.id.siteNameSiteEdit);
+        editName = view.findViewById(R.id.siteNameSiteEdit);
         editAddress = view.findViewById(R.id.siteAddressSiteEdit);
         editLatitude = view.findViewById(R.id.siteLatitudeSiteEdit);
         editLongitude = view.findViewById(R.id.siteLongitudeSiteEdit);
@@ -212,15 +249,24 @@ public class MySiteEditFragment extends Fragment {
         editStartTime = view.findViewById(R.id.siteStartTimeSiteEdit);
         editEndTime = view.findViewById(R.id.siteEndTimeSiteEdit);
 
-        editSiteButton =view.findViewById(R.id.editSiteSiteEdit);
-        editSiteBackButton = view.findViewById(R.id.backButtonToolbarSiteEdit);
+        editSiteButton = view.findViewById(R.id.editSiteSiteEdit);
+        backButton = view.findViewById(R.id.backButtonToolbarSiteEdit);
         editSiteLocationButton = view.findViewById(R.id.siteLocationSiteEdit);
     }
 
-
+    /**
+     * Function to get current site detail to display to UI
+     * if Success, set textView for siteName, siteAddress,
+     * siteLat, siteLng, siteDate, siteStartTime, siteEndTime
+     * if Failure, display Log debug
+     *
+     * @param cleaningSiteId cleaning siteId to get document
+     */
+    @SuppressLint("SimpleDateFormat")
     private void displayCurrentSite(String cleaningSiteId) {
-        DocumentReference docRef = db.collection("cleaningSites").document(cleaningSiteId);
-        docRef.get()
+        db.collection("cleaningSites")
+                .document(cleaningSiteId)
+                .get()
                 .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -235,9 +281,9 @@ public class MySiteEditFragment extends Fragment {
                                 editLatitude.setText(String.valueOf(cleaningSite.getLat()));
                                 editLongitude.setText(String.valueOf(cleaningSite.getLng()));
 
+                                // Format Date to display
                                 if (cleaningSite.getDate() != null) {
                                     Date dateFormat = cleaningSite.getDate().toDate();
-                                    @SuppressLint("SimpleDateFormat")
                                     String siteDateFormat = new SimpleDateFormat("dd/MM/yyyy").format(dateFormat);
                                     editDate.setText(siteDateFormat);
                                 }
@@ -252,28 +298,37 @@ public class MySiteEditFragment extends Fragment {
                             Log.d(TAG, "Get failed with ", task.getException());
                         }
                     }
-        });
+                });
     }
 
+    /**
+     * Function to update new site details to Firebase
+     * if Success, finish the activity
+     * if Failure, display Log debug
+     *
+     * @param cleaningSiteId cleaning siteId to get document
+     */
     private void updateSite(String cleaningSiteId) {
         String siteName = editName.getText().toString();
         String siteAddress = editAddress.getText().toString();
         Double latitude = Double.valueOf(editLatitude.getText().toString());
         Double longitude = Double.valueOf(editLongitude.getText().toString());
 
-        DocumentReference docRef = db.collection("cleaningSites").document(cleaningSiteId);
+        // Set all detail to a HashMap to update
         Map<String, Object> updates = new HashMap<>();
-        updates.put("name",siteName);
-        updates.put("address",siteAddress);
-        updates.put("lat",latitude);
-        updates.put("lng",longitude);
+        updates.put("name", siteName);
+        updates.put("address", siteAddress);
+        updates.put("lat", latitude);
+        updates.put("lng", longitude);
         updates.put("timestamp", FieldValue.serverTimestamp());
 
-        docRef.update(updates)
+        db.collection("cleaningSites")
+                .document(cleaningSiteId)
+                .update(updates)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        Log.d("UPDATE SITE", "DocumentSnapshot successfully updated!");
+                        Log.d(TAG, "DocumentSnapshot successfully updated!");
                         requireActivity().finish();
 
                     }
@@ -281,13 +336,9 @@ public class MySiteEditFragment extends Fragment {
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Log.w("UPDATE SITE", "Error updating document", e);
+                        Log.w(TAG, "Error updating document", e);
                     }
                 });
 
-    }
-
-    private void backToPrevious() {
-        requireActivity().getSupportFragmentManager().popBackStack();
     }
 }

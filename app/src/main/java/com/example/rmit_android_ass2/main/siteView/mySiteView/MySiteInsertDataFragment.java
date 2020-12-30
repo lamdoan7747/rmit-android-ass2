@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,16 +38,21 @@ import java.util.Map;
 
 public class MySiteInsertDataFragment extends Fragment {
 
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String SITE_ID = "cleaningSiteId";
+    // Constant declaration
+    private final String TAG = "MY_SITE_EDIT_FRAGMENT";
+    private final String SITE_ID = "cleaningSiteId";
 
-    private String cleaningSiteId;
-
+    // Google Firebase declaration
     private FirebaseFirestore db;
 
+    // Android view declaration
     private EditText inputAmount, inputDate;
     private Button saveDataCollectionButton;
     private ImageButton backButton;
+
+    // Utils variable declaration
+    private String cleaningSiteId;
+
 
     public MySiteInsertDataFragment() {
         // Required empty public constructor
@@ -55,6 +61,8 @@ public class MySiteInsertDataFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Get message cleaningSiteId from previous fragment
         if (getArguments() != null) {
             cleaningSiteId = getArguments().getString(SITE_ID);
         }
@@ -71,13 +79,22 @@ public class MySiteInsertDataFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        /*
+         *   Represents a Cloud Firestore database and
+         *   is the entry point for all Cloud Firestore
+         *   operations.
+         */
         db = FirebaseFirestore.getInstance();
 
+        // Initiate view for the activity
         renderView(requireView());
+
+        // Set all events on touchable
         onClickListener();
     }
 
     private void onClickListener() {
+        // Back button to return the previous fragment
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -85,6 +102,7 @@ public class MySiteInsertDataFragment extends Fragment {
             }
         });
 
+        // Save data button to trigger saveDataCollection() function
         saveDataCollectionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -93,18 +111,29 @@ public class MySiteInsertDataFragment extends Fragment {
         });
     }
 
-    private void renderView(View view){
+    /**
+     * Function to initiate all the view with the right id
+     *
+     * @param view view get from UI
+     */
+    private void renderView(View view) {
         inputAmount = view.findViewById(R.id.inputAmountCollection);
         inputDate = view.findViewById(R.id.inputDateCollection);
         saveDataCollectionButton = view.findViewById(R.id.saveDataCollection);
         backButton = view.findViewById(R.id.backButtonToolbarMySiteInsertData);
     }
 
+    /**
+     * Function to save collection data to Firebase
+     * if Success, trigger updateAmount() funciton, then return to the previous fragment
+     * if Failure, display Log debug
+     *
+     * @param cleaningSiteId site id to get document
+     */
     private void saveDataCollection(String cleaningSiteId) {
         // Set value for data collection with new timestamp and amount of garbage
-        Double data = Double.parseDouble(inputAmount.getText().toString());
-
-        CleaningResult results = new CleaningResult(data);
+        double amount = Double.parseDouble(inputAmount.getText().toString());
+        CleaningResult results = new CleaningResult(amount);
 
         // Add new data collection
         db.collection("cleaningSites")
@@ -114,33 +143,40 @@ public class MySiteInsertDataFragment extends Fragment {
                 .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                     @Override
                     public void onSuccess(DocumentReference documentReference) {
-                        Toast.makeText(getActivity(),"Add success: " + documentReference.getId(), Toast.LENGTH_SHORT).show();
-                        updateAmount(cleaningSiteId, data);
+                        Log.d(TAG, "Add success: " + documentReference.getId());
+                        updateAmount(cleaningSiteId, amount);
                         backToPrevious();
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(getActivity(),"Failure: " + e.toString(),Toast.LENGTH_SHORT).show();
+                        Log.d(TAG, "Failure: " + e.toString());
                     }
                 });
     }
 
-    private void updateAmount(String cleaningSiteId, Double data) {
+    /**
+     * Function to update totalAmount in "cleaningSites" collection
+     *
+     * @param cleaningSiteId cleaning siteId to get document
+     * @param amount         amount of collection getting from UI
+     */
+    private void updateAmount(String cleaningSiteId, double amount) {
         db.runTransaction(new Transaction.Function<Void>() {
             @Nullable
             @Override
             public Void apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
                 DocumentReference docRef = db.collection("cleaningSites").document(cleaningSiteId);
                 DocumentSnapshot document = transaction.get(docRef);
-                Double addFollower = document.getDouble("totalAmount") + data;
-                transaction.update(docRef,"totalAmount", addFollower);
+                double addAmount = document.getDouble("totalAmount") + amount;
+                transaction.update(docRef, "totalAmount", addAmount);
                 return null;
             }
         });
     }
 
+    // Function to return previous fragment
     private void backToPrevious() {
         requireActivity().getSupportFragmentManager().popBackStack();
     }

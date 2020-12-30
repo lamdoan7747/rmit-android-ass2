@@ -32,22 +32,25 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * A simple {@link Fragment} subclass.
- * create an instance of this fragment.
- */
+
 public class SiteViewFragment extends Fragment {
+    // Constant declaration
+    private final String TAG = "SITE_VIEW_FRAGMENT";
 
-    private static final String TAG = "SITE_VIEW_FRAGMENT";
-
-    private ArrayList<CleaningSite> cleaningSiteList;
+    // Google Firebase declaration
     private FirebaseFirestore db;
     private FirebaseAuth mAuth;
     private FirebaseUser currentUser;
+
+    // Android view declaration
     private TextView createSite;
     private ListView listSite;
+
+    // Adapter
     private SiteListAdapter siteListAdapter;
 
+    // Array list declaration
+    private ArrayList<CleaningSite> cleaningSiteList;
 
 
     public SiteViewFragment() {
@@ -57,8 +60,6 @@ public class SiteViewFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
-
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_site_view, container, false);
     }
@@ -67,32 +68,44 @@ public class SiteViewFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        /*
+         *   Represents a Cloud Firestore database and
+         *   is the entry point for all Cloud Firestore
+         *   operations.
+         */
         db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
 
+        /*
+         *   getSites callback to return the list of all sites to setup listview with adapter
+         *   -> OnItemClick will save the CleaningSite object to Intent and starting new activity
+         *   -> setup transition slide right
+         */
         cleaningSiteList = new ArrayList<>();
-
-        getSites(new FirestoreCallBack() {
+        getSites(new OnSiteCallBack() {
             @Override
             public void onCallBack(List<CleaningSite> cleaningSites) {
+                Log.d(TAG, "Size list: " + cleaningSiteList.size());
+                listSite = requireView().findViewById(R.id.listMySite);
+
+                // Setup adapter
                 siteListAdapter = new SiteListAdapter(cleaningSiteList);
-                listSite = getView().findViewById(R.id.listMySite);
                 listSite.setAdapter(siteListAdapter);
                 listSite.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                        Log.d(TAG,"Item: " + position);
+                        Log.d(TAG, "Item: " + position);
                         CleaningSite cleaningSite = (CleaningSite) siteListAdapter.getItem(position);
                         Intent intent = new Intent(getActivity(), MySiteActivity.class);
                         intent.putExtra("cleaningSite", cleaningSite);
                         startActivity(intent);
+                        requireActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                     }
                 });
             }
         });
 
-
-
+        // Create site load new fragment
         createSite = getView().findViewById(R.id.createSite);
         createSite.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -100,14 +113,18 @@ public class SiteViewFragment extends Fragment {
                 loadFragment(new SiteCreateFragment());
             }
         });
-
-
-
     }
 
-    private void getSites(FirestoreCallBack firestoreCallBack) {
+    /**
+     * Function to get all sites display to UI listView
+     * if Success, add all CleaningSite object to a list
+     * assign function onSiteCallBack
+     * if Failure, display Log debug
+     *
+     * @param onSiteCallBack callBack to get list of sites
+     */
+    private void getSites(OnSiteCallBack onSiteCallBack) {
         currentUser = mAuth.getCurrentUser();
-
         db.collection("cleaningSites")
                 .whereEqualTo("owner", currentUser.getUid())
                 .get()
@@ -119,7 +136,7 @@ public class SiteViewFragment extends Fragment {
                                 CleaningSite cleaningSite = document.toObject(CleaningSite.class);
                                 cleaningSiteList.add(cleaningSite);
                             }
-                            firestoreCallBack.onCallBack(cleaningSiteList);
+                            onSiteCallBack.onCallBack(cleaningSiteList);
                             Log.d(TAG, "Site list => " + cleaningSiteList.size());
 
                         } else {
@@ -129,14 +146,23 @@ public class SiteViewFragment extends Fragment {
                 });
     }
 
-    private interface FirestoreCallBack{
+    /**
+     * Interface for implementing a listener to listen
+     * to get list of siteSuggestion from getSites().
+     */
+    private interface OnSiteCallBack {
         void onCallBack(List<CleaningSite> cleaningSites);
     }
 
+    /**
+     * Start a new transaction to add fragment
+     *
+     * @param fragment: init fragment to load
+     */
     private void loadFragment(Fragment fragment) {
         FragmentTransaction fragmentTransaction = requireActivity().getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.setCustomAnimations(R.anim.slide_in_up,R.anim.slide_out_up, R.anim.slide_in_down, R.anim.slide_out_down);
-        fragmentTransaction.replace(R.id.frameContainer,fragment);
+        fragmentTransaction.setCustomAnimations(R.anim.slide_in_up, R.anim.slide_out_up, R.anim.slide_in_down, R.anim.slide_out_down);
+        fragmentTransaction.replace(R.id.frameContainer, fragment);
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
     }

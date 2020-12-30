@@ -29,27 +29,29 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * A simple {@link Fragment} subclass.
- * create an instance of this fragment.
- */
+
+@SuppressLint("LongLogTag")
 public class MySiteFollowerFragment extends Fragment {
+    // Constant declaration
+    private final String TAG = "MY_SITE_FOLLOWER_FRAGMENT";
+    private final String SITE_ID = "cleaningSiteId";
 
-    private static final String TAG = "MY_SITE_FOLLOWER_FRAGMENT";
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String SITE_ID = "cleaningSiteId";
+    // Google Firebase declaration
+    private FirebaseFirestore db;
 
-    private String cleaningSiteId;
+    // Android view declaration
+    private ListView listFollower;
+    private ImageButton backButton;
 
+    // Array list declaration
     private ArrayList<User> followerList;
 
-    private FirebaseFirestore db;
-    private FirebaseAuth mAuth;
-
-    private ListView listFollower;
+    // Adapter
     private FollowerListAdapter followerListAdapter;
 
-    private ImageButton backButton;
+    // Utils variable declaration
+    private String cleaningSiteId;
+
 
     public MySiteFollowerFragment() {
         // Required empty public constructor
@@ -58,6 +60,8 @@ public class MySiteFollowerFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Get message cleaningSiteId from previous fragment
         if (getArguments() != null) {
             cleaningSiteId = getArguments().getString(SITE_ID);
         }
@@ -74,43 +78,51 @@ public class MySiteFollowerFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        /*
+         *   Represents a Cloud Firestore database and
+         *   is the entry point for all Cloud Firestore
+         *   operations.
+         */
         db = FirebaseFirestore.getInstance();
-        mAuth = FirebaseAuth.getInstance();
 
+        // Back button to return the previous fragment
         backButton = requireView().findViewById(R.id.backButtonToolbarMySiteFollower);
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                backToPrevious();
+                requireActivity().getSupportFragmentManager().popBackStack();
             }
         });
 
-        // Init follower list
+        // Get follower size to display on listView
         followerList = new ArrayList<>();
-        // Display follower list view
-        displayFollowerList(cleaningSiteId);
-    }
-
-
-    private void displayFollowerList(String cleaningSiteId) {
         getFollowers(cleaningSiteId, new FollowerCallBack() {
             @Override
             public void onCallBack(List<User> followers) {
+                Log.d(TAG, "Follower list => " + followerList.size());
                 followerListAdapter = new FollowerListAdapter(followerList);
                 listFollower = requireView().findViewById(R.id.listFollower);
                 listFollower.setAdapter(followerListAdapter);
                 listFollower.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                        Toast.makeText(getActivity(),"DISPLAY FOLLOWER PROFILE", Toast.LENGTH_SHORT).show();
+                        Log.d(TAG, "Item click!");
+                        Toast.makeText(getActivity(), "DISPLAY FOLLOWER PROFILE", Toast.LENGTH_SHORT).show();
                     }
                 });
             }
         });
     }
 
+    /**
+     * Function to get all followers of specific site
+     * if Success, add all Follower object to a list
+     * if Failure, display Log debug
+     *
+     * @param cleaningSiteId   cleaning siteId to get document
+     * @param followerCallBack callBack interface to get list of followers
+     */
     private void getFollowers(String cleaningSiteId, FollowerCallBack followerCallBack) {
-
         db.collection("cleaningSites")
                 .document(cleaningSiteId)
                 .collection("followers")
@@ -120,27 +132,24 @@ public class MySiteFollowerFragment extends Fragment {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document: task.getResult()){
+                            for (QueryDocumentSnapshot document : task.getResult()) {
                                 User follower = document.toObject(User.class);
                                 followerList.add(follower);
-
                             }
                             followerCallBack.onCallBack(followerList);
-                            Log.d(TAG, "Follower list => " + followerList.size());
                         } else {
-                        Log.d(TAG, "Error getting documents: " + task.getException());
+                            Log.d(TAG, "Error getting documents: " + task.getException());
                         }
                     }
                 });
 
     }
 
-    private interface FollowerCallBack{
+    /**
+     * Interface for implementing a listener to listen
+     * to get list of followers from Firestore.
+     */
+    private interface FollowerCallBack {
         void onCallBack(List<User> followers);
     }
-
-    private void backToPrevious() {
-        requireActivity().getSupportFragmentManager().popBackStack();
-    }
-
 }

@@ -17,11 +17,17 @@ import com.example.rmit_android_ass2.SiteDetailActivity;
 import com.google.firebase.messaging.FirebaseMessaging;
 
 public class NotificationHelper {
-
+    // Constant declaration
     public static final String CHANNEL_ID = "NOTIFICATION";
     public static final CharSequence CHANNEL_NAME = "NOTIFICATION";
     public static final String CHANNEL_DESC = "NOTIFICATION";
 
+    /**
+     *  Function to create new notification channel for User
+     *  Check version and set notification
+     *
+     * @param context Activity context
+     * */
     public static void createNotificationChannel(Context context) {
         // Create the NotificationChannel, but only on API 26+ because
         // the NotificationChannel class is new and not in the support library
@@ -36,8 +42,17 @@ public class NotificationHelper {
         }
     }
 
+    /**
+     *  Function to create notification to display
+     *  On click message will start new activity with the cleaningSiteId message
+     *
+     * @param context Activity context
+     * @param title title of message
+     * @param body body of message
+     * @param cleaningSiteId cleaning site id get from message
+     * */
     public static void displayNotification(Context context, String title, String body, String cleaningSiteId){
-
+        // Set direction when clicked
         Intent intent = new Intent(context, SiteDetailActivity.class);
         intent.putExtra("cleaningSiteId",cleaningSiteId);
         PendingIntent pendingIntent = PendingIntent.getActivity(
@@ -47,6 +62,7 @@ public class NotificationHelper {
                 PendingIntent.FLAG_CANCEL_CURRENT
         );
 
+        // Custom notification
         NotificationCompat.Builder notificationBuilder =
                 new NotificationCompat.Builder(context, CHANNEL_ID)
                         .setSmallIcon(R.drawable.logo)
@@ -57,6 +73,7 @@ public class NotificationHelper {
                         .setOnlyAlertOnce(true)
                         .setPriority(NotificationCompat.PRIORITY_DEFAULT);
 
+        // Build notification
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
         notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
     }

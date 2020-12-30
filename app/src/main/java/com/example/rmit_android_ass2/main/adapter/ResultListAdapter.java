@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 public class ResultListAdapter extends BaseAdapter {
-    private ArrayList<CleaningResult> cleaningResults;
+    private final ArrayList<CleaningResult> cleaningResults;
 
     public ResultListAdapter(ArrayList<CleaningResult> cleaningResults) {
         this.cleaningResults = cleaningResults;

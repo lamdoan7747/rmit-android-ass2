@@ -21,7 +21,6 @@ import android.widget.Button;
 import com.arlib.floatingsearchview.FloatingSearchView;
 import com.arlib.floatingsearchview.suggestions.model.SearchSuggestion;
 import com.example.rmit_android_ass2.R;
-import com.example.rmit_android_ass2.SearchActivity;
 import com.example.rmit_android_ass2.SiteDetailActivity;
 import com.example.rmit_android_ass2.main.adapter.CustomInfoWindowAdapter;
 import com.example.rmit_android_ass2.main.mapView.direction.FetchDirectionURL;
@@ -54,33 +53,38 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MapsFragment extends Fragment implements OnMapReadyCallback,
-        GoogleMap.OnInfoWindowClickListener, GoogleMap.OnMapLoadedCallback{
+        GoogleMap.OnInfoWindowClickListener, GoogleMap.OnMapLoadedCallback {
 
+    // Constant declaration
     private static final String TAG = "MAP_FRAGMENT";
-    private FloatingSearchView searchMap;
-    private GoogleMap mMap;
-    private SupportMapFragment mapFragment;
-    private FusedLocationProviderClient client;
 
-    private Polyline currentPolyline;
-
-    private String mLastQuery = "";
-    private final int limit = 3;
-
-    private ArrayList<CleaningSite> cleaningSiteList;
-
+    // Google Firebase declaration
     private FirebaseFirestore db;
     private FirebaseAuth mAuth;
     private FirebaseUser currentUser;
 
-    private List<String> mSuggestions =new ArrayList<>();
+    // Google Map declaration
+    private GoogleMap mMap;
+    private FusedLocationProviderClient client;
+    private Polyline currentPolyline;
+
+    // Android view declaration
+    private FloatingSearchView searchMap;
+
+    // Array list declaration
+    private ArrayList<CleaningSite> cleaningSiteList;
+
+    // Utils variable declaration
+    private String mLastQuery = "";
+    private final int limit = 3;
+
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-
+        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_maps, container, false);
     }
 
@@ -88,33 +92,149 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        /*
+         *   Represents a Cloud Firestore database and
+         *   is the entry point for all Cloud Firestore
+         *   operations.
+         */
         db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
 
-        cleaningSiteList = new ArrayList<>();
 
-        mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
+        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+        SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         if (mapFragment != null)
             mapFragment.getMapAsync(this);
 
-        // Initialize fused location
+        // Initialize fused location, the main entry point for location services integration
         client = LocationServices.getFusedLocationProviderClient(requireActivity());
 
+        // Action when use the searchView
         searchMap = requireView().findViewById(R.id.floating_search_view);
+        setupFloatingSearch();
+    }
+
+    /**
+     * Manipulates the map once available.
+     * This callback is triggered when the map is ready to be used.
+     * This is where we can add markers or lines, add listeners or move the camera. In this case,
+     * we just add a marker near Sydney, Australia.
+     * If Google Play services is not installed on the device, the user will be prompted to install
+     * it inside the SupportMapFragment. This method will only be triggered once the user has
+     * installed Google Play services and returned to the app.
+     */
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        mMap = googleMap;
+
+        // Setting UI for google map
+        mMap.getUiSettings().setZoomControlsEnabled(true);
+        mMap.getUiSettings().setMapToolbarEnabled(false);
+        mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+
+        // Load all site
+        mMap.setOnMapLoadedCallback(this);
+        mMap.setOnInfoWindowClickListener(this);
+
+        // Set custom info Google map adapter
+        CustomInfoWindowAdapter adapter = new CustomInfoWindowAdapter(getActivity());
+        mMap.setInfoWindowAdapter(adapter);
+
+        // Check permission
+        if (ActivityCompat.checkSelfPermission(requireActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            // When permission granted
+            // Call method get location
+            mMap.setMyLocationEnabled(true);
+            getCurrentLocation();
+        } else {
+            // When permission denied
+            // Request permission
+            ActivityCompat.requestPermissions(requireActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 44);
+        }
+    }
+
+    /**
+     * Setup all markers display on the map view
+     */
+    @Override
+    public void onMapLoaded() {
+        // Get all sites to display marker to map
+        cleaningSiteList = new ArrayList<>();
+        getSites(new OnSiteCallBack() {
+            @Override
+            public void onCallBack(List<CleaningSite> cleaningSites) {
+                Log.d(TAG, "Site list => " + cleaningSiteList.size());
+                if (cleaningSiteList.size() < 1) {
+                    Log.d(TAG, "Don't have any site");
+                } else {
+                    // Get all location latlng
+                    for (CleaningSite cleaningSite : cleaningSiteList) {
+                        if (cleaningSite.getLat() == null || cleaningSite.getLng() == null) {
+                            continue;
+                        }
+
+                        // Add marker for all sites
+                        mMap.addMarker(new MarkerOptions()
+                                .position(new LatLng(cleaningSite.getLat(), cleaningSite.getLng()))
+                                .title(cleaningSite.getName())
+                                .snippet(cleaningSite.getAddress())
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.logo)));
+                    }
+                }
+            }
+        });
+    }
+
+    /**
+     * Setup event when click info window
+     * -> save cleaningSite object to transfer to new activity
+     * -> start new activity
+     * -> setup transition slide to right
+     */
+    @Override
+    public void onInfoWindowClick(Marker marker) {
+        Intent intent = new Intent(getActivity(), SiteDetailActivity.class);
+        for (CleaningSite cleaningSite : cleaningSiteList) {
+            if (cleaningSite.getName().equals(marker.getTitle())) {
+                Log.d(TAG, "Get cleaning site: " + cleaningSite.getId());
+                intent.putExtra("cleaningSite", cleaningSite);
+            }
+        }
+        startActivity(intent);
+        requireActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+    }
+
+    /**
+     * Setup search view event
+     */
+    private void setupFloatingSearch() {
         searchMap.setOnQueryChangeListener(new FloatingSearchView.OnQueryChangeListener() {
+            /**
+             * Called when the query has changed. It will
+             * be invoked when one or more characters in the
+             * query was changed.
+             *
+             * @param oldQuery the previous query
+             * @param newQuery the new query
+             */
             @Override
             public void onSearchTextChanged(String oldQuery, String newQuery) {
                 if (!oldQuery.equals("") && newQuery.equals("")) {
                     mLastQuery = "";
                     searchMap.clearSuggestions();
                 } else {
+                    /*  this shows the top left circular progress
+                     *  you can call it where ever you want, but
+                     *  it makes sense to do it when loading something in
+                     *  the background.
+                     */
                     searchMap.showProgress();
                     getSuggestionSites(new OnSiteSuggestionCallBack() {
                         @Override
                         public void onCallBack(List<SiteSuggestion> siteSuggestions) {
                             List<SiteSuggestion> suggestionList = new ArrayList<>();
-                            for(SiteSuggestion siteSuggestion:siteSuggestions){
-                                if(siteSuggestion.getBody().toLowerCase().contains(newQuery.toLowerCase())){
+                            for (SiteSuggestion siteSuggestion : siteSuggestions) {
+                                if (siteSuggestion.getBody().toLowerCase().contains(newQuery.toLowerCase())) {
                                     suggestionList.add(siteSuggestion);
                                     if (suggestionList.size() == limit) {
                                         break;
@@ -128,22 +248,30 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
                     //let the users know that the background
                     //process has completed
                     searchMap.hideProgress();
+                    Log.d(TAG, "onSearchTextChanged(): " + newQuery);
                 }
             }
         });
 
         searchMap.setOnSearchListener(new FloatingSearchView.OnSearchListener() {
+            /**
+             * Called when a suggestion was clicked indicating
+             * that the current search has completed.
+             * set move to the exact location when clicked
+             *
+             * @param searchSuggestion siteSuggestion
+             */
             @Override
             public void onSuggestionClicked(final SearchSuggestion searchSuggestion) {
                 getSites(new OnSiteCallBack() {
                     @Override
                     public void onCallBack(List<CleaningSite> cleaningSites) {
-                        for (CleaningSite cleaningSite: cleaningSites){
+                        for (CleaningSite cleaningSite : cleaningSites) {
                             SiteSuggestion siteSuggestion = (SiteSuggestion) searchSuggestion;
                             String cleaningSiteId = siteSuggestion.getCleaningSiteId();
-                            if (cleaningSite.get_id().equals(cleaningSiteId)){
-                                LatLng searchLocation = new LatLng(cleaningSite.getLat(),cleaningSite.getLng());
-                                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(searchLocation,20));
+                            if (cleaningSite.getId().equals(cleaningSiteId)) {
+                                LatLng searchLocation = new LatLng(cleaningSite.getLat(), cleaningSite.getLng());
+                                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(searchLocation, 20));
                                 mLastQuery = searchSuggestion.getBody();
                                 searchMap.clearSearchFocus();
                             }
@@ -160,6 +288,10 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
         });
 
         searchMap.setOnFocusChangeListener(new FloatingSearchView.OnFocusChangeListener() {
+            /**
+             * Called when the search bar has gained focus
+             * and listeners are now active.
+             */
             @Override
             public void onFocus() {
                 searchMap.showProgress();
@@ -168,9 +300,9 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
                 getSuggestionSites(new OnSiteSuggestionCallBack() {
                     @Override
                     public void onCallBack(List<SiteSuggestion> siteSuggestions) {
-                        List<SiteSuggestion> suggestionList=new ArrayList<>();
-                        for(SiteSuggestion siteSuggestion:siteSuggestions){
-                            if(siteSuggestion.getBody().toLowerCase().contains(searchMap.getQuery().toLowerCase())){
+                        List<SiteSuggestion> suggestionList = new ArrayList<>();
+                        for (SiteSuggestion siteSuggestion : siteSuggestions) {
+                            if (siteSuggestion.getBody().toLowerCase().contains(searchMap.getQuery().toLowerCase())) {
                                 suggestionList.add(siteSuggestion);
                                 if (suggestionList.size() == limit) {
                                     break;
@@ -181,8 +313,13 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
                     }
                 });
                 searchMap.hideProgress();
+                Log.d(TAG, "onFocus()");
             }
 
+            /**
+             * Called when the search bar has lost focus
+             * and listeners are no more active.
+             */
             @Override
             public void onFocusCleared() {
                 //set the title of the bar so that when focus is returned a new query begins
@@ -195,7 +332,9 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
         });
     }
 
-
+    /**
+     * Setup current location and route for user when click on a marker
+     */
     private void getCurrentLocation() {
         // Initialize task location
         @SuppressLint("MissingPermission")
@@ -206,22 +345,21 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
                 // When success
                 if (location != null) {
                     // Initialize latlng
-                    LatLng currentLocation = new LatLng(location.getLatitude(),location.getLongitude());
+                    LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
 
                     // Create marker option
                     // MarkerOptions options = new MarkerOptions().position(latLng).title("I'm here");
                     CircleOptions circles = new CircleOptions()
                             .center(currentLocation)
                             .radius(500)
-                            .fillColor(Color.argb(70,140,180,160))
+                            .fillColor(Color.argb(70, 140, 180, 160))
                             .strokeColor(Color.GREEN)
                             .strokeWidth(2f);
 
                     // Zoom map
-                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLocation,15));
+                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 15));
 
-                    // Add marker
-                    //mMap.addMarker(options);
+                    // Add circle
                     mMap.addCircle(circles);
 
                     // Setup direction for Google Map
@@ -251,13 +389,14 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
                         }
                     });
 
-                    
+
                 }
             }
         });
 
     }
 
+    // Setup Permission to get current location
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -270,54 +409,17 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
         }
     }
 
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-        mMap = googleMap;
 
-        // Setting UI for google map
-        mMap.getUiSettings().setZoomControlsEnabled(true);
-        mMap.getUiSettings().setMapToolbarEnabled(false);
-        mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-
-        // Load all site
-        mMap.setOnMapLoadedCallback(this);
-        mMap.setOnInfoWindowClickListener(this);
-
-        // Set custom info Google map adapter
-        CustomInfoWindowAdapter adapter = new CustomInfoWindowAdapter(getActivity());
-        mMap.setInfoWindowAdapter(adapter);
-
-        // Check permission
-        if (ActivityCompat.checkSelfPermission(requireActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
-            // When permission granted
-            // Call method get location
-            mMap.setMyLocationEnabled(true);
-            getCurrentLocation();
-        } else {
-            // When permission denied
-            // Request permission
-            ActivityCompat.requestPermissions(requireActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 44);
-        }
-
-    }
-
-    @Override
-    public void onInfoWindowClick(Marker marker) {
-        Intent intent = new Intent(getActivity(), SiteDetailActivity.class);
-        for (CleaningSite cleaningSite: cleaningSiteList){
-            if (cleaningSite.getName().equals(marker.getTitle())){
-                Log.d(TAG, "Get cleaning site: " + cleaningSite.get_id());
-                intent.putExtra("cleaningSite", cleaningSite);
-            }
-        }
-        startActivity(intent);
-        requireActivity().overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_left);
-    }
-
-
+    /**
+     * Function to get all sites display to UI listView
+     * if Success, add all CleaningSite without current owner' site object to a list
+     * by init from CleaningSite, then assign function onSiteCallBack
+     * if Failure, display Log debug
+     *
+     * @param onSiteCallBack callBack to get list of sites
+     */
     private void getSites(OnSiteCallBack onSiteCallBack) {
         currentUser = mAuth.getCurrentUser();
-
         db.collection("cleaningSites")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -326,14 +428,11 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 CleaningSite cleaningSite = document.toObject(CleaningSite.class);
-                                if (!cleaningSite.getOwner().equals(currentUser.getUid())){
+                                if (!cleaningSite.getOwner().equals(currentUser.getUid())) {
                                     cleaningSiteList.add(cleaningSite);
                                 }
                             }
                             onSiteCallBack.onCallBack(cleaningSiteList);
-                            Log.d(TAG, "Site list => " + cleaningSiteList.size());
-
-
                         } else {
                             Log.d(TAG, "Error getting documents: ", task.getException());
                         }
@@ -341,7 +440,15 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
                 });
     }
 
-    private void getSuggestionSites(OnSiteSuggestionCallBack onSiteSuggestionCallBack){
+    /**
+     * Function to get all suggestions display to UI searchView
+     * if Success, add all siteSuggestion without current owner' suggestion object to a list
+     * by init from siteSuggestion, then assign function onSiteSuggestionCallBack
+     * if Failure, display Log debug
+     *
+     * @param onSiteSuggestionCallBack callBack to get list of site suggestion
+     */
+    private void getSuggestionSites(OnSiteSuggestionCallBack onSiteSuggestionCallBack) {
         List<SiteSuggestion> siteSuggestions = new ArrayList<>();
         currentUser = mAuth.getCurrentUser();
 
@@ -353,14 +460,11 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 CleaningSite cleaningSite = document.toObject(CleaningSite.class);
-                                if (!cleaningSite.getOwner().equals(currentUser.getUid())){
-                                    siteSuggestions.add(new SiteSuggestion(cleaningSite.getName(), cleaningSite.get_id()));
+                                if (!cleaningSite.getOwner().equals(currentUser.getUid())) {
+                                    siteSuggestions.add(new SiteSuggestion(cleaningSite.getName(), cleaningSite.getId()));
                                 }
                             }
                             onSiteSuggestionCallBack.onCallBack(siteSuggestions);
-                            Log.d(TAG, "Site list => " + cleaningSiteList.size());
-
-
                         } else {
                             Log.d(TAG, "Error getting documents: ", task.getException());
                         }
@@ -368,33 +472,8 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
                 });
     }
 
-    @Override
-    public void onMapLoaded() {
-        getSites(new OnSiteCallBack() {
-            @Override
-            public void onCallBack(List<CleaningSite> cleaningSites) {
-                if (cleaningSiteList.size() < 1) {
-                    Log.d(TAG, "Don't have any site");
-                } else {
-                    List<LatLng> locations = new ArrayList<>();
 
-                    // Get all location latlng
-                    for (CleaningSite cleaningSite: cleaningSiteList){
-                        if (cleaningSite.getLat() == null || cleaningSite.getLng() == null){ continue; }
-                        locations.add(new LatLng(cleaningSite.getLat(),cleaningSite.getLng()));
-
-                        // Add marker for all sites
-                        mMap.addMarker(new MarkerOptions()
-                                .position(new LatLng(cleaningSite.getLat(),cleaningSite.getLng()))
-                                .title(cleaningSite.getName())
-                                .snippet(cleaningSite.getAddress())
-                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.logo)));
-                    }
-                }
-            }
-        });
-    }
-
+    // Function to get url to return the polyline direction
     private String getUrl(LatLng origin, LatLng dest, String directionMode) {
         // Origin of route
         String str_origin = "origin=" + origin.latitude + "," + origin.longitude;
@@ -411,13 +490,19 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
         return url;
     }
 
-
-
-    private interface OnSiteCallBack{
+    /**
+     * Interface for implementing a listener to listen
+     * to get list of cleaningSite from getSites().
+     */
+    private interface OnSiteCallBack {
         void onCallBack(List<CleaningSite> cleaningSites);
     }
 
-    private interface OnSiteSuggestionCallBack{
+    /**
+     * Interface for implementing a listener to listen
+     * to get list of siteSuggestion from getSites().
+     */
+    private interface OnSiteSuggestionCallBack {
         void onCallBack(List<SiteSuggestion> siteSuggestions);
     }
 }

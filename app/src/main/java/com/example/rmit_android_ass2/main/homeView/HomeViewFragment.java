@@ -40,16 +40,22 @@ import java.util.List;
  */
 public class HomeViewFragment extends Fragment {
 
-    // TODO: Customize parameters
-    private int mColumnCount = 1;
+    // Constant declaration
+    private final int mColumnCount = 1;
     private static final String TAG = "HOME_FRAGMENT";
 
+    // Android view declaration
+    private TextView searchButton;
     private ListView cleaningSiteListView;
+
+    // Adapter declaration
     private SiteListAdapter siteListAdapter;
+
+    // Array list declaration
     private ArrayList<CleaningSite> cleaningSiteList;
 
-    private TextView searchButton;
 
+    // Google Firebase declaration
     private FirebaseFirestore db;
     private FirebaseAuth mAuth;
     private FirebaseUser currentUser;
@@ -71,9 +77,20 @@ public class HomeViewFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
+        /*
+         *   Represents a Cloud Firestore database and
+         *   is the entry point for all Cloud Firestore
+         *   operations.
+         */
         db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
 
+        /*
+         *   Search button is default, when clicked on search button
+         *   -> starting new activity
+         *   -> setup transition slide right
+         */
         searchButton = requireView().findViewById(R.id.searchHomeView);
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -84,22 +101,28 @@ public class HomeViewFragment extends Fragment {
             }
         });
 
+        /*
+         *   getSites callback to return the list of all sites to setup listview with adapter
+         *   -> OnItemClick will save the CleaningSite object to Intent and starting new activity
+         *   -> setup transition slide right
+         */
         cleaningSiteList = new ArrayList<>();
-        getAllSites(new OnSiteCallBack() {
+        getSites(new OnSiteCallBack() {
             @Override
             public void onCallBack(List<CleaningSite> cleaningSites) {
-
-                Log.d(TAG,"Size list: " + cleaningSiteList.size());
-
+                Log.d(TAG, "Size list: " + cleaningSiteList.size());
                 cleaningSiteListView = requireView().findViewById(R.id.cleaningSiteHomeView);
 
+                // Setup adapter
                 siteListAdapter = new SiteListAdapter(cleaningSiteList);
                 cleaningSiteListView.setAdapter(siteListAdapter);
+
+                // Setup onItemClick
                 cleaningSiteListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                        Log.d(TAG,"WORK");
-                        Toast.makeText(getActivity(),"Clicked!",Toast.LENGTH_SHORT).show();
+                        Log.d(TAG, "WORK");
+                        Toast.makeText(getActivity(), "Clicked!", Toast.LENGTH_SHORT).show();
                         CleaningSite cleaningSite = (CleaningSite) siteListAdapter.getItem(position);
                         Intent intent = new Intent(getActivity(), SiteDetailActivity.class);
                         intent.putExtra("cleaningSite", cleaningSite);
@@ -111,9 +134,16 @@ public class HomeViewFragment extends Fragment {
         });
     }
 
-    private void getAllSites(OnSiteCallBack onSiteCallBack) {
-        currentUser = mAuth.getCurrentUser();
 
+    /**
+     * Function to get all sites display to UI listView
+     * if Success, add all CleaningSite object to a list
+     * assign function onSiteCallBack
+     * if Failure, display Log debug
+     *
+     * @param onSiteCallBack callBack to get list of sites
+     */
+    private void getSites(OnSiteCallBack onSiteCallBack) {
         db.collection("cleaningSites")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -133,8 +163,11 @@ public class HomeViewFragment extends Fragment {
                 });
     }
 
-
-    private interface OnSiteCallBack{
+    /**
+     * Interface for implementing a listener to listen
+     * to get list of siteSuggestion from getSites().
+     */
+    private interface OnSiteCallBack {
         void onCallBack(List<CleaningSite> cleaningSites);
     }
 }

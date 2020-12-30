@@ -16,23 +16,23 @@
             android:layout_height="30dp"
             android:layout_gravity="center|start"
             android:background="@color/backgroundColor"
-            android:src="@drawable/ic_back_arrow"/>
+            android:src="@drawable/ic_back_arrow" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:textSize="24sp"
-            android:textStyle="bold"
+            android:text="Site Follower"
             android:textColor="@color/primaryColor"
-            android:text="Site Follower" />
-
+            android:textSize="24sp"
+            android:textStyle="bold" />
     </androidx.appcompat.widget.Toolbar>
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fillViewport="true">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -46,33 +46,31 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
+                    android:layout_marginStart="16dp"
                     android:layout_weight="1"
-                    android:layout_marginLeft="16dp"
                     android:gravity="bottom|start"
                     android:text="Follower"
                     android:textColor="@color/primaryColor"
-                    android:textStyle="bold"
-                    android:textSize="30sp" />
+                    android:textSize="30sp"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
+                    android:layout_marginEnd="16dp"
                     android:layout_weight="1"
-                    android:layout_marginRight="16dp"
-                    android:text="Edit"
                     android:gravity="bottom|end"
+                    android:text="Edit"
                     android:textColor="@color/primaryColor"
                     android:textSize="16sp" />
-
             </LinearLayout>
 
             <ListView
                 android:id="@+id/listFollower"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:nestedScrollingEnabled="true"/>
+                android:nestedScrollingEnabled="true"
+                tools:targetApi="lollipop" />
         </LinearLayout>
-
-
     </ScrollView>
 </androidx.appcompat.widget.LinearLayoutCompat>

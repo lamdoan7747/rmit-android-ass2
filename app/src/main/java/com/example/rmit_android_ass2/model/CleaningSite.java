@@ -4,13 +4,10 @@ import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentId;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 public class CleaningSite implements Serializable {
     @DocumentId
-    private String _id;
+    private String id;
     private String name;
     private String address;
     private transient Timestamp date;
@@ -30,12 +27,12 @@ public class CleaningSite implements Serializable {
         this.address = address;
     }
 
-    public String get_id() {
-        return _id;
+    public String getId() {
+        return id;
     }
 
-    public void set_id(String _id) {
-        this._id = _id;
+    public void setId(String id) {
+        this.id = id;
     }
 
     public CleaningSite(String name) {

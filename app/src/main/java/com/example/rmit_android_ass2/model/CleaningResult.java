@@ -13,10 +13,8 @@ import java.util.Date;
 public class CleaningResult implements Serializable {
     @DocumentId
     private String id;
-
     @ServerTimestamp
     private Timestamp dateCleaning;
-
     private double amount;
 
     public CleaningResult() {

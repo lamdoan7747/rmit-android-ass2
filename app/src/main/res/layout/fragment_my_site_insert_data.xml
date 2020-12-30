@@ -15,25 +15,24 @@
             android:layout_height="30dp"
             android:layout_gravity="center|start"
             android:background="@color/backgroundColor"
-            android:src="@drawable/ic_back_arrow"/>
+            android:src="@drawable/ic_back_arrow" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:textSize="24sp"
-            android:textStyle="bold"
+            android:text="Data Collection"
             android:textColor="@color/primaryColor"
-            android:text="Data Collection" />
-
+            android:textSize="24sp"
+            android:textStyle="bold" />
     </androidx.appcompat.widget.Toolbar>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:layout_marginHorizontal="30dp"
-        android:orientation="vertical"
-        android:layout_gravity="center">
+        android:orientation="vertical">
 
         <EditText
             android:id="@+id/inputAmountCollection"
@@ -41,10 +40,11 @@
             android:layout_height="40dp"
             android:layout_marginBottom="10dp"
             android:background="@drawable/white_rectangle_background_button"
+            android:elevation="5dp"
+            android:hint="Amount"
             android:inputType="number"
             android:paddingHorizontal="15dp"
-            android:elevation="5dp"
-            android:hint="Amount" />
+            tools:targetApi="lollipop" />
 
         <EditText
             android:id="@+id/inputDateCollection"
@@ -52,21 +52,20 @@
             android:layout_height="40dp"
             android:layout_marginBottom="10dp"
             android:background="@drawable/white_rectangle_background_button"
-            android:inputType="number"
-            android:paddingHorizontal="15dp"
             android:elevation="5dp"
-            android:hint="Date" />
+            android:hint="Date"
+            android:paddingHorizontal="15dp"
+            tools:targetApi="lollipop" />
 
         <Button
             android:id="@+id/saveDataCollection"
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:layout_gravity="center"
-            android:gravity="center"
             android:background="@drawable/white_rectangle_background_button"
             android:elevation="5dp"
-            android:text="Save"/>
+            android:gravity="center"
+            android:text="Save"
+            tools:targetApi="lollipop" />
     </LinearLayout>
-
-
 </FrameLayout>

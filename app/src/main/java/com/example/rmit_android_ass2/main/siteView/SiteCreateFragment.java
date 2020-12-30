@@ -41,25 +41,20 @@ import java.util.Date;
 
 import static android.app.Activity.RESULT_OK;
 
-/**
- * A simple {@link Fragment} subclass.
- * create an instance of this fragment.
- */
+
 public class SiteCreateFragment extends Fragment {
+    // Constant declaration
+    private final String TAG = "SITE_CREATE_FRAGMENT";
+    private int REQUEST_CODE = 200;
 
-    private static final String TAG = "SITE_CREATE_FRAGMENT";
-    // Request code for startActivityForResult() to get location
-    private static int REQUEST_CODE = 200;
-
-    // Firestore declaration
+    // Google Firebase declaration
     private FirebaseFirestore db;
     private FirebaseAuth mAuth;
     private FirebaseUser currentUser;
 
-    // View declaration
+    // Android view declaration
     private EditText editName, editAddress, editLatitude,
             editLongitude, editDate, editStartTime, editEndTime;
-
     private Button createSiteButton, addLocationButton;
     private ImageButton backButton;
 
@@ -68,16 +63,12 @@ public class SiteCreateFragment extends Fragment {
         // Required empty public constructor
     }
 
-
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-
-        return inflater.inflate(R.layout.fragment_site_create, container, false);
-    }
-
+    /*
+     *   Setup onActivityResult to return intent date
+     *   -> Get latitude, longitude
+     *   -> Cast to Double
+     *   -> Display lat, lng to UI
+     */
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -92,18 +83,47 @@ public class SiteCreateFragment extends Fragment {
     }
 
     @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.fragment_site_create, container, false);
+    }
+
+
+    @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        /*
+         *   Represents a Cloud Firestore database and
+         *   is the entry point for all Cloud Firestore
+         *   operations.
+         */
         db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
 
+        // Initiate view for the activity
         renderView(requireView());
-        clickListener();
+
+        // Set all events on touchable
+        onClickListener();
     }
 
     @SuppressLint("SimpleDateFormat")
-    private void clickListener(){
+    private void onClickListener(){
+        // Back button to return the previous fragment
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                backToPrevious();
+            }
+        });
+
+        /*
+        *   Create site button will get all detail from UI update
+        *   Initiate CleaningSite object to set all detail
+        *   Then trigger createSite() function
+        * */
         createSiteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -142,13 +162,7 @@ public class SiteCreateFragment extends Fragment {
             }
         });
 
-        backButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                backToPrevious();
-            }
-        });
-
+        // Edit site location will start new map activity to get location with REQUEST_CODE
         addLocationButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -157,6 +171,8 @@ public class SiteCreateFragment extends Fragment {
             }
         });
 
+        // Edit date will popup a DatePicker dialog to set Date
+        // When finish, set the date to the UI
         editDate.setOnClickListener(new View.OnClickListener() {
             @Override
             @RequiresApi(api = Build.VERSION_CODES.N)
@@ -174,6 +190,8 @@ public class SiteCreateFragment extends Fragment {
             }
         });
 
+        // Edit start time will popup a TimePicker dialog to set time
+        // When finish, set the time to the UI
         editStartTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -192,6 +210,8 @@ public class SiteCreateFragment extends Fragment {
             }
         });
 
+        // Edit end time will popup a TimePicker dialog to set time
+        // When finish, set the time to the UI
         editEndTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -211,6 +231,11 @@ public class SiteCreateFragment extends Fragment {
         });
     }
 
+    /**
+     * Function to initiate all the view with the right id
+     *
+     * @param view view get from UI
+     */
     private void renderView(View view){
         editName = view.findViewById(R.id.siteNameSiteCreate);
         editAddress = view.findViewById(R.id.siteAddressSiteCreate);
@@ -226,6 +251,11 @@ public class SiteCreateFragment extends Fragment {
 
     }
 
+    /**
+     *  Function to create new site to Firebase
+     *  if Success, return to previous fragment
+     *  if Failure, display Log debug
+     * */
     private void createSite(CleaningSite cleaningSite) {
         currentUser = mAuth.getCurrentUser();
         if (currentUser != null)
@@ -236,14 +266,14 @@ public class SiteCreateFragment extends Fragment {
                 .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                     @Override
                     public void onSuccess(DocumentReference documentReference) {
-                        Toast.makeText(getActivity(),"Add success: " + documentReference.getId(), Toast.LENGTH_LONG).show();
+                        Log.d(TAG, "DocumentSnapshot successfully added!");
                         backToPrevious();
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(getActivity(),"Failure: " + e.toString(),Toast.LENGTH_LONG).show();
+                        Log.w(TAG, "Error updating document", e);
                     }
                 });
     }

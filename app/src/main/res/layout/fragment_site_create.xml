@@ -15,61 +15,60 @@
             android:layout_height="30dp"
             android:layout_gravity="center|start"
             android:background="@color/backgroundColor"
-            android:src="@drawable/ic_back_arrow"/>
+            android:src="@drawable/ic_back_arrow" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:textSize="24sp"
-            android:textStyle="bold"
+            android:text="Create Site"
             android:textColor="@color/primaryColor"
-            android:text="Create Site" />
-
+            android:textSize="24sp"
+            android:textStyle="bold" />
     </androidx.appcompat.widget.Toolbar>
-
-
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="50dp"
         android:layout_gravity="center"
+        android:layout_margin="50dp"
         android:orientation="vertical">
-
 
         <EditText
             android:id="@+id/siteNameSiteCreate"
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:layout_margin="5dp"
+            android:background="@drawable/white_rectangle_background"
+            android:elevation="5dp"
+            android:hint="Site name"
             android:paddingStart="15dp"
             android:paddingEnd="15dp"
-            android:elevation="5dp"
-            android:background="@drawable/white_rectangle_background"
-            android:hint="Site name" />
+            tools:targetApi="lollipop" />
 
         <EditText
             android:id="@+id/siteAddressSiteCreate"
             android:layout_width="match_parent"
             android:layout_height="40dp"
+            android:layout_margin="5dp"
+            android:background="@drawable/white_rectangle_background"
+            android:elevation="5dp"
+            android:hint="Address"
             android:paddingStart="15dp"
             android:paddingEnd="15dp"
-            android:layout_margin="5dp"
-            android:elevation="5dp"
-            android:background="@drawable/white_rectangle_background"
-            android:hint="Address"/>
+            tools:targetApi="lollipop" />
 
         <EditText
             android:id="@+id/siteDateSiteCreate"
             android:layout_width="match_parent"
             android:layout_height="40dp"
+            android:layout_margin="5dp"
+            android:background="@drawable/white_rectangle_background"
+            android:elevation="5dp"
+            android:hint="Date"
             android:paddingStart="15dp"
             android:paddingEnd="15dp"
-            android:layout_margin="5dp"
-            android:elevation="5dp"
-            android:background="@drawable/white_rectangle_background"
-            android:hint="Date"/>
+            tools:targetApi="lollipop" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -80,30 +79,31 @@
                 android:id="@+id/siteStartTimeSiteCreate"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
-                android:layout_marginVertical="5dp"
-                android:paddingStart="15dp"
-                android:paddingEnd="15dp"
                 android:layout_margin="5dp"
-                android:elevation="5dp"
+                android:layout_marginVertical="5dp"
                 android:layout_weight="1"
                 android:background="@drawable/white_rectangle_background"
-                android:hint="From"/>
+                android:elevation="5dp"
+                android:hint="From"
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp"
+                tools:targetApi="lollipop" />
 
             <EditText
                 android:id="@+id/siteEndTimeSiteCreate"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
-                android:layout_marginVertical="5dp"
-                android:paddingStart="15dp"
-                android:paddingEnd="15dp"
-                android:elevation="5dp"
                 android:layout_margin="5dp"
+                android:layout_marginVertical="5dp"
                 android:layout_weight="1"
                 android:background="@drawable/white_rectangle_background"
-                android:hint="To"/>
+                android:elevation="5dp"
+                android:hint="To"
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp"
+                tools:targetApi="lollipop" />
 
         </LinearLayout>
-
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -114,30 +114,31 @@
                 android:id="@+id/siteLatitudeSiteCreate"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
+                android:layout_margin="5dp"
                 android:layout_marginVertical="5dp"
+                android:layout_weight="1"
+                android:background="@drawable/white_rectangle_background"
+                android:elevation="5dp"
+                android:enabled="false"
+                android:hint="Latitude"
                 android:paddingStart="15dp"
                 android:paddingEnd="15dp"
-                android:elevation="5dp"
-                android:layout_margin="5dp"
-                android:layout_weight="1"
-                android:hint="Latitude"
-                android:background="@drawable/white_rectangle_background"
-                android:enabled="false"/>
+                tools:targetApi="lollipop" />
 
             <EditText
                 android:id="@+id/siteLongitudeSiteCreate"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
+                android:layout_margin="5dp"
                 android:layout_marginVertical="5dp"
+                android:layout_weight="1"
+                android:background="@drawable/white_rectangle_background"
+                android:elevation="5dp"
+                android:enabled="false"
+                android:hint="Longitude"
                 android:paddingStart="15dp"
                 android:paddingEnd="15dp"
-                android:elevation="5dp"
-                android:layout_margin="5dp"
-                android:layout_weight="1"
-                android:hint="Longitude"
-                android:background="@drawable/white_rectangle_background"
-                android:enabled="false"/>
-
+                tools:targetApi="lollipop" />
         </LinearLayout>
 
         <androidx.appcompat.widget.AppCompatButton
@@ -147,10 +148,10 @@
             android:layout_margin="5dp"
             android:background="@drawable/white_rectangle_background"
             android:backgroundTint="@color/white"
-            android:textColor="@color/primaryColor"
             android:elevation="5dp"
-            android:text="Add location" />
-
+            android:text="Add location"
+            android:textColor="@color/primaryColor"
+            tools:targetApi="lollipop" />
 
         <Button
             android:id="@+id/createSiteSiteCreate"
@@ -158,12 +159,6 @@
             android:layout_height="40dp"
             android:layout_margin="5dp"
             android:background="@drawable/white_rectangle_background"
-
             android:text="Create" />
-
-
-
-
     </LinearLayout>
-
 </FrameLayout>

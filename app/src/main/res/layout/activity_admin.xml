@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:fitsSystemWindows="true"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
     android:orientation="vertical"
     tools:context=".main.admin.AdminActivity">
 
@@ -12,7 +12,7 @@
         android:id="@+id/adminContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="1"/>
+        android:layout_weight="1" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation_admin"
@@ -21,7 +21,5 @@
         android:layout_gravity="bottom"
         app:backgroundTint="@color/white"
         app:itemIconSize="30dp"
-        app:menu="@menu/bottom_navigation_menu_admin"/>
-
-
+        app:menu="@menu/bottom_navigation_menu_admin" />
 </androidx.appcompat.widget.LinearLayoutCompat>

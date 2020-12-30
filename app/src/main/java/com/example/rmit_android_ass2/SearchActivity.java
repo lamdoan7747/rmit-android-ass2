@@ -5,7 +5,6 @@ import android.os.Bundle;
 
 import com.arlib.floatingsearchview.FloatingSearchView;
 import com.arlib.floatingsearchview.suggestions.model.SearchSuggestion;
-import com.example.rmit_android_ass2.main.adapter.SearchSiteListAdapter;
 import com.example.rmit_android_ass2.model.SiteSuggestion;
 import com.example.rmit_android_ass2.model.CleaningSite;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -16,29 +15,25 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
-import android.view.MenuItem;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class SearchActivity extends AppCompatActivity {
-
+    // Constant declaration
     private final String TAG = "SEARCH_ACTIVITY";
 
-    public static final long FIND_SUGGESTION_SIMULATED_DELAY = 250;
-
+    // Android view declaration
     private FloatingSearchView searchView;
 
-    private RecyclerView searchSiteList;
-    private SearchSiteListAdapter searchSiteAdapter;
-
+    // Utils variable declaration
     private String mLastQuery = "";
     private final int limit = 3;
     private String cleaningSiteId;
 
+    // Google Firebase declaration
     private FirebaseFirestore db;
 
 
@@ -47,39 +42,59 @@ public class SearchActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
 
+        /*
+         *   Represents a Cloud Firestore database and
+         *   is the entry point for all Cloud Firestore
+         *   operations.
+         */
+        db = FirebaseFirestore.getInstance();
+
+        // When activity create, set focus to the search view
         searchView = (FloatingSearchView) findViewById(R.id.floating_search_view);
         searchView.setSearchFocused(true);
-        //searchSiteList = (RecyclerView) findViewById(R.id.search_results_list);
 
+        // Action when use the searchView
         setupFloatingSearch();
+
+        // Display recyclerView for sites (Out scope)
         setupResultsList();
     }
 
-    private void setupResultsList(){
+    // Display recyclerView for sites (Out scope)
+    private void setupResultsList() {
     }
 
     private void setupFloatingSearch() {
         searchView.setOnQueryChangeListener(new FloatingSearchView.OnQueryChangeListener() {
+            /**
+             * Called when the query has changed. It will
+             * be invoked when one or more characters in the
+             * query was changed.
+             *
+             * @param oldQuery the previous query
+             * @param newQuery the new query
+             */
             @Override
             public void onSearchTextChanged(String oldQuery, final String newQuery) {
-
                 if (!oldQuery.equals("") && newQuery.equals("")) {
                     mLastQuery = "";
                     searchView.clearSuggestions();
                 } else {
-                    //this shows the top left circular progress
-                    //you can call it where ever you want, but
-                    //it makes sense to do it when loading something in
-                    //the background.
+                    /*  this shows the top left circular progress
+                     *  you can call it where ever you want, but
+                     *  it makes sense to do it when loading something in
+                     *  the background.
+                     */
                     searchView.showProgress();
-                    //this will swap the data and
-                    //render the collapse/expand animations as necessary
+
+                    // this will swap the data and
+                    // render the collapse/expand animations as necessary
                     getSites(new OnSiteCallBack() {
                         @Override
                         public void onCallBack(List<SiteSuggestion> siteSuggestions) {
                             List<SiteSuggestion> suggestionList = new ArrayList<>();
-                            for(SiteSuggestion siteSuggestion:siteSuggestions){
-                                if(siteSuggestion.getBody().toLowerCase().contains(newQuery.toLowerCase())){
+                            for (SiteSuggestion siteSuggestion : siteSuggestions) {
+                                if (siteSuggestion.getBody().toLowerCase().contains(newQuery.toLowerCase())) {
                                     suggestionList.add(siteSuggestion);
                                     if (suggestionList.size() == limit) {
                                         break;
@@ -90,29 +105,37 @@ public class SearchActivity extends AppCompatActivity {
                             searchView.swapSuggestions(suggestionList);
                         }
                     });
-                    //let the users know that the background
-                    //process has completed
+
+                    // let the users know that the background
+                    // process has completed
                     searchView.hideProgress();
-                    Log.d(TAG, "onSearchTextChanged()");
+                    Log.d(TAG, "onSearchTextChanged(): " + newQuery);
                 }
             }
         });
 
+
         searchView.setOnSearchListener(new FloatingSearchView.OnSearchListener() {
+            /**
+             * Called when a suggestion was clicked indicating
+             * that the current search has completed.
+             *
+             * @param searchSuggestion siteSuggestion
+             */
             @Override
             public void onSuggestionClicked(final SearchSuggestion searchSuggestion) {
-
+                // Cast to SiteSuggestion model object
                 SiteSuggestion siteSuggestion = (SiteSuggestion) searchSuggestion;
                 cleaningSiteId = siteSuggestion.getCleaningSiteId();
 
-
+                // Start new activity when clicked
                 Intent intent = new Intent(SearchActivity.this, SiteDetailActivity.class);
-                intent.putExtra("cleaningSiteId",cleaningSiteId);
+                intent.putExtra("cleaningSiteId", cleaningSiteId);
                 startActivity(intent);
 
-                Log.d(TAG, "onSuggestionClicked()");
+                Log.d(TAG, "onSuggestionClicked(): " + searchSuggestion.getBody());
+                // When return back to the Search Activity, display query on searchText
                 mLastQuery = searchSuggestion.getBody();
-                searchView.clearSearchFocus();
             }
 
             @Override
@@ -122,7 +145,12 @@ public class SearchActivity extends AppCompatActivity {
             }
         });
 
+
         searchView.setOnFocusChangeListener(new FloatingSearchView.OnFocusChangeListener() {
+            /**
+             * Called when the search bar has gained focus
+             * and listeners are now active.
+             */
             @Override
             public void onFocus() {
                 searchView.showProgress();
@@ -131,9 +159,9 @@ public class SearchActivity extends AppCompatActivity {
                 getSites(new OnSiteCallBack() {
                     @Override
                     public void onCallBack(List<SiteSuggestion> siteSuggestions) {
-                        List<SiteSuggestion> suggestionList=new ArrayList<>();
-                        for(SiteSuggestion siteSuggestion:siteSuggestions){
-                            if(siteSuggestion.getBody().toLowerCase().contains(searchView.getQuery().toLowerCase())){
+                        List<SiteSuggestion> suggestionList = new ArrayList<>();
+                        for (SiteSuggestion siteSuggestion : siteSuggestions) {
+                            if (siteSuggestion.getBody().toLowerCase().contains(searchView.getQuery().toLowerCase())) {
                                 suggestionList.add(siteSuggestion);
                                 if (suggestionList.size() == limit) {
                                     break;
@@ -147,6 +175,10 @@ public class SearchActivity extends AppCompatActivity {
                 Log.d(TAG, "onFocus()");
             }
 
+            /**
+             * Called when the search bar has lost focus
+             * and listeners are no more active.
+             */
             @Override
             public void onFocusCleared() {
 
@@ -155,25 +187,21 @@ public class SearchActivity extends AppCompatActivity {
 
                 //you can also set setSearchText(...) to make keep the query there when not focused and when focus returns
                 searchView.setSearchText(mLastQuery);
-
                 Log.d(TAG, "onFocusCleared()");
-            }
-        });
-
-
-        //handle menu clicks the same way as you would
-        //in a regular activity
-        searchView.setOnMenuItemClickListener(new FloatingSearchView.OnMenuItemClickListener() {
-            @Override
-            public void onActionMenuItemSelected(MenuItem item) {
-                Log.d(TAG, "onActionMenuItemSelected()");
             }
         });
     }
 
+    /**
+     * Function to get all sites display to UI listView
+     * if Success, add all SiteSuggestion object to a list
+     * by init from CleaningSite, then assign function onSiteCallBack
+     * if Failure, display Log debug
+     *
+     * @param onSiteCallBack callBack to get list of sites
+     */
     private void getSites(OnSiteCallBack onSiteCallBack) {
         List<SiteSuggestion> siteSuggestions = new ArrayList<>();
-        db = FirebaseFirestore.getInstance();
         db.collection("cleaningSites")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -184,10 +212,9 @@ public class SearchActivity extends AppCompatActivity {
                                 Log.d(TAG, document.getId() + " => " + document.getData());
                                 CleaningSite cleaningSite = document.toObject(CleaningSite.class);
 
-                                siteSuggestions.add(new SiteSuggestion(cleaningSite.getName(), cleaningSite.get_id()));
+                                siteSuggestions.add(new SiteSuggestion(cleaningSite.getName(), cleaningSite.getId()));
                             }
                             onSiteCallBack.onCallBack(siteSuggestions);
-
                         } else {
                             Log.d(TAG, "Error getting documents: ", task.getException());
                         }
@@ -195,8 +222,11 @@ public class SearchActivity extends AppCompatActivity {
                 });
     }
 
-
-    private interface OnSiteCallBack{
+    /**
+     * Interface for implementing a listener to listen
+     * to get list of siteSuggestion from getSites().
+     */
+    private interface OnSiteCallBack {
         void onCallBack(List<SiteSuggestion> siteSuggestions);
     }
 }

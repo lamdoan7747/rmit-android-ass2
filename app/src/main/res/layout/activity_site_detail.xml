@@ -7,41 +7,42 @@
     tools:context=".SiteDetailActivity">
 
     <androidx.appcompat.widget.Toolbar
-            android:layout_width="match_parent"
-            android:layout_height="50dp">
+        android:layout_width="match_parent"
+        android:layout_height="50dp">
 
-            <ImageButton
-                android:id="@+id/backButtonToolbarSiteDetail"
-                android:layout_width="wrap_content"
-                android:layout_height="30dp"
-                android:layout_gravity="center|start"
-                android:background="@color/backgroundColor"
-                android:src="@drawable/ic_back_arrow"/>
+        <ImageButton
+            android:id="@+id/backButtonToolbarSiteDetail"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:layout_gravity="center|start"
+            android:background="@color/backgroundColor"
+            android:src="@drawable/ic_back_arrow" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:textSize="24sp"
-                android:textStyle="bold"
-                android:textColor="@color/primaryColor"
-                android:text="Cleaning Site" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Cleaning Site"
+            android:textColor="@color/primaryColor"
+            android:textSize="24sp"
+            android:textStyle="bold" />
 
-            <ImageButton
-                android:id="@+id/optionSite"
-                android:layout_width="wrap_content"
-                android:layout_height="30dp"
-                android:layout_gravity="center|end"
-                android:layout_marginEnd="15dp"
-                android:background="@color/backgroundColor"
-                android:src="@drawable/ic_more_vert_black_24dp"/>
+        <ImageButton
+            android:id="@+id/optionSite"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:layout_gravity="center|end"
+            android:layout_marginEnd="15dp"
+            android:background="@color/backgroundColor"
+            android:src="@drawable/ic_more_vert_black_24dp" />
 
     </androidx.appcompat.widget.Toolbar>
+
     <ScrollView
         android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_marginTop="50dp"
-        android:fillViewport="true"
-        android:layout_height="match_parent">
+        android:fillViewport="true">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -51,7 +52,7 @@
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
-                android:background="@drawable/app_logo"/>
+                android:background="@drawable/app_logo" />
 
             <TextView
                 android:id="@+id/siteNameSiteDetail"
@@ -85,37 +86,40 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center|right"
-                    android:layout_marginEnd="15dp"
                     android:layout_marginStart="15dp"
+                    android:layout_marginEnd="15dp"
                     android:text="404 Followers"
                     android:textColor="@color/dark_gray"
-                    android:textSize="12sp"/>
+                    android:textSize="12sp"
+                    tools:ignore="RtlHardcoded" />
 
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginVertical="30dp"
                 android:layout_marginHorizontal="15dp"
+                android:layout_marginVertical="30dp"
                 android:orientation="horizontal">
 
                 <ImageView
                     android:layout_width="50dp"
                     android:layout_height="50dp"
                     android:background="@drawable/white_rectangle_background"
-                    android:src="@drawable/app_logo"/>
+                    android:src="@drawable/app_logo" />
+
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
                     android:layout_gravity="center"
+                    android:layout_marginStart="10dp"
                     android:orientation="vertical">
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="top"
-                        android:text="Hosted by"/>
+                        android:text="Hosted by" />
 
                     <TextView
                         android:id="@+id/siteHostSiteDetail"
@@ -148,9 +152,9 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
                     android:layout_weight="1"
-                    android:textColor="@color/primaryColor"
                     android:backgroundTint="@color/white"
                     android:text="Direction"
+                    android:textColor="@color/primaryColor"
                     tools:targetApi="lollipop" />
             </LinearLayout>
 
@@ -165,46 +169,50 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="start|center"
                     android:layout_marginStart="15dp"
-                    android:text="Activity"
                     android:layout_weight="1"
+                    android:text="Activity"
                     android:textColor="@color/dark_gray"
-                    android:textStyle="bold"
-                    android:textSize="24sp"/>
+                    android:textSize="24sp"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="bottom|right"
-                    android:layout_marginEnd="15dp"
                     android:layout_marginStart="15dp"
+                    android:layout_marginEnd="15dp"
                     android:text="more >"
                     android:textColor="@color/dark_gray"
-                    android:textSize="12sp"/>
+                    android:textSize="12sp" />
 
             </LinearLayout>
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
+
                 <TextView
                     android:id="@+id/viewNoRecordSiteDetail"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
                     android:gravity="center"
-                    android:textSize="24sp"
                     android:text="No activity yet!"
-                    android:visibility="invisible"/>
+                    android:textSize="24sp"
+                    android:visibility="invisible" />
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
+
                     <ListView
                         android:id="@+id/listResultSiteDetail"
                         android:name="com.example.rmit_android_ass2.SiteListFragment"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:nestedScrollingEnabled="true"
-                        tools:listitem="@layout/list_view_result" />
+                        tools:listitem="@layout/list_view_result"
+                        tools:targetApi="lollipop" />
                 </LinearLayout>
             </RelativeLayout>
         </LinearLayout>
@@ -221,6 +229,7 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
+
             <Button
                 android:id="@+id/siteUnfollow"
                 android:layout_width="wrap_content"
@@ -229,6 +238,4 @@
                 android:text="Unfollow" />
         </LinearLayout>
     </LinearLayout>
-
-
 </FrameLayout>

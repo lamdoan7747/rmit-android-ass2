@@ -21,8 +21,8 @@ import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
-
-    private static final String TAG = "MESSAGE_RECEIVE";
+    // Constant declaration
+    private final String TAG = "FIREBASE_MESSAGE";
 
 
     @Override
@@ -69,6 +69,5 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     @Override
     public void onDeletedMessages() {
         super.onDeletedMessages();
-
     }
 }

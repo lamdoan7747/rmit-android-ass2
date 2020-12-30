@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ReportAdapter extends RecyclerView.Adapter<ReportAdapter.ViewHolder> {
-    private ArrayList<Report> reports;
+    private final ArrayList<Report> reports;
 
     public ReportAdapter(ArrayList<Report> reports) {
         this.reports = reports;
@@ -47,10 +47,10 @@ public class ReportAdapter extends RecyclerView.Adapter<ReportAdapter.ViewHolder
     }
 
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
-        private TextView reportSiteName;
-        private TextView reportSiteFollower;
-        private TextView reportSiteAmount;
+    public static class ViewHolder extends RecyclerView.ViewHolder{
+        private final TextView reportSiteName;
+        private final TextView reportSiteFollower;
+        private final TextView reportSiteAmount;
 
         public ViewHolder(@NonNull View view) {
             super(view);

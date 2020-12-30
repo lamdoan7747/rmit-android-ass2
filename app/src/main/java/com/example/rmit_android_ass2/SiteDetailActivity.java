@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -40,26 +41,31 @@ import java.util.Date;
 import java.util.List;
 
 public class SiteDetailActivity extends AppCompatActivity {
-
+    // Constant declaration
     private static final String TAG = "ACTIVITY_SITE_DETAIL";
+    private final String REGISTER = "REGISTER";
+    private final String UNFOLLOW = "UNFOLLOW";
 
+    // Android View declaration
     private Button registerButton, unfollowButton;
     private ImageButton backButton;
     private TextView viewFollower, siteName, siteDate,
             siteHost, siteStartTime, siteEndTime, viewNoRecord;
     private ListView listResult;
 
+    // Google Firebase declaration
     private FirebaseFirestore db;
     private FirebaseAuth mAuth;
     private FirebaseUser currentUser;
 
-    private final String REGISTER = "REGISTER";
-    private final String UNFOLLOW = "UNFOLLOW";
-
+    // Array list declaration
     private ArrayList<User> followers;
     private ArrayList<CleaningResult> cleaningResults;
 
+    // Adapter declaration
     private ResultListAdapter resultListAdapter;
+
+    // Utils variable declaration
     private String cleaningSiteId;
 
 
@@ -68,33 +74,41 @@ public class SiteDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_site_detail);
 
-
+        /*
+         *   Represents a Cloud Firestore database and
+         *   is the entry point for all Cloud Firestore
+         *   operations.
+         */
         db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
+
+        // Get user id from FirebaseUser
         currentUser = mAuth.getCurrentUser();
-        assert currentUser != null;
         String userId = currentUser.getUid();
 
+        // Get intent data from the previous activity
         Intent intent = getIntent();
         if (intent.getExtras().get("cleaningSite") != null) {
             CleaningSite cleaningSite = (CleaningSite) intent.getExtras().get("cleaningSite");
-            cleaningSiteId = cleaningSite.get_id();
+            cleaningSiteId = cleaningSite.getId();
         } else {
             cleaningSiteId = (String) intent.getExtras().get("cleaningSiteId");
         }
 
+        // Initiate view for the activity
         renderView();
+
+        // Set all events on touchable with siteId and userId variable
         onClickListener(cleaningSiteId, userId);
 
+        // Get all site details to display
+        getSiteDetail(cleaningSiteId);
 
-        // GET FOLLOWER OF THE SITE
+        // Get follower size to display on textView
         followers = new ArrayList<>();
         getFollowers(cleaningSiteId);
 
-        // GET SITE DETAIL
-        getSiteDetail(cleaningSiteId);
-
-        // GET SITE RESULT
+        // Get all site results to display
         cleaningResults = new ArrayList<>();
         getResults(cleaningSiteId, new OnResultCallBack() {
             @Override
@@ -117,6 +131,7 @@ public class SiteDetailActivity extends AppCompatActivity {
     }
 
     private void onClickListener(String cleaningSiteId, String userId) {
+        // Back button to return to the previous activity
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -125,6 +140,7 @@ public class SiteDetailActivity extends AppCompatActivity {
             }
         });
 
+        // Register button start triggered actionSite() with REGISTER action
         registerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -132,6 +148,7 @@ public class SiteDetailActivity extends AppCompatActivity {
             }
         });
 
+        // Unfollow button start triggered actionSite() with UNFOLLOW action
         unfollowButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -140,7 +157,7 @@ public class SiteDetailActivity extends AppCompatActivity {
         });
     }
 
-    private void renderView(){
+    private void renderView() {
         registerButton = findViewById(R.id.siteRegisterButtonSiteDetail);
         unfollowButton = findViewById(R.id.siteUnfollow);
         backButton = findViewById(R.id.backButtonToolbarSiteDetail);
@@ -153,9 +170,16 @@ public class SiteDetailActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Function to get all followers of specific site to
+     * return total of followers
+     *
+     * @param cleaningSiteId cleaning siteId to query
+     */
     private void getFollowers(String cleaningSiteId) {
-        DocumentReference docRef = db.collection("cleaningSites").document(cleaningSiteId);
-        docRef.collection("followers")
+        db.collection("cleaningSites")
+                .document(cleaningSiteId)
+                .collection("followers")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -167,7 +191,6 @@ public class SiteDetailActivity extends AppCompatActivity {
                             }
                             viewFollower.setText(String.format("%s followers", followers.size()));
                             Log.d(TAG, "Follower size => " + followers.size());
-
                         } else {
                             Log.d(TAG, "Error getting follower: ", task.getException());
                         }
@@ -175,98 +198,61 @@ public class SiteDetailActivity extends AppCompatActivity {
                 });
     }
 
-    private void actionSite(String userId,String cleaningSiteId, String action) {
-        DocumentReference docRef = db.collection("users").document(userId);
-        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    DocumentSnapshot document = task.getResult();
-                    if (document.exists()) {
-                        User user = document.toObject(User.class);
-                        switch (action){
-                            case REGISTER:
-                                registerSite(cleaningSiteId, user);
-                                break;
-                            case UNFOLLOW:
-                                unfollowSite(cleaningSiteId, user);
-                                break;
-                        }
-                    } else {
-                        Log.d(TAG, "Cannot get any document:" + task.getException());
-                    }
-                } else {
-                    Log.d(TAG, "get failed with ", task.getException());
-                }
-            }
-        });
-    }
-
-    private void unfollowSite(String cleaningSiteId, User user) {
-        DocumentReference docRef = db.collection("cleaningSites").document(cleaningSiteId);
-        docRef.collection("followers")
-                .document(user.getId())
-                .delete()
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
+    /**
+     * Function to query to the user database to trigger registerSite or unfollowSite function
+     * with the siteId and User object
+     *
+     * @param cleaningSiteId cleaning siteId to pass to new function
+     * @param userId         userId to get document
+     * @param action         action from UI
+     */
+    private void actionSite(String userId, String cleaningSiteId, String action) {
+        db.collection("users")
+                .document(userId)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.d(TAG, "Site successfully delete follower!");
-                        Toast.makeText(SiteDetailActivity.this, "Unfollowed!", Toast.LENGTH_SHORT).show();
-                        unsubscribeToSite(cleaningSiteId);
-                        actionFollower(cleaningSiteId, UNFOLLOW);
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w(TAG, "Error deleting follower", e);
-                    }
-                });
-    }
-
-    private void actionFollower(String cleaningSiteId, String action) {
-        db.runTransaction(new Transaction.Function<Long>() {
-            @Nullable
-            @Override
-            public Long apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
-                DocumentReference docRef = db.collection("cleaningSites").document(cleaningSiteId);
-                DocumentSnapshot document = transaction.get(docRef);
-                switch (action){
-                    case REGISTER:
-                        long addFollower = document.getLong("follower") + 1;
-                        transaction.update(docRef,"follower",addFollower);
-                        return addFollower;
-                    case UNFOLLOW:
-                        long removeFollower = document.getLong("follower") - 1;
-                        transaction.update(docRef,"follower",removeFollower);
-                        return removeFollower;
-                    default:
-                        throw new IllegalStateException("Unexpected value: " + action);
-                }
-            }
-        }).addOnSuccessListener(new OnSuccessListener<Long>() {
-            @Override
-            public void onSuccess(Long result) {
-                viewFollower.setText(String.format("%s followers", result));
-            }
-        });
-    }
-
-    private void unsubscribeToSite(String cleaningSiteId) {
-        FirebaseMessaging.getInstance().unsubscribeFromTopic(cleaningSiteId)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                         if (task.isSuccessful()) {
-                            Toast.makeText(SiteDetailActivity.this, "Subscribed!", Toast.LENGTH_SHORT).show();
+                            DocumentSnapshot document = task.getResult();
+                            if (document.exists()) {
+                                User user = document.toObject(User.class);
+                                switch (action) {
+                                    case REGISTER:
+                                        registerSite(cleaningSiteId, user);
+                                        break;
+                                    case UNFOLLOW:
+                                        unfollowSite(cleaningSiteId, user);
+                                        break;
+                                }
+                            } else {
+                                Log.d(TAG, "Cannot get any document:" + task.getException());
+                            }
+                        } else {
+                            Log.d(TAG, "get failed with ", task.getException());
                         }
                     }
                 });
     }
 
-    private void registerSite(String cleaningSiteId, User user) {
+    /**
+     * Function to add new User to "follower" sub-collection from cleaningSites collection
+     * set document id with User id
+     * if Success,
+     * -> trigger subscribeToSite() function from Cloud Messaging Firebase
+     * -> able to receive notification from the topic named "cleaningSiteId"
+     * -> trigger updateSite() to update site detail with REGISTER action
+     * if Failure, display Log debug
+     *
+     * @param cleaningSiteId cleaning siteId to get document
+     * @param user           User object to get name & email
+     */
+    private void registerSite(String cleaningSiteId, @NonNull User user) {
+        // Get document query by cleaningSiteId
         DocumentReference docRef = db.collection("cleaningSites").document(cleaningSiteId);
-        User newUser = new User(user.getFname(),user.getEmail());
+
+        // Declare an object with name and email only
+        User newUser = new User(user.getName(), user.getEmail());
 
         docRef.collection("followers")
                 .document(user.getId())
@@ -277,18 +263,23 @@ public class SiteDetailActivity extends AppCompatActivity {
                         Log.d(TAG, "Site successfully added new follower!");
                         Toast.makeText(SiteDetailActivity.this, "Registered!", Toast.LENGTH_SHORT).show();
                         subscribeToSite(cleaningSiteId);
-                        actionFollower(cleaningSiteId,REGISTER);
+                        updateSite(cleaningSiteId, REGISTER);
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Log.d(TAG,"Error add new follower!");
+                        Log.d(TAG, "Error add new follower!");
                     }
                 });
     }
 
-
+    /**
+     * Function to subscribe to new topic named "cleaningSiteId"
+     * if Success, display toast message
+     *
+     * @param cleaningSiteId cleaning siteId to get document
+     */
     private void subscribeToSite(String cleaningSiteId) {
         FirebaseMessaging.getInstance().subscribeToTopic(cleaningSiteId)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -302,51 +293,157 @@ public class SiteDetailActivity extends AppCompatActivity {
                 });
     }
 
-    private void getSiteDetail(String cleaningSiteId) {
+    /**
+     * Function to delete new User from "follower" sub-collection from cleaningSites collection
+     * get document id with User id
+     * if Success,
+     * -> trigger unsubscribeToSite() function from Cloud Messaging Firebase
+     * -> able to refuse notification from the topic named "cleaningSiteId"
+     * -> trigger updateSite() to update site detail with UNFOLLOW action
+     * if Failure, display Log debug
+     *
+     * @param cleaningSiteId cleaning siteId to get document
+     * @param user           User object to get name & email
+     */
+    private void unfollowSite(String cleaningSiteId, @NonNull User user) {
         DocumentReference docRef = db.collection("cleaningSites").document(cleaningSiteId);
-        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    DocumentSnapshot document = task.getResult();
-                    if (document.exists()) {
-                        CleaningSite cleaningSite = document.toObject(CleaningSite.class);
-                        Log.d(TAG, "Site id: " + cleaningSite.get_id());
-
-                        siteName.setText(cleaningSite.getName());
-
-                        if (cleaningSite.getDate() != null){
-                            Date dateFormat = cleaningSite.getDate().toDate();
-                            String simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy").format(dateFormat);
-                            siteDate.setText(simpleDateFormat);
-                        }
-
-                        // Set host name
-                        String hostId = cleaningSite.getOwner();
-                        setHostName(hostId);
-
-
-                    } else {
-                        Log.d("CLEANING SITE", "Cannot get any document:" + task.getException());
+        docRef.collection("followers")
+                .document(user.getId())
+                .delete()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(TAG, "Site successfully delete follower!");
+                        Toast.makeText(SiteDetailActivity.this, "Unfollowed!", Toast.LENGTH_SHORT).show();
+                        unsubscribeToSite(cleaningSiteId);
+                        updateSite(cleaningSiteId, UNFOLLOW);
                     }
-                } else {
-                    Log.d("ON FAILURE", "get failed with ", task.getException());
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "Error deleting follower", e);
+                    }
+                });
+    }
+
+    /**
+     * Function to unsubscribe to registered topic named "cleaningSiteId"
+     * if Success, display toast message
+     *
+     * @param cleaningSiteId cleaning siteId to get document
+     */
+    private void unsubscribeToSite(String cleaningSiteId) {
+        FirebaseMessaging.getInstance().unsubscribeFromTopic(cleaningSiteId)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            Toast.makeText(SiteDetailActivity.this, "Subscribed!", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+    }
+
+    /**
+     * Function to update follower in "cleaningSites" collection
+     * if REGISTER, update follower add 1
+     * if UNFOLLOW, update follower minus 1
+     * on Success, set new follower for textView
+     *
+     * @param cleaningSiteId cleaning siteId to get document
+     * @param action         action from UI
+     */
+    private void updateSite(String cleaningSiteId, String action) {
+        db.runTransaction(new Transaction.Function<Long>() {
+            @Nullable
+            @Override
+            public Long apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
+                DocumentReference docRef = db.collection("cleaningSites").document(cleaningSiteId);
+                DocumentSnapshot document = transaction.get(docRef);
+                switch (action) {
+                    case REGISTER:
+                        long addFollower = document.getLong("follower") + 1;
+                        transaction.update(docRef, "follower", addFollower);
+                        return addFollower;
+                    case UNFOLLOW:
+                        long removeFollower = document.getLong("follower") - 1;
+                        transaction.update(docRef, "follower", removeFollower);
+                        return removeFollower;
+                    default:
+                        throw new IllegalStateException("Unexpected value: " + action);
                 }
+            }
+        }).addOnSuccessListener(new OnSuccessListener<Long>() {
+            @Override
+            public void onSuccess(Long result) {
+                viewFollower.setText(String.format("%s followers", result));
             }
         });
     }
 
+    /**
+     * Function to get all site details to display to UI
+     * if Success, set textView for siteName, siteDate, finally trigger setHostName function
+     * if Failure, display Log debug
+     *
+     * @param cleaningSiteId cleaning siteId to get document
+     */
+    private void getSiteDetail(String cleaningSiteId) {
+        db.collection("cleaningSites")
+                .document(cleaningSiteId)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    @SuppressLint("SimpleDateFormat")
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if (task.isSuccessful()) {
+                            DocumentSnapshot document = task.getResult();
+                            if (document.exists()) {
+                                CleaningSite cleaningSite = document.toObject(CleaningSite.class);
+                                Log.d(TAG, "Site id: " + cleaningSite.getId());
+
+                                siteName.setText(cleaningSite.getName());
+
+                                if (cleaningSite.getDate() != null) {
+                                    Date dateFormat = cleaningSite.getDate().toDate();
+                                    String simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy").format(dateFormat);
+                                    siteDate.setText(simpleDateFormat);
+                                }
+
+                                // Set host name
+                                String hostId = cleaningSite.getOwner();
+                                setHostName(hostId);
+
+
+                            } else {
+                                Log.d(TAG, "Cannot get any document:" + task.getException());
+                            }
+                        }
+                    }
+                });
+    }
+
+    /**
+     * Function to get all results to add to listView
+     * if Success, add all CleaningResult object to a list
+     * -> assign function onResultCallBack
+     * if Failure, display Log debug
+     *
+     * @param cleaningSiteId   cleaning siteId to get document
+     * @param onResultCallBack callBack interface to get list of results
+     */
     private void getResults(String cleaningSiteId, OnResultCallBack onResultCallBack) {
-        DocumentReference docRef = db.collection("cleaningSites").document(cleaningSiteId);
-        docRef.collection("results")
+        db.collection("cleaningSites")
+                .document(cleaningSiteId)
+                .collection("results")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document: task.getResult()){
+                            for (QueryDocumentSnapshot document : task.getResult()) {
                                 CleaningResult cleaningResult = document.toObject(CleaningResult.class);
-
                                 cleaningResults.add(cleaningResult);
                             }
                             onResultCallBack.onCallBack(cleaningResults);
@@ -356,7 +453,14 @@ public class SiteDetailActivity extends AppCompatActivity {
                 });
     }
 
-    private void setHostName(String userId){
+    /**
+     * Function to get all site details to display to UI
+     * if Success, set textView for siteHost
+     * if Failure, display Log debug
+     *
+     * @param userId userId to get document
+     */
+    private void setHostName(String userId) {
         db.collection("users")
                 .document(userId)
                 .get()
@@ -366,14 +470,20 @@ public class SiteDetailActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             DocumentSnapshot document = task.getResult();
                             User user = document.toObject(User.class);
-                            Log.d(TAG,"Host name: " + user.getFname());
-                            siteHost.setText(user.getFname());
+                            Log.d(TAG, "Host name: " + user.getName());
+                            siteHost.setText(user.getName());
+                        } else {
+                            Log.d(TAG, "Cannot get any document:" + task.getException());
                         }
                     }
                 });
     }
 
-    private interface OnResultCallBack{
+    /**
+     * Interface for implementing a listener to listen
+     * to get list of cleaningResult from Firestore.
+     */
+    private interface OnResultCallBack {
         void onCallBack(List<CleaningResult> cleaningResult);
     }
 }

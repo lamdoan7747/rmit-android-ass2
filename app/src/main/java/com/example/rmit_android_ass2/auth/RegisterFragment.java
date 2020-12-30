@@ -25,21 +25,22 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-/**
- * A simple {@link Fragment} subclass.
- * create an instance of this fragment.
- */
-public class RegisterFragment extends Fragment {
 
+public class RegisterFragment extends Fragment {
+    // Constant declaration
+    private static final String EMAIL_REGEX_CHECK = "^([\\w-\\.]+){1,64}@([\\w&&[^_]]+){2,255}.[a-z]{2,}$";
+    private final String TAG = "REGISTER_FRAGMENT";
+
+    // Google Firebase declaration
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
-    private EditText fnameRegister, passwordRegister,
+
+    // Android view declaration
+    private EditText nameRegister, passwordRegister,
             emailRegister, confirmPasswordRegister;
     private Button registerButton;
     private TextView backToLogin;
     private ProgressBar loadingProgressBar;
-
-    public static final String EMAIL_REGEX_CHECK = "^([\\w-\\.]+){1,64}@([\\w&&[^_]]+){2,255}.[a-z]{2,}$";
 
 
     public RegisterFragment() {
@@ -55,26 +56,38 @@ public class RegisterFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_auth_register, container, false);
     }
 
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        /*
+         *   Represents a Cloud Firestore database and
+         *   is the entry point for all Cloud Firestore
+         *   operations.
+         */
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
+        // Initiate view for the fragment
         renderView(view);
+
+        // Set all events on touchable
         onClickListener();
 
     }
 
-
     private void onClickListener() {
-        // On register button clicked
+        /*
+         *   Register button
+         *   When clicked, function get 4 variable
+         *   from UI to check valid and start registerAccount function
+         */
         registerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String email = emailRegister.getText().toString();
-                String fname = fnameRegister.getText().toString();
+                String name = nameRegister.getText().toString();
                 String password = passwordRegister.getText().toString();
                 String confirmPassword = confirmPasswordRegister.getText().toString();
 
@@ -82,22 +95,24 @@ public class RegisterFragment extends Fragment {
                     emailRegister.setError("Invalid Email");
                     return;
                 }
-                if (fname.isEmpty() || fname.equals(" ")) {
-                    fnameRegister.setError("Required");
+                if (name.isEmpty() || name.equals(" ")) {
+                    nameRegister.setError("Required");
                     return;
                 }
                 if (password.isEmpty() || password.length() < 6) {
                     passwordRegister.setError("Invalid Password");
                     return;
                 }
-                if (!password.equals(confirmPassword) ) {
+                if (!password.equals(confirmPassword)) {
                     confirmPasswordRegister.setError("Invalid Password");
                     return;
                 }
-                registerAccount(email,password, fname);
+
+                registerAccount(email, password, name);
             }
         });
 
+        // Back
         backToLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -106,9 +121,8 @@ public class RegisterFragment extends Fragment {
         });
     }
 
-
     private void renderView(View view) {
-        fnameRegister = view.findViewById(R.id.fnameRegister);
+        nameRegister = view.findViewById(R.id.nameRegister);
         passwordRegister = view.findViewById(R.id.passwordRegister);
         confirmPasswordRegister = view.findViewById(R.id.confirmPasswordRegister);
         emailRegister = view.findViewById(R.id.emailRegister);
@@ -117,39 +131,58 @@ public class RegisterFragment extends Fragment {
         backToLogin = view.findViewById(R.id.backToLoginRegister);
     }
 
-
-    private void registerAccount(String email, String password, String fname) {
-
+    /**
+     * Function to register to the app using FirebaseAuth API
+     * if Success, call function addUser to cloud database
+     * if Failure, display an error toast
+     *
+     * @param email    email get from UI editText
+     * @param password password get from UI editText
+     * @param name     name get from UI editText
+     */
+    private void registerAccount(String email, String password, String name) {
+        // Set loading progress bar when function start
         loadingProgressBar.setVisibility(View.VISIBLE);
 
-        mAuth.createUserWithEmailAndPassword(email,password)
+        mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener((Activity) getContext(), new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
-                            Log.d(getTag(), "createUserWithEmail:success");
+                            Log.d(TAG, "createUserWithEmail: SUCCESS");
+
+                            // Set loading bar stop
+                            loadingProgressBar.setVisibility(View.GONE);
 
                             // Get ID from User
                             FirebaseUser currentUser = mAuth.getCurrentUser();
 
                             // Add User to database
                             assert currentUser != null;
-                            User user = new User(currentUser.getUid(), fname, email);
+                            User user = new User(currentUser.getUid(), name, email);
                             addUser(user);
-                            loadingProgressBar.setVisibility(View.GONE);
+
 
                         } else {
-                            // If sign in fails, display a message to the user.
-                            Log.w(getTag(), "createUserWithEmail:failure", task.getException());
+                            // Set loading bar stop
                             loadingProgressBar.setVisibility(View.GONE);
-                            Toast.makeText(getActivity(), "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
+
+                            // If sign in fails, display a message to the user.
+                            Log.w(TAG, "createUserWithEmail: FAILURE", task.getException());
+                            Toast.makeText(getActivity(), "Authentication failed.", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
     }
 
+    /**
+     * Function to add user object to cloud database
+     * if Success, back to Login Fragment
+     * if Failure, display an error toast
+     *
+     * @param user: user object
+     */
     private void addUser(User user) {
         db.collection("users")
                 .document(user.getId())
@@ -158,6 +191,7 @@ public class RegisterFragment extends Fragment {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()) {
+                            Log.w(TAG, "addUserToFirestore: SUCCESS", task.getException());
                             // Update UI
                             backToPrevious();
                         }
@@ -165,6 +199,7 @@ public class RegisterFragment extends Fragment {
                 });
     }
 
+    // Return the previous fragment
     private void backToPrevious() {
         getActivity().getSupportFragmentManager().popBackStack();
     }

@@ -36,7 +36,7 @@
             android:orientation="vertical">
 
             <EditText
-                android:id="@+id/lEmail"
+                android:id="@+id/emailLogin"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_marginHorizontal="10dp"
@@ -47,10 +47,11 @@
                 android:inputType="textEmailAddress"
                 android:paddingStart="15dp"
                 android:paddingEnd="15dp"
-                android:selectAllOnFocus="true" />
+                android:selectAllOnFocus="true"
+                tools:targetApi="lollipop" />
 
             <EditText
-                android:id="@+id/lPassword"
+                android:id="@+id/passwordLogin"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_marginHorizontal="10dp"
@@ -63,7 +64,8 @@
                 android:inputType="textPassword"
                 android:paddingStart="15dp"
                 android:paddingEnd="15dp"
-                android:selectAllOnFocus="true" />
+                android:selectAllOnFocus="true"
+                tools:targetApi="lollipop" />
 
         </LinearLayout>
 
@@ -76,7 +78,7 @@
 
 
             <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/lRegister"
+                android:id="@+id/moveToRegisterButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
@@ -85,10 +87,11 @@
                 android:backgroundTint="@color/white"
                 android:elevation="5dp"
                 android:text="Register"
-                android:textColor="@color/primaryColor" />
+                android:textColor="@color/primaryColor"
+                tools:targetApi="lollipop" />
 
             <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/lLogin"
+                android:id="@+id/loginButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
@@ -96,11 +99,9 @@
                 android:background="@drawable/primary_rectangle_background"
                 android:elevation="5dp"
                 android:text="Login"
-                android:textColor="@color/white" />
-
+                android:textColor="@color/white"
+                tools:targetApi="lollipop" />
         </LinearLayout>
-
-
     </LinearLayout>
 
 
@@ -116,8 +117,9 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
+
         <ProgressBar
-            android:id="@+id/lLoading"
+            android:id="@+id/loadingProgressBarLogin"
             style="@style/Widget.AppCompat.ProgressBar.Horizontal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -126,7 +128,8 @@
             android:layout_marginEnd="64dp"
             android:indeterminate="true"
             android:indeterminateTint="@color/primaryColor"
-            android:visibility="gone"/>
+            android:visibility="gone"
+            tools:targetApi="lollipop" />
     </LinearLayout>
 
     <LinearLayout
@@ -139,7 +142,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@id/loginForm"
         app:layout_constraintTop_toBottomOf="@+id/loginForm">
-
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -155,7 +157,8 @@
                 android:background="@drawable/white_rectangle_background"
                 android:elevation="5dp"
                 android:src="@drawable/googleg_disabled_color_18"
-                android:textColor="@color/primaryColor" />
+                android:textColor="@color/primaryColor"
+                tools:targetApi="lollipop" />
 
             <ImageButton
                 android:layout_width="95dp"
@@ -165,7 +168,8 @@
                 android:background="@drawable/white_rectangle_background"
                 android:elevation="5dp"
                 android:src="@drawable/googleg_standard_color_18"
-                android:textColor="@color/primaryColor" />
+                android:textColor="@color/primaryColor"
+                tools:targetApi="lollipop" />
 
             <ImageButton
                 android:layout_width="95dp"
@@ -174,9 +178,9 @@
                 android:layout_weight="1"
                 android:background="@drawable/white_rectangle_background"
                 android:elevation="5dp"
-
                 android:src="@drawable/googleg_disabled_color_18"
-                android:textColor="@color/primaryColor" />
+                android:textColor="@color/primaryColor"
+                tools:targetApi="lollipop" />
         </LinearLayout>
     </LinearLayout>
 

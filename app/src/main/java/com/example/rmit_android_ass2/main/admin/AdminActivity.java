@@ -18,7 +18,10 @@ import android.view.View;
 import com.example.rmit_android_ass2.R;
 
 public class AdminActivity extends AppCompatActivity {
+    // Constant declaration
     private static final String TAG = "ADMIN_ACTIVITY";
+
+    // Utils variable declaration
     private int startingPosition = 0;
 
     @Override
@@ -36,12 +39,17 @@ public class AdminActivity extends AppCompatActivity {
         navigationView.setOnNavigationItemSelectedListener(onNavigationItemSelectedListener);
     }
 
+    /**
+     * Bottom navigation
+     * Home button starting new ReportFragment and state position 1
+     * Setting button starting new UserFragment and state position 2
+     */
     @SuppressLint("NonConstantResourceId")
     private final BottomNavigationView.OnNavigationItemSelectedListener onNavigationItemSelectedListener
             = item -> {
         Fragment fragment;
         int newPosition;
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.bottomNavigationHomeAdmin:
                 fragment = new ReportFragment();
                 newPosition = 1;
@@ -56,22 +64,27 @@ public class AdminActivity extends AppCompatActivity {
         return loadFragment(fragment, newPosition);
     };
 
+    /**
+     * Load new fragment with transaction
+     * If startingPosition > newPosition -> transition slide left
+     * If startingPosition < newPosition -> transition slide right
+     */
     private boolean loadFragment(Fragment fragment, int newPosition) {
         if (fragment != null) {
-            if (newPosition == 0){
+            if (newPosition == 0) {
                 getSupportFragmentManager()
                         .beginTransaction()
                         .replace(R.id.adminContainer, fragment)
                         .commit();
             }
-            if(startingPosition > newPosition) {
+            if (startingPosition > newPosition) {
                 getSupportFragmentManager()
                         .beginTransaction()
-                        .setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right )
+                        .setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right)
                         .replace(R.id.adminContainer, fragment).commit();
 
             }
-            if(startingPosition < newPosition) {
+            if (startingPosition < newPosition) {
                 getSupportFragmentManager()
                         .beginTransaction()
                         .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left)

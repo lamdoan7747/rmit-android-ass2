@@ -40,7 +40,7 @@ public class FollowerListAdapter extends BaseAdapter {
         } else viewSite = view;
 
         User follower = (User) getItem(position);
-        ((TextView) viewSite.findViewById(R.id.siteNameListView)).setText(String.format("%s",follower.getFname()));
+        ((TextView) viewSite.findViewById(R.id.siteNameListView)).setText(String.format("%s",follower.getName()));
         ((TextView) viewSite.findViewById(R.id.siteAddressListView)).setText(String.format("%s",follower.getEmail()));
 
         return viewSite;

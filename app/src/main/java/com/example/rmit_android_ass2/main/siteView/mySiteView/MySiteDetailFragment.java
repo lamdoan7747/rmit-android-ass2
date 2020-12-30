@@ -26,9 +26,6 @@ import com.example.rmit_android_ass2.model.CleaningSite;
 import com.example.rmit_android_ass2.model.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -38,24 +35,27 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 
 
 public class MySiteDetailFragment extends Fragment {
-
+    // Constant declaration
     private static final String TAG = "MY_SITE_DETAIL_FRAGMENT";
+
+    // Android view declaration
     private Button insertButton;
     private ImageButton backButton, buttonSiteOption;
     private TextView viewFollower, siteName, siteDate,
             siteStartTime, siteEndTime, viewNoRecord;
     private ListView listResult;
 
+    // Google Firebase declaration
     private FirebaseFirestore db;
-    private FirebaseUser currentUser;
-    private FirebaseAuth mAuth;
 
+    // Array list declaration
     private ArrayList<User> followerList;
     private ArrayList<CleaningResult> cleaningResults;
+
+    // Adapter
     private ResultListAdapter resultListAdapter;
 
 
@@ -81,29 +81,37 @@ public class MySiteDetailFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        /*
+         *   Represents a Cloud Firestore database and
+         *   is the entry point for all Cloud Firestore
+         *   operations.
+         */
+        db = FirebaseFirestore.getInstance();
+
+        // Get intent data from the previous activity
         Intent intent = requireActivity().getIntent();
         CleaningSite cleaningSite = (CleaningSite) intent.getExtras().get("cleaningSite");
-        String cleaningSiteId = cleaningSite.get_id();
+        String cleaningSiteId = cleaningSite.getId();
 
-        db = FirebaseFirestore.getInstance();
-        mAuth = FirebaseAuth.getInstance();
-
+        // Initiate view for the activity
         renderView(requireView());
+
+        // Set all events on touchable with siteId variable
         onCLickListener(cleaningSiteId);
 
-        // Get site detail
+        // Get all site details to display
         getSiteDetail(cleaningSiteId);
 
-        // Get number of followers
+        // Get follower size to display on textView
         followerList = new ArrayList<>();
         getFollowers(cleaningSiteId);
 
-        // GET SITE RESULT
+        // Get all site results to display
         cleaningResults = new ArrayList<>();
         getResults(cleaningSiteId, new OnResultCallBack() {
             @Override
             public void onCallBack(List<CleaningResult> cleaningResult) {
-                if (cleaningResult.size() < 1){
+                if (cleaningResult.size() < 1) {
                     viewNoRecord.setVisibility(View.VISIBLE);
                 }
 
@@ -123,13 +131,16 @@ public class MySiteDetailFragment extends Fragment {
     }
 
     private void onCLickListener(String cleaningSiteId) {
+        // Back button to return the previous activity
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                backToPrevious();
+                requireActivity().finish();
+                requireActivity().overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
             }
         });
 
+        // Insert button to load new fragment
         insertButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -137,6 +148,7 @@ public class MySiteDetailFragment extends Fragment {
             }
         });
 
+        // Option button to load new fragment
         buttonSiteOption.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -145,6 +157,11 @@ public class MySiteDetailFragment extends Fragment {
         });
     }
 
+    /**
+     * Function to initiate all the view with the right id
+     *
+     * @param view view get from UI
+     */
     private void renderView(View view) {
         insertButton = view.findViewById(R.id.insertSiteMySiteDetail);
         buttonSiteOption = view.findViewById(R.id.optionSiteMySiteDetail);
@@ -157,13 +174,16 @@ public class MySiteDetailFragment extends Fragment {
 
     }
 
-    private void backToPrevious() {
-        requireActivity().finish();
-    }
-
+    /**
+     * Function to get all followers of specific site to
+     * return total of followers
+     *
+     * @param cleaningSiteId cleaning siteId to query
+     */
     private void getFollowers(String cleaningSiteId) {
-        DocumentReference docRef = db.collection("cleaningSites").document(cleaningSiteId);
-        docRef.collection("followers")
+        db.collection("cleaningSites")
+                .document(cleaningSiteId)
+                .collection("followers")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -182,17 +202,26 @@ public class MySiteDetailFragment extends Fragment {
                 });
     }
 
+    /**
+     * Function to get all results to add to listView
+     * if Success, add all CleaningResult object to a list
+     * -> assign function onResultCallBack
+     * if Failure, display Log debug
+     *
+     * @param cleaningSiteId   cleaning siteId to get document
+     * @param onResultCallBack callBack interface to get list of results
+     */
     private void getResults(String cleaningSiteId, OnResultCallBack onResultCallBack) {
-        DocumentReference docRef = db.collection("cleaningSites").document(cleaningSiteId);
-        docRef.collection("results")
+        db.collection("cleaningSites")
+                .document(cleaningSiteId)
+                .collection("results")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document: task.getResult()){
+                            for (QueryDocumentSnapshot document : task.getResult()) {
                                 CleaningResult cleaningResult = document.toObject(CleaningResult.class);
-
                                 cleaningResults.add(cleaningResult);
                             }
                             onResultCallBack.onCallBack(cleaningResults);
@@ -202,41 +231,54 @@ public class MySiteDetailFragment extends Fragment {
                 });
     }
 
+    /**
+     * Function to get all site details to display to UI
+     * if Success, set textView for siteName, siteDate
+     * if Failure, display Log debug
+     *
+     * @param cleaningSiteId cleaning siteId to get document
+     */
     @SuppressLint("SimpleDateFormat")
     private void getSiteDetail(String cleaningSiteId) {
-        DocumentReference docRef = db.collection("cleaningSites").document(cleaningSiteId);
-        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    DocumentSnapshot document = task.getResult();
-                    if (document.exists()) {
-                        CleaningSite cleaningSite = document.toObject(CleaningSite.class);
-                        Log.d(TAG, "Site id: " + cleaningSite.get_id());
+        db.collection("cleaningSites")
+                .document(cleaningSiteId)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if (task.isSuccessful()) {
+                            DocumentSnapshot document = task.getResult();
+                            if (document.exists()) {
+                                CleaningSite cleaningSite = document.toObject(CleaningSite.class);
+                                Log.d(TAG, "Site id: " + cleaningSite.getId());
 
-                        if (cleaningSite.getDate() != null){
-                            Date dateFormat = cleaningSite.getDate().toDate();
-                            String simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy").format(dateFormat);
-                            siteDate.setText(simpleDateFormat);
+                                if (cleaningSite.getDate() != null) {
+                                    Date dateFormat = cleaningSite.getDate().toDate();
+                                    String simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy").format(dateFormat);
+                                    siteDate.setText(simpleDateFormat);
+                                }
+                                siteName.setText(cleaningSite.getName());
+
+
+                            } else {
+                                Log.d(TAG, "Cannot get any document:" + task.getException());
+                            }
+                        } else {
+                            Log.d(TAG, "get failed with ", task.getException());
                         }
-                        siteName.setText(cleaningSite.getName());
-
-
-                    } else {
-                        Log.d("CLEANING SITE", "Cannot get any document:" + task.getException());
                     }
-                } else {
-                    Log.d("ON FAILURE", "get failed with ", task.getException());
-                }
-            }
-        });
+                });
     }
 
-    private interface OnResultCallBack{
-        void onCallBack(List<CleaningResult> cleaningResult);
-    }
-
-    private void loadFragment(String cleaningSiteId,Fragment fragment) {
+    /**
+     * Start a new transaction to add fragment
+     * -> Save message to transfer to other fragment
+     * -> Setup transition slide up, slide down
+     *
+     * @param cleaningSiteId: cleaningSiteId to transfer to other fragment
+     * @param fragment:       init fragment to load
+     */
+    private void loadFragment(String cleaningSiteId, Fragment fragment) {
         // Set message for new fragment
         Bundle bundle = new Bundle();
         bundle.putString("cleaningSiteId", cleaningSiteId);
@@ -244,9 +286,17 @@ public class MySiteDetailFragment extends Fragment {
 
         // Start transaction with new fragment
         FragmentTransaction fragmentTransaction = requireActivity().getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.setCustomAnimations(R.anim.slide_in_up,R.anim.slide_out_up, R.anim.slide_in_down, R.anim.slide_out_down);
-        fragmentTransaction.replace(R.id.editFrameContainer,fragment);
+        fragmentTransaction.setCustomAnimations(R.anim.slide_in_up, R.anim.slide_out_up, R.anim.slide_in_down, R.anim.slide_out_down);
+        fragmentTransaction.replace(R.id.editFrameContainer, fragment);
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
+    }
+
+    /**
+     * Interface for implementing a listener to listen
+     * to get list of cleaningResult from Firestore.
+     */
+    private interface OnResultCallBack {
+        void onCallBack(List<CleaningResult> cleaningResult);
     }
 }

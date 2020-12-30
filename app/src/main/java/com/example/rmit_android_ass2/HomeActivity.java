@@ -18,9 +18,11 @@ import com.example.rmit_android_ass2.main.siteView.SiteViewFragment;
 import com.example.rmit_android_ass2.notification.NotificationHelper;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-public class HomeActivity extends AppCompatActivity{
+public class HomeActivity extends AppCompatActivity {
+    // Constant declaration
+    private final String TAG = "HOME_ACTIVITY";
 
-    private static final String TAG = "HOME_ACTIVITY";
+    // Utils variable declaration
     private int startingPosition = 0;
 
 
@@ -47,51 +49,60 @@ public class HomeActivity extends AppCompatActivity{
         navigationView.setOnNavigationItemSelectedListener(onNavigationItemSelectedListener);
     }
 
+    /**
+     * Bottom navigation
+     * Home button starting new ReportFragment and state position 1
+     * Setting button starting new UserFragment and state position 2
+     */
     @SuppressLint("NonConstantResourceId")
     private final BottomNavigationView.OnNavigationItemSelectedListener onNavigationItemSelectedListener
             = item -> {
-                Fragment fragment;
-                int newPosition;
-                switch (item.getItemId()) {
-                    case R.id.bottomNavigationHome:
-                        fragment = new HomeViewFragment();
-                        newPosition = 1;
-                        break;
-                    case R.id.bottomNavigationMap:
-                        fragment = new MapsFragment();
-                        newPosition = 2;
-                        break;
-                    case R.id.bottomNavigationMySite:
-                        fragment = new SiteViewFragment();
-                        newPosition = 3;
-                        break;
-                    case R.id.bottomNavigationProfile:
-                        fragment = new ProfileFragment();
-                        newPosition = 4;
-                        break;
-                    default:
-                        throw new IllegalStateException("Unexpected value: " + item.getItemId());
-                }
-                return loadFragment(fragment, newPosition);
-            };
+        Fragment fragment;
+        int newPosition;
+        switch (item.getItemId()) {
+            case R.id.bottomNavigationHome:
+                fragment = new HomeViewFragment();
+                newPosition = 1;
+                break;
+            case R.id.bottomNavigationMap:
+                fragment = new MapsFragment();
+                newPosition = 2;
+                break;
+            case R.id.bottomNavigationMySite:
+                fragment = new SiteViewFragment();
+                newPosition = 3;
+                break;
+            case R.id.bottomNavigationProfile:
+                fragment = new ProfileFragment();
+                newPosition = 4;
+                break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + item.getItemId());
+        }
+        return loadFragment(fragment, newPosition);
+    };
 
-
+    /**
+     * Load new fragment with transaction
+     * If startingPosition > newPosition -> transition slide left
+     * If startingPosition < newPosition -> transition slide right
+     */
     private boolean loadFragment(Fragment fragment, int newPosition) {
-        if(fragment != null) {
-            if(newPosition == 0) {
+        if (fragment != null) {
+            if (newPosition == 0) {
                 getSupportFragmentManager()
                         .beginTransaction()
                         .replace(R.id.frameContainer, fragment).commit();
 
             }
-            if(startingPosition > newPosition) {
+            if (startingPosition > newPosition) {
                 getSupportFragmentManager()
                         .beginTransaction()
-                        .setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right )
+                        .setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right)
                         .replace(R.id.frameContainer, fragment).commit();
 
             }
-            if(startingPosition < newPosition) {
+            if (startingPosition < newPosition) {
                 getSupportFragmentManager()
                         .beginTransaction()
                         .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left)

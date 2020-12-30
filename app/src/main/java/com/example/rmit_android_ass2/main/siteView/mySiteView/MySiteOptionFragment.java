@@ -25,17 +25,20 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 public class MySiteOptionFragment extends Fragment {
-
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+    // Constant declaration
+    private static final String TAG = "MY_SITE_OPTION_FRAGMENT";
     private static final String SITE_ID = "cleaningSiteId";
 
-    private String cleaningSiteId;
-
+    // Android View declaration
     private TextView editSiteOption, viewFollowerOption, deleteSiteOption;
     private ImageButton backButton;
 
+    // Google Firebase declaration
     private FirebaseFirestore db;
+
+    // Utils variable declaration
+    private String cleaningSiteId;
+
 
     public MySiteOptionFragment() {
         // Required empty public constructor
@@ -45,6 +48,8 @@ public class MySiteOptionFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Get message cleaningSiteId from previous fragment
         if (getArguments() != null) {
             cleaningSiteId = getArguments().getString(SITE_ID);
         }
@@ -61,13 +66,22 @@ public class MySiteOptionFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        /*
+         *   Represents a Cloud Firestore database and
+         *   is the entry point for all Cloud Firestore
+         *   operations.
+         */
         db = FirebaseFirestore.getInstance();
 
-        editSiteOption = getView().findViewById(R.id.editSiteMySiteOption);
-        viewFollowerOption = getView().findViewById(R.id.viewFollowerMySiteOption);
-        deleteSiteOption = getView().findViewById(R.id.deleteSiteMySiteOption);
-        backButton = getView().findViewById(R.id.backButtonToolbarMySiteOption);
+        // Initiate view for the activity
+        renderView(requireView());
 
+        // Set all events on touchable
+        onClickListener();
+    }
+
+    private void onClickListener() {
+        // Edit site option to load edit fragment
         editSiteOption.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -75,6 +89,7 @@ public class MySiteOptionFragment extends Fragment {
             }
         });
 
+        // View follower option to load site follower fragment
         viewFollowerOption.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -82,6 +97,11 @@ public class MySiteOptionFragment extends Fragment {
             }
         });
 
+        /*
+         *   Delete site option will popup dialog to confirm if User want to delete
+         *   if Ok, trigger deleteSite() function
+         *   if Cancel, cancel dialog
+         * */
         deleteSiteOption.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -89,7 +109,7 @@ public class MySiteOptionFragment extends Fragment {
                 alertDialogBuilder
                         .setTitle("Confirm Delete")
                         .setMessage("Do you want to delete this site?")
-                        .setMessage("All information included followers would be deleted!")
+                        .setMessage("All information included followers and activities would be deleted!")
                         .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
@@ -105,38 +125,62 @@ public class MySiteOptionFragment extends Fragment {
             }
         });
 
+        // Back button to return the previous fragment
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                backToPrevious();
+                getActivity().getSupportFragmentManager().popBackStack();
             }
         });
     }
 
-    private void backToPrevious() {
-        getActivity().getSupportFragmentManager().popBackStack();
+    /**
+     * Function to initiate all the view with the right id
+     *
+     * @param view view get from UI
+     */
+    private void renderView(View view) {
+        editSiteOption = view.findViewById(R.id.editSiteMySiteOption);
+        viewFollowerOption = view.findViewById(R.id.viewFollowerMySiteOption);
+        deleteSiteOption = view.findViewById(R.id.deleteSiteMySiteOption);
+        backButton = view.findViewById(R.id.backButtonToolbarMySiteOption);
     }
 
+    /**
+     * Function to delete Site document in Firebase
+     * if Success, finish activity
+     * if Failure, display Log debug
+     *
+     * @param cleaningSiteId cleaning siteId to get document
+     */
     private void deleteSite(String cleaningSiteId) {
-        DocumentReference docRef = db.collection("cleaningSites").document(cleaningSiteId);
-        docRef.delete()
+        db.collection("cleaningSites")
+                .document(cleaningSiteId)
+                .delete()
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        Log.d("DELETE SITE", "DocumentSnapshot successfully deleted!");
+                        Log.d(TAG, "Delete option: SUCCESS");
                         getActivity().finish();
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Log.w("DELETE SITE", "Error deleting document", e);
+                        Log.w(TAG, "Delete option: FAILURE", e);
                     }
                 });
     }
 
-
-    private void loadFragment(String cleaningSiteId,Fragment fragment) {
+    /**
+     * Start a new transaction to add fragment
+     * -> Save message to transfer to other fragment
+     * -> Setup transition slide up, slide down
+     *
+     * @param cleaningSiteId: cleaningSiteId to transfer to other fragment
+     * @param fragment:       init fragment to load
+     */
+    private void loadFragment(String cleaningSiteId, Fragment fragment) {
         // Set message for new fragment
         Bundle bundle = new Bundle();
         bundle.putString("cleaningSiteId", cleaningSiteId);
@@ -144,8 +188,8 @@ public class MySiteOptionFragment extends Fragment {
 
         // Start transaction with new fragment
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-        fragmentTransaction.setCustomAnimations(R.anim.slide_in_up,R.anim.slide_out_up, R.anim.slide_in_down, R.anim.slide_out_down);
-        fragmentTransaction.replace(R.id.editFrameContainer,fragment);
+        fragmentTransaction.setCustomAnimations(R.anim.slide_in_up, R.anim.slide_out_up, R.anim.slide_in_down, R.anim.slide_out_down);
+        fragmentTransaction.replace(R.id.editFrameContainer, fragment);
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
     }

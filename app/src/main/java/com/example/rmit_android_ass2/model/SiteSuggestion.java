@@ -9,6 +9,9 @@ public class SiteSuggestion implements SearchSuggestion {
     private String cleaningSiteId;
     private boolean isHistory = false;
 
+    public SiteSuggestion() {
+    }
+
     public SiteSuggestion(String suggestion, String cleaningSiteId) {
         this.siteName = suggestion.toLowerCase();
         this.cleaningSiteId = cleaningSiteId;

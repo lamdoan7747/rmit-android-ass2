@@ -30,12 +30,17 @@ public class MySiteActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_site);
 
+        // Load fragment when activity created
         if (savedInstanceState == null) {
             loadFragment(new MySiteDetailFragment());
         }
     }
 
-
+    /**
+     * Start a new transaction to add fragment
+     *
+     * @param fragment: init fragment to load
+     */
     private void loadFragment(Fragment fragment) {
         // Start transaction with new fragment
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
