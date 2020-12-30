@@ -27,7 +27,7 @@
                     android:layout_marginStart="20dp"
                     android:layout_weight="1"
                     android:gravity="bottom|start"
-                    android:text="My Site"
+                    android:text="@string/my_site_header"
                     android:textColor="@color/primaryColor"
                     android:textSize="30sp"
                     android:textStyle="bold" />
@@ -39,7 +39,7 @@
                     android:layout_marginEnd="16dp"
                     android:layout_weight="1"
                     android:gravity="bottom|end"
-                    android:text="+"
+                    android:text="@string/plus_symbol"
                     android:textColor="@color/primaryColor"
                     android:textSize="30sp" />
 

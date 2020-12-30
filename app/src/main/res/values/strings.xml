@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">rmit_android_ass2</string>
+    <string name="app_name">Sach &amp; Xanh</string>
     <string name="title_activity_maps">Map</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
@@ -10,18 +10,59 @@
     <string name="action_sign_in_short">Sign in</string>
     <string name="welcome">"Welcome!"</string>
     <string name="invalid_username">Not a valid username</string>
-    <string name="invalid_password">Password must be >5 characters</string>
+    <string name="invalid_password">Password must be >6 characters</string>
     <string name="login_failed">"Login failed"</string>
     <string name="title_activity_splash">SplashActivity</string>
     <!-- Strings used for fragments for navigation -->
-    <string name="first_fragment_label">First Fragment</string>
-    <string name="second_fragment_label">Second Fragment</string>
     <string name="next">Next</string>
     <string name="previous">Previous</string>
 
-    <string name="hello_first_fragment">Hello first fragment</string>
-    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
     <string name="title_activity_get_location">Map</string>
     <string name="title_activity_search">SearchActivity</string>
     <string name="title_activity_admin">AdminActivity</string>
+    <string name="header_toolbar_site_detail">Cleaning Site</string>
+    <string name="cleaning_site_name_detail">Cleaning Site Name</string>
+    <string name="cleaning_site_date_detail">Fri, 20 October</string>
+    <string name="cleaning_site_follower_detail">404 Followers</string>
+    <string name="host_by_detail">Hosted by</string>
+    <string name="cleaning_site_host_detail">Lam Doan</string>
+    <string name="register_button">Register</string>
+    <string name="direction_button">Direction</string>
+    <string name="activity_header_detail">Activity</string>
+    <string name="get_more_detail"><![CDATA[more >]]></string>
+    <string name="no_activity_detail">No activity yet!</string>
+    <string name="unfollow_button">Unfollow</string>
+    <string name="report_header">Report</string>
+    <string name="plus_symbol">+</string>
+    <string name="header_toolbar_profile">Profile</string>
+    <string name="logout_button">Logout</string>
+    <string name="login_button">Login</string>
+    <string name="register_form">Register Form</string>
+    <string name="already_had_account">Already had account?</string>
+    <string name="hello_string">Hello</string>
+    <string name="cleaning_sites">Cleaning sites</string>
+    <string name="header_toolbar_my_site_detail">My Site Detail</string>
+    <string name="add_data_collection_button">Add data collection</string>
+    <string name="header_toolbar_site_follower">Site Follower</string>
+    <string name="follower_header_title">Follower</string>
+    <string name="edit_button">Edit</string>
+    <string name="header_toolbar_data_collection">Data Collection</string>
+    <string name="save_button">Save</string>
+    <string name="header_toolbar_site_option">Site Option</string>
+    <string name="edit_site_button">Edit Site</string>
+    <string name="view_follower_button">View Follower</string>
+    <string name="delete_site_button">Delete Site</string>
+    <string name="header_title_create_site">Create Site</string>
+    <string name="get_new_location">Get new location</string>
+    <string name="create_button">Create</string>
+    <string name="my_site_header">My Site</string>
+    <string name="follower_count_example">100</string>
+    <string name="total_amount_example">200</string>
+    <string name="kg">kg</string>
+    <string name="sample_card_descriptions">Sample Card Descriptions</string>
+    <string name="home_title">Home</string>
+    <string name="map_title">Map</string>
+    <string name="my_site_title">My Site</string>
+    <string name="profile_title">Profile</string>
+    <string name="setting_title">Setting</string>
 </resources>

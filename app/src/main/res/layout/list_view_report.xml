@@ -26,7 +26,7 @@
                 android:layout_weight="1"
                 android:gravity="start|center"
                 android:padding="10dp"
-                android:text="Cleaning Site Name"
+                android:text="@string/cleaning_site_name_detail"
                 android:textColor="@android:color/black"
                 android:textSize="15sp" />
 
@@ -38,7 +38,7 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:padding="10dp"
-                android:text="100"
+                android:text="@string/follower_count_example"
                 android:textColor="@android:color/black"
                 android:textSize="15sp" />
 
@@ -50,7 +50,7 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:padding="10dp"
-                android:text="100"
+                android:text="@string/total_amount_example"
                 android:textColor="@android:color/black"
                 android:textSize="15sp" />
         </LinearLayout>

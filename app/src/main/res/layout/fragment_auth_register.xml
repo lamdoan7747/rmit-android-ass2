@@ -23,7 +23,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Register Form"
+            android:text="@string/register_form"
             android:textColor="@color/primaryColor"
             android:textSize="32sp"
             android:textStyle="bold" />
@@ -53,7 +53,8 @@
             android:inputType="textEmailAddress"
             android:paddingStart="15dp"
             android:paddingEnd="15dp"
-            android:selectAllOnFocus="true" />
+            android:selectAllOnFocus="true"
+            tools:targetApi="lollipop" />
 
         <EditText
             android:id="@+id/nameRegister"
@@ -67,7 +68,8 @@
             android:inputType="text"
             android:paddingStart="15dp"
             android:paddingEnd="15dp"
-            android:selectAllOnFocus="true" />
+            android:selectAllOnFocus="true"
+            tools:targetApi="lollipop" />
 
         <EditText
             android:id="@+id/passwordRegister"
@@ -81,7 +83,8 @@
             android:inputType="textPassword"
             android:paddingStart="15dp"
             android:paddingEnd="15dp"
-            android:selectAllOnFocus="true" />
+            android:selectAllOnFocus="true"
+            tools:targetApi="lollipop" />
 
         <EditText
             android:id="@+id/confirmPasswordRegister"
@@ -95,18 +98,20 @@
             android:inputType="textPassword"
             android:paddingStart="15dp"
             android:paddingEnd="15dp"
-            android:selectAllOnFocus="true" />
+            android:selectAllOnFocus="true"
+            tools:targetApi="lollipop" />
 
         <Button
             android:id="@+id/registerButtonRegister"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:layout_margin="10dp"
             android:layout_weight="1"
             android:background="@drawable/primary_rectangle_background"
             android:elevation="5dp"
             android:text="Register"
-            android:textColor="@color/white" />
+            android:textColor="@color/white"
+            tools:targetApi="lollipop" />
 
 
     </LinearLayout>
@@ -128,14 +133,14 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Already had account?" />
+            android:text="@string/already_had_account" />
 
         <TextView
             android:id="@+id/backToLoginRegister"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
-            android:text="Login"
+            android:layout_marginStart="5dp"
+            android:text="@string/login_button"
             android:textColor="@color/primaryColor"
             android:textStyle="bold" />
     </LinearLayout>

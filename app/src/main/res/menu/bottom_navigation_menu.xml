@@ -4,20 +4,20 @@
         android:id="@+id/bottomNavigationHome"
         android:enabled="true"
         android:icon="@android:drawable/ic_dialog_dialer"
-        android:title="Home" />
+        android:title="@string/home_title" />
     <item
         android:id="@+id/bottomNavigationMap"
         android:enabled="true"
         android:icon="@android:drawable/ic_menu_mapmode"
-        android:title="Map" />
+        android:title="@string/map_title" />
     <item
         android:id="@+id/bottomNavigationMySite"
         android:enabled="true"
         android:icon="?attr/actionModePasteDrawable"
-        android:title="My Site" />
+        android:title="@string/my_site_title" />
     <item
         android:id="@+id/bottomNavigationProfile"
         android:enabled="true"
         android:icon="?attr/actionModePasteDrawable"
-        android:title="Profile" />
+        android:title="@string/profile_title" />
 </menu>

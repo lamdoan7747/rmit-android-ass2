@@ -4,10 +4,10 @@
         android:id="@+id/bottomNavigationHomeAdmin"
         android:enabled="true"
         android:icon="@android:drawable/ic_dialog_dialer"
-        android:title="Home" />
+        android:title="@string/home_title" />
     <item
         android:id="@+id/bottomNavigationSettingAdmin"
         android:enabled="true"
         android:icon="@android:drawable/ic_menu_mapmode"
-        android:title="Setting" />
+        android:title="@string/setting_title" />
 </menu>

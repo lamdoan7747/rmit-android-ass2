@@ -39,7 +39,7 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="10dp"
-        android:text="Direction"
+        android:text="@string/direction_button"
         android:visibility="invisible" />
 </RelativeLayout>
 

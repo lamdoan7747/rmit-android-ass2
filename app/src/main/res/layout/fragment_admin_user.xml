@@ -14,11 +14,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="Profile"
+            android:text="@string/header_toolbar_profile"
             android:textColor="@color/primaryColor"
             android:textSize="24sp"
             android:textStyle="bold" />
-
     </androidx.appcompat.widget.Toolbar>
 
     <LinearLayout
@@ -34,9 +33,6 @@
 
             android:layout_gravity="bottom"
             android:background="@drawable/white_rectangle_background_button"
-            android:text="Logout" />
-
+            android:text="@string/logout_button" />
     </LinearLayout>
-
-
 </FrameLayout>

@@ -21,7 +21,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="My Site Detail"
+            android:text="@string/header_toolbar_my_site_detail"
             android:textColor="@color/primaryColor"
             android:textSize="24sp"
             android:textStyle="bold" />
@@ -54,9 +54,9 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="15dp"
             android:layout_marginTop="15dp"
-            android:text="Cleaning Downtown"
+            android:text="@string/cleaning_site_name_detail"
             android:textColor="@color/dark_gray"
-            android:textSize="24dp"
+            android:textSize="24sp"
             android:textStyle="bold" />
 
         <LinearLayout
@@ -71,7 +71,7 @@
                 android:layout_gravity="start|center"
                 android:layout_marginStart="15dp"
                 android:layout_weight="1"
-                android:text="Fri, 20 October"
+                android:text="@string/cleaning_site_date_detail"
                 android:textColor="@color/dark_gray"
                 android:textSize="12sp" />
 
@@ -82,9 +82,10 @@
                 android:layout_gravity="center|right"
                 android:layout_marginStart="15dp"
                 android:layout_marginEnd="15dp"
-                android:text="404 Followers"
+                android:text="@string/cleaning_site_date_detail"
                 android:textColor="@color/dark_gray"
-                android:textSize="12sp" />
+                android:textSize="12sp"
+                tools:ignore="RtlHardcoded" />
 
         </LinearLayout>
 
@@ -101,7 +102,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="10dp"
                 android:layout_weight="1"
-                android:text="Add data collection" />
+                android:text="@string/add_data_collection_button" />
 
             <ImageButton
                 android:id="@+id/optionSiteMySiteDetail"
@@ -124,7 +125,7 @@
                 android:layout_gravity="start|center"
                 android:layout_marginStart="15dp"
                 android:layout_weight="1"
-                android:text="Activity"
+                android:text="@string/activity_header_detail"
                 android:textColor="@color/dark_gray"
                 android:textSize="24sp"
                 android:textStyle="bold" />
@@ -135,11 +136,10 @@
                 android:layout_gravity="bottom|right"
                 android:layout_marginStart="15dp"
                 android:layout_marginEnd="15dp"
-                android:text="more >"
+                android:text="@string/get_more_detail"
                 android:textColor="@color/dark_gray"
                 android:textSize="12sp"
                 tools:ignore="RtlHardcoded" />
-
         </LinearLayout>
 
         <RelativeLayout
@@ -152,7 +152,7 @@
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
                 android:gravity="center"
-                android:text="No activity yet!"
+                android:text="@string/no_activity_detail"
                 android:textSize="24sp"
                 android:visibility="invisible" />
 

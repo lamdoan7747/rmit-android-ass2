@@ -16,7 +16,7 @@
         app:floatingSearch_searchBarMarginLeft="5dp"
         app:floatingSearch_searchBarMarginRight="5dp"
         app:floatingSearch_searchBarMarginTop="5dp"
-        app:floatingSearch_searchHint="Nhập nội dung cần t..."
+        app:floatingSearch_searchHint="Search..."
         app:floatingSearch_showSearchKey="true"
         app:floatingSearch_suggestionsListAnimDuration="250"
         tools:layout_editor_absoluteX="8dp"
