@@ -15,7 +15,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.rmit_android_ass2.R;
 import com.example.rmit_android_ass2.main.adapter.SiteListAdapter;
@@ -33,7 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class SiteViewFragment extends Fragment {
+public class MySiteListViewFragment extends Fragment {
     // Constant declaration
     private final String TAG = "SITE_VIEW_FRAGMENT";
 
@@ -43,7 +42,7 @@ public class SiteViewFragment extends Fragment {
     private FirebaseUser currentUser;
 
     // Android view declaration
-    private TextView createSite;
+    private TextView createSite, viewNoRecord;
     private ListView listSite;
 
     // Adapter
@@ -53,7 +52,7 @@ public class SiteViewFragment extends Fragment {
     private ArrayList<CleaningSite> cleaningSiteList;
 
 
-    public SiteViewFragment() {
+    public MySiteListViewFragment() {
         // Required empty public constructor
     }
 
@@ -61,7 +60,7 @@ public class SiteViewFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_site_view, container, false);
+        return inflater.inflate(R.layout.fragment_my_site_list_view, container, false);
     }
 
     @Override
@@ -86,10 +85,15 @@ public class SiteViewFragment extends Fragment {
             @Override
             public void onCallBack(List<CleaningSite> cleaningSites) {
                 Log.d(TAG, "Size list: " + cleaningSiteList.size());
-                listSite = requireView().findViewById(R.id.listMySite);
+                viewNoRecord = getView().findViewById(R.id.viewNoRecordMySiteListView);
+                if (cleaningSites.size() < 1) {
+                    viewNoRecord.setVisibility(View.VISIBLE);
+                }
+
 
                 // Setup adapter
                 siteListAdapter = new SiteListAdapter(cleaningSiteList);
+                listSite = requireView().findViewById(R.id.listMySite);
                 listSite.setAdapter(siteListAdapter);
                 listSite.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override

@@ -112,8 +112,6 @@
             android:text="Register"
             android:textColor="@color/white"
             tools:targetApi="lollipop" />
-
-
     </LinearLayout>
 
     <LinearLayout
@@ -149,7 +147,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="64dp"
-        android:layout_marginTop="600dp"
+        android:layout_marginTop="700dp"
         android:layout_marginEnd="64dp"
         android:gravity="center"
         app:layout_constraintEnd_toEndOf="parent"
@@ -169,6 +167,4 @@
             android:indeterminate="true"
             android:visibility="gone" />
     </LinearLayout>
-
-
 </androidx.constraintlayout.widget.ConstraintLayout>

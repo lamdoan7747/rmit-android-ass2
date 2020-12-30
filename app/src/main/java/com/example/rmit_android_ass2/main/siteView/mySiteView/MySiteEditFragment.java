@@ -150,7 +150,7 @@ public class MySiteEditFragment extends Fragment {
                 alertDialogBuilder
                         .setTitle("Confirm Update")
                         .setMessage("Do you want to update this site?")
-                        .setMessage("All information included followers would be edited!")
+                        .setMessage("All information would be edited!")
                         .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {

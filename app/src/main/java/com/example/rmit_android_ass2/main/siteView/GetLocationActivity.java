@@ -95,7 +95,7 @@ public class GetLocationActivity extends FragmentActivity implements OnMapReadyC
                 mMap.clear();
                 Marker newMarker = mMap.addMarker(new MarkerOptions()
                         .position(latLng)
-                        .title("New marker")
+                        .title("Click to info window to setup location!")
                         .snippet(latLng.latitude + "-" + latLng.longitude)
                         .icon(BitmapDescriptorFactory.fromResource(R.drawable.logo)));
 

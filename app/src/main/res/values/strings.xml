@@ -45,7 +45,7 @@
     <string name="add_data_collection_button">Add data collection</string>
     <string name="header_toolbar_site_follower">Site Follower</string>
     <string name="follower_header_title">Follower</string>
-    <string name="edit_button">Edit</string>
+    <string name="edit_button">edit ></string>
     <string name="header_toolbar_data_collection">Data Collection</string>
     <string name="save_button">Save</string>
     <string name="header_toolbar_site_option">Site Option</string>
@@ -65,4 +65,5 @@
     <string name="my_site_title">My Site</string>
     <string name="profile_title">Profile</string>
     <string name="setting_title">Setting</string>
+    <string name="warning_no_site">You don\'t have any site!</string>
 </resources>

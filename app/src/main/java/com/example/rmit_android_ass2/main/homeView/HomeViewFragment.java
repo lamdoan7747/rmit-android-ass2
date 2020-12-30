@@ -24,10 +24,12 @@ import com.example.rmit_android_ass2.SearchActivity;
 import com.example.rmit_android_ass2.SiteDetailActivity;
 import com.example.rmit_android_ass2.main.adapter.SiteListAdapter;
 import com.example.rmit_android_ass2.model.CleaningSite;
+import com.example.rmit_android_ass2.model.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -41,11 +43,10 @@ import java.util.List;
 public class HomeViewFragment extends Fragment {
 
     // Constant declaration
-    private final int mColumnCount = 1;
     private static final String TAG = "HOME_FRAGMENT";
 
     // Android view declaration
-    private TextView searchButton;
+    private TextView searchView, userName;
     private ListView cleaningSiteListView;
 
     // Adapter declaration
@@ -91,8 +92,8 @@ public class HomeViewFragment extends Fragment {
          *   -> starting new activity
          *   -> setup transition slide right
          */
-        searchButton = requireView().findViewById(R.id.searchHomeView);
-        searchButton.setOnClickListener(new View.OnClickListener() {
+        searchView = requireView().findViewById(R.id.searchHomeView);
+        searchView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getActivity(), SearchActivity.class);
@@ -100,6 +101,11 @@ public class HomeViewFragment extends Fragment {
                 requireActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
             }
         });
+
+        // Get userId from FirebaseAuth to get user name
+        currentUser = mAuth.getCurrentUser();
+        String userId = currentUser.getUid();
+        getUser(userId);
 
         /*
          *   getSites callback to return the list of all sites to setup listview with adapter
@@ -134,9 +140,33 @@ public class HomeViewFragment extends Fragment {
         });
     }
 
+    /**
+     * Function to get user detail from Firebase and display to UI
+     *
+     * @param userId document id of user
+     */
+    private void getUser(String userId) {
+        db.collection("users")
+                .document(userId)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if (task.isSuccessful()) {
+                            DocumentSnapshot document = task.getResult();
+                            User currentUser = document.toObject(User.class);
+                            userName = requireView().findViewById(R.id.userNameHomeView);
+                            userName.setText(currentUser.getName());
+                        } else {
+                            Log.d(TAG, "Error getting document: ", task.getException());
+                        }
+                    }
+                });
+    }
+
 
     /**
-     * Function to get all sites display to UI listView
+     * Function to get all sites display to UI listView except current user's sites
      * if Success, add all CleaningSite object to a list
      * assign function onSiteCallBack
      * if Failure, display Log debug
@@ -153,7 +183,9 @@ public class HomeViewFragment extends Fragment {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 Log.d(TAG, document.getId() + " => " + document.getData());
                                 CleaningSite cleaningSite = document.toObject(CleaningSite.class);
-                                cleaningSiteList.add(cleaningSite);
+                                if (!cleaningSite.getOwner().equals(currentUser.getUid())) {
+                                    cleaningSiteList.add(cleaningSite);
+                                }
                             }
                             onSiteCallBack.onCallBack(cleaningSiteList);
                         } else {

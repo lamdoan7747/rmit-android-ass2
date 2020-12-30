@@ -6,27 +6,40 @@
     android:layout_centerVertical="true"
     tools:context=".main.siteView.mySiteView.MySiteEditFragment">
 
-    <androidx.appcompat.widget.Toolbar
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="50dp">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
-        <ImageButton
-            android:id="@+id/backButtonToolbarSiteEdit"
-            android:layout_width="wrap_content"
-            android:layout_height="30dp"
-            android:layout_gravity="center|start"
-            android:background="@color/backgroundColor"
-            android:src="@drawable/ic_back_arrow" />
+        <androidx.appcompat.widget.Toolbar
+            android:layout_width="match_parent"
+            android:layout_height="50dp">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="@string/edit_site_button"
-            android:textColor="@color/primaryColor"
-            android:textSize="24sp"
-            android:textStyle="bold" />
-    </androidx.appcompat.widget.Toolbar>
+            <ImageButton
+                android:id="@+id/backButtonToolbarSiteEdit"
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:layout_gravity="center|start"
+                android:background="@color/backgroundColor"
+                android:src="@drawable/ic_back_arrow" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="@string/edit_site_button"
+                android:textColor="@color/primaryColor"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+        </androidx.appcompat.widget.Toolbar>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#DADADA" />
+    </LinearLayout>
+
+
 
     <LinearLayout
         android:layout_width="match_parent"

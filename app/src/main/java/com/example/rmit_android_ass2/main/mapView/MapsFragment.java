@@ -411,7 +411,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
 
 
     /**
-     * Function to get all sites display to UI listView
+     * Function to get all sites display to UI listView except current user's site
      * if Success, add all CleaningSite without current owner' site object to a list
      * by init from CleaningSite, then assign function onSiteCallBack
      * if Failure, display Log debug

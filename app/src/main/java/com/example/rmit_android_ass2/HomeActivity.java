@@ -1,6 +1,5 @@
 package com.example.rmit_android_ass2;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
@@ -9,12 +8,11 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.MenuItem;
 
 import com.example.rmit_android_ass2.main.homeView.HomeViewFragment;
 import com.example.rmit_android_ass2.main.mapView.MapsFragment;
 import com.example.rmit_android_ass2.main.profileView.ProfileFragment;
-import com.example.rmit_android_ass2.main.siteView.SiteViewFragment;
+import com.example.rmit_android_ass2.main.siteView.MySiteListViewFragment;
 import com.example.rmit_android_ass2.notification.NotificationHelper;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -69,7 +67,7 @@ public class HomeActivity extends AppCompatActivity {
                 newPosition = 2;
                 break;
             case R.id.bottomNavigationMySite:
-                fragment = new SiteViewFragment();
+                fragment = new MySiteListViewFragment();
                 newPosition = 3;
                 break;
             case R.id.bottomNavigationProfile:

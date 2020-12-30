@@ -9,6 +9,8 @@ import com.example.rmit_android_ass2.model.SiteSuggestion;
 import com.example.rmit_android_ass2.model.CleaningSite;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -35,6 +37,8 @@ public class SearchActivity extends AppCompatActivity {
 
     // Google Firebase declaration
     private FirebaseFirestore db;
+    private FirebaseAuth mAuth;
+    private FirebaseUser currentUser;
 
 
     @Override
@@ -48,6 +52,7 @@ public class SearchActivity extends AppCompatActivity {
          *   operations.
          */
         db = FirebaseFirestore.getInstance();
+        mAuth = FirebaseAuth.getInstance();
 
         // When activity create, set focus to the search view
         searchView = (FloatingSearchView) findViewById(R.id.floating_search_view);
@@ -193,7 +198,7 @@ public class SearchActivity extends AppCompatActivity {
     }
 
     /**
-     * Function to get all sites display to UI listView
+     * Function to get all sites display to UI listView except current user's sites
      * if Success, add all SiteSuggestion object to a list
      * by init from CleaningSite, then assign function onSiteCallBack
      * if Failure, display Log debug
@@ -201,6 +206,8 @@ public class SearchActivity extends AppCompatActivity {
      * @param onSiteCallBack callBack to get list of sites
      */
     private void getSites(OnSiteCallBack onSiteCallBack) {
+        currentUser = mAuth.getCurrentUser();
+
         List<SiteSuggestion> siteSuggestions = new ArrayList<>();
         db.collection("cleaningSites")
                 .get()
@@ -211,8 +218,9 @@ public class SearchActivity extends AppCompatActivity {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 Log.d(TAG, document.getId() + " => " + document.getData());
                                 CleaningSite cleaningSite = document.toObject(CleaningSite.class);
-
-                                siteSuggestions.add(new SiteSuggestion(cleaningSite.getName(), cleaningSite.getId()));
+                                if (!cleaningSite.getOwner().equals(currentUser.getUid())) {
+                                    siteSuggestions.add(new SiteSuggestion(cleaningSite.getName(), cleaningSite.getId()));
+                                }
                             }
                             onSiteCallBack.onCallBack(siteSuggestions);
                         } else {
