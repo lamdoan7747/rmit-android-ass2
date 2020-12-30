@@ -7,48 +7,7 @@
 
     <fragment
         android:id="@+id/FirstFragment"
-        android:name="com.example.rmit_android_ass2.FirstFragment"
-        android:label="@string/first_fragment_label"
-        tools:layout="@layout/fragment_admin_report">
-
-        <action
-            android:id="@+id/action_FirstFragment_to_SecondFragment"
-            app:destination="@id/SecondFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/SecondFragment"
-        android:name="com.example.rmit_android_ass2.SecondFragment"
-        android:label="@string/second_fragment_label"
-        tools:layout="@layout/fragment_admin_user">
-
-        <action
-            android:id="@+id/action_SecondFragment_to_FirstFragment"
-            app:destination="@id/FirstFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/FirstFragment"
-        android:name="com.example.rmit_android_ass2.FirstFragment"
-        android:label="@string/first_fragment_label"
-        tools:layout="@layout/fragment_admin_report">
-
-        <action
-            android:id="@+id/action_FirstFragment_to_SecondFragment"
-            app:destination="@id/SecondFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/SecondFragment"
-        android:name="com.example.rmit_android_ass2.SecondFragment"
-        android:label="@string/second_fragment_label"
-        tools:layout="@layout/fragment_admin_user">
-
-        <action
-            android:id="@+id/action_SecondFragment_to_FirstFragment"
-            app:destination="@id/FirstFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/FirstFragment"
         android:name="com.example.rmit_android_ass2.main.admin.ReportFragment"
-        android:label="@string/first_fragment_label"
         tools:layout="@layout/fragment_admin_report">
 
         <action
@@ -58,7 +17,38 @@
     <fragment
         android:id="@+id/SecondFragment"
         android:name="com.example.rmit_android_ass2.main.admin.UserFragment"
-        android:label="@string/second_fragment_label"
+        tools:layout="@layout/fragment_admin_user">
+
+        <action
+            android:id="@+id/action_SecondFragment_to_FirstFragment"
+            app:destination="@id/FirstFragment" />
+    </fragment>
+    <fragment
+        android:name="com.example.rmit_android_ass2.main.admin.ReportFragment"
+        tools:layout="@layout/fragment_admin_report">
+
+        <action
+            android:id="@+id/action_FirstFragment_to_SecondFragment"
+            app:destination="@id/SecondFragment" />
+    </fragment>
+    <fragment
+        android:name="com.example.rmit_android_ass2.main.admin.UserFragment"
+        tools:layout="@layout/fragment_admin_user">
+
+        <action
+            android:id="@+id/action_SecondFragment_to_FirstFragment"
+            app:destination="@id/FirstFragment" />
+    </fragment>
+    <fragment
+        android:name="com.example.rmit_android_ass2.main.admin.ReportFragment"
+        tools:layout="@layout/fragment_admin_report">
+
+        <action
+            android:id="@+id/action_FirstFragment_to_SecondFragment"
+            app:destination="@id/SecondFragment" />
+    </fragment>
+    <fragment
+        android:name="com.example.rmit_android_ass2.main.admin.UserFragment"
         tools:layout="@layout/fragment_admin_user">
 
         <action
