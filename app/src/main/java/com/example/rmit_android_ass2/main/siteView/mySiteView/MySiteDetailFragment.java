@@ -45,7 +45,7 @@ public class MySiteDetailFragment extends Fragment {
     private Button insertButton;
     private ImageButton backButton, buttonSiteOption;
     private TextView viewFollower, siteName, siteDate,
-            siteStartTime, siteEndTime, viewNoRecord;
+            siteTime, siteAddress, viewNoRecord;
     private ListView listResult;
 
     // Google Firebase declaration
@@ -169,6 +169,9 @@ public class MySiteDetailFragment extends Fragment {
 
         siteName = view.findViewById(R.id.siteNameMySiteDetail);
         siteDate = view.findViewById(R.id.siteDateMySiteDetail);
+        siteTime = view.findViewById(R.id.siteTimeMySiteDetail);
+        siteAddress = view.findViewById(R.id.siteAddressMySiteDetail);
+
         viewFollower = view.findViewById(R.id.viewFollowerMySiteDetail);
         viewNoRecord = view.findViewById(R.id.viewNoRecordMySiteDetail);
 
@@ -258,6 +261,8 @@ public class MySiteDetailFragment extends Fragment {
                                     siteDate.setText(simpleDateFormat);
                                 }
                                 siteName.setText(cleaningSite.getName());
+                                siteAddress.setText(cleaningSite.getAddress());
+                                siteTime.setText(String.format("%s : %s", cleaningSite.getStartTime(), cleaningSite.getEndTime()));
 
 
                             } else {

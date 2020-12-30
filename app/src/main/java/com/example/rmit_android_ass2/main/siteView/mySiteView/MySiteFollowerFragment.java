@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.rmit_android_ass2.R;
@@ -42,6 +43,7 @@ public class MySiteFollowerFragment extends Fragment {
     // Android view declaration
     private ListView listFollower;
     private ImageButton backButton;
+    private TextView viewNoRecord;
 
     // Array list declaration
     private ArrayList<User> followerList;
@@ -99,6 +101,11 @@ public class MySiteFollowerFragment extends Fragment {
         getFollowers(cleaningSiteId, new FollowerCallBack() {
             @Override
             public void onCallBack(List<User> followers) {
+                viewNoRecord = requireView().findViewById(R.id.viewNoRecordMySiteFollower);
+                if (followers.size() < 1) {
+                    viewNoRecord.setVisibility(View.VISIBLE);
+                }
+
                 Log.d(TAG, "Follower list => " + followerList.size());
                 followerListAdapter = new FollowerListAdapter(followerList);
                 listFollower = requireView().findViewById(R.id.listFollower);
@@ -142,7 +149,6 @@ public class MySiteFollowerFragment extends Fragment {
                         }
                     }
                 });
-
     }
 
     /**

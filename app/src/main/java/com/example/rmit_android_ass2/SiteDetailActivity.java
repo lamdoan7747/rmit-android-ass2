@@ -50,7 +50,7 @@ public class SiteDetailActivity extends AppCompatActivity {
     private Button registerButton, unfollowButton;
     private ImageButton backButton;
     private TextView viewFollower, siteName, siteDate,
-            siteHost, siteStartTime, siteEndTime, viewNoRecord;
+            siteHost, siteTime, siteAddress, viewNoRecord;
     private ListView listResult;
 
     // Google Firebase declaration
@@ -167,6 +167,8 @@ public class SiteDetailActivity extends AppCompatActivity {
         siteName = findViewById(R.id.siteNameSiteDetail);
         siteDate = findViewById(R.id.siteDateSiteDetail);
         siteHost = findViewById(R.id.siteHostSiteDetail);
+        siteAddress = findViewById(R.id.siteAddressSiteDetail);
+        siteTime = findViewById(R.id.siteTimeSiteDetail);
 
     }
 
@@ -404,6 +406,8 @@ public class SiteDetailActivity extends AppCompatActivity {
                                 Log.d(TAG, "Site id: " + cleaningSite.getId());
 
                                 siteName.setText(cleaningSite.getName());
+                                siteAddress.setText(cleaningSite.getAddress());
+                                siteTime.setText(String.format("%s : %s", cleaningSite.getStartTime(), cleaningSite.getEndTime()));
 
                                 if (cleaningSite.getDate() != null) {
                                     Date dateFormat = cleaningSite.getDate().toDate();

@@ -66,4 +66,8 @@
     <string name="profile_title">Profile</string>
     <string name="setting_title">Setting</string>
     <string name="warning_no_site">You don\'t have any site!</string>
+    <string name="no_follower_warning">No follower yet!</string>
+    <string name="cleaning_site_time">12:00 - 24:00</string>
+    <string name="cleaning_site_address">45NTMK</string>
+    <string name="save">Save</string>
 </resources>

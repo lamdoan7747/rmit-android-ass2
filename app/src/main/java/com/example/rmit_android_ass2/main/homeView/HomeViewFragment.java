@@ -30,7 +30,9 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -68,6 +70,10 @@ public class HomeViewFragment extends Fragment {
     public HomeViewFragment() {
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -127,8 +133,6 @@ public class HomeViewFragment extends Fragment {
                 cleaningSiteListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                        Log.d(TAG, "WORK");
-                        Toast.makeText(getActivity(), "Clicked!", Toast.LENGTH_SHORT).show();
                         CleaningSite cleaningSite = (CleaningSite) siteListAdapter.getItem(position);
                         Intent intent = new Intent(getActivity(), SiteDetailActivity.class);
                         intent.putExtra("cleaningSite", cleaningSite);

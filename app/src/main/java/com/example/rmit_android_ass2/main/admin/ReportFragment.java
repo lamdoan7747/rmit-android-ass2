@@ -8,13 +8,12 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.fragment.NavHostFragment;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.rmit_android_ass2.R;
-import com.example.rmit_android_ass2.main.adapter.ReportAdapter;
-import com.example.rmit_android_ass2.model.CleaningResult;
+import com.example.rmit_android_ass2.main.adapter.ReportRecyclerAdapter;
 import com.example.rmit_android_ass2.model.CleaningSite;
 import com.example.rmit_android_ass2.model.Report;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -61,14 +60,15 @@ public class ReportFragment extends Fragment {
             @Override
             public void onCallBack(List<Report> reportList) {
                 reportListView = (RecyclerView) view.findViewById(R.id.listReport);
-                ReportAdapter reportAdapter = new ReportAdapter(reports);
-                if (reportAdapter == null) {
+                ReportRecyclerAdapter reportRecyclerAdapter = new ReportRecyclerAdapter(reports);
+                if (reportRecyclerAdapter == null) {
                     Log.d(TAG, "CANNOT GET ADAPTER");
                 }
                 RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
-                reportAdapter.notifyDataSetChanged();
-                reportListView.setAdapter(reportAdapter);
+                reportRecyclerAdapter.notifyDataSetChanged();
+                reportListView.setAdapter(reportRecyclerAdapter);
                 reportListView.setLayoutManager(layoutManager);
+                reportListView.addItemDecoration(new DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL));
                 reportListView.setHasFixedSize(true);
             }
         });

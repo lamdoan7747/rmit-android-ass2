@@ -1,5 +1,6 @@
 package com.example.rmit_android_ass2.main.siteView;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -24,17 +25,19 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
 
-
+@SuppressLint("LongLogTag")
 public class MySiteListViewFragment extends Fragment {
     // Constant declaration
-    private final String TAG = "SITE_VIEW_FRAGMENT";
+    private final String TAG = "MY_SITE_LIST_VIEW_FRAGMENT";
 
     // Google Firebase declaration
     private FirebaseFirestore db;
@@ -57,23 +60,8 @@ public class MySiteListViewFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_my_site_list_view, container, false);
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
-        /*
-         *   Represents a Cloud Firestore database and
-         *   is the entry point for all Cloud Firestore
-         *   operations.
-         */
-        db = FirebaseFirestore.getInstance();
-        mAuth = FirebaseAuth.getInstance();
+    public void onStart() {
+        super.onStart();
 
         /*
          *   getSites callback to return the list of all sites to setup listview with adapter
@@ -81,11 +69,11 @@ public class MySiteListViewFragment extends Fragment {
          *   -> setup transition slide right
          */
         cleaningSiteList = new ArrayList<>();
+        viewNoRecord = getView().findViewById(R.id.viewNoRecordMySiteListView);
         getSites(new OnSiteCallBack() {
             @Override
             public void onCallBack(List<CleaningSite> cleaningSites) {
                 Log.d(TAG, "Size list: " + cleaningSiteList.size());
-                viewNoRecord = getView().findViewById(R.id.viewNoRecordMySiteListView);
                 if (cleaningSites.size() < 1) {
                     viewNoRecord.setVisibility(View.VISIBLE);
                 }
@@ -108,6 +96,28 @@ public class MySiteListViewFragment extends Fragment {
                 });
             }
         });
+    }
+
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.fragment_my_site_list_view, container, false);
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        /*
+         *   Represents a Cloud Firestore database and
+         *   is the entry point for all Cloud Firestore
+         *   operations.
+         */
+        db = FirebaseFirestore.getInstance();
+        mAuth = FirebaseAuth.getInstance();
+
 
         // Create site load new fragment
         createSite = getView().findViewById(R.id.createSite);

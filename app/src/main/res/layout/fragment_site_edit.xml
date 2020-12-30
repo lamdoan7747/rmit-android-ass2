@@ -173,7 +173,7 @@
             android:layout_height="40dp"
             android:layout_margin="5dp"
             android:background="@drawable/white_rectangle_background"
-            android:text="@string/create_button" />
+            android:text="@string/save" />
 
         <androidx.core.widget.ContentLoadingProgressBar
             android:id="@+id/editLoading"

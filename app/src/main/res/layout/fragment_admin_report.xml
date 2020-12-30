@@ -22,7 +22,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:text="@string/header_toolbar_profile"
+                    android:text="@string/report_header"
                     android:textColor="@color/primaryColor"
                     android:textSize="24sp"
                     android:textStyle="bold" />

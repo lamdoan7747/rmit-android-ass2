@@ -14,6 +14,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,6 +32,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
@@ -38,6 +40,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -207,7 +210,13 @@ public class MySiteEditFragment extends Fragment {
                     @SuppressLint("DefaultLocale")
                     @Override
                     public void onTimeSet(TimePicker timePicker, int hourOfDay, int minute) {
-                        editStartTime.setText(String.format("%d:%d", hourOfDay, minute));
+                        if (minute == 0){
+                            editStartTime.setText(String.format("%d:00", hourOfDay));
+                        } else if (minute < 10){
+                            editStartTime.setText(String.format("%d:0%d", hourOfDay, minute));
+                        } else{
+                            editStartTime.setText(String.format("%d:%d", hourOfDay, minute));
+                        }
                     }
                 }, hour, minute, android.text.format.DateFormat.is24HourFormat(getContext()));
                 timePickerDialog.show();
@@ -227,7 +236,13 @@ public class MySiteEditFragment extends Fragment {
                     @SuppressLint("DefaultLocale")
                     @Override
                     public void onTimeSet(TimePicker timePicker, int hourOfDay, int minute) {
-                        editEndTime.setText(String.format("%d:%d", hourOfDay, minute));
+                        if (minute == 0){
+                            editEndTime.setText(String.format("%d:00", hourOfDay));
+                        } else if (minute < 10){
+                            editEndTime.setText(String.format("%d:0%d", hourOfDay, minute));
+                        } else{
+                            editEndTime.setText(String.format("%d:%d", hourOfDay, minute));
+                        }
                     }
                 }, hour, minute, android.text.format.DateFormat.is24HourFormat(getContext()));
                 timePickerDialog.show();
@@ -287,7 +302,6 @@ public class MySiteEditFragment extends Fragment {
                                     String siteDateFormat = new SimpleDateFormat("dd/MM/yyyy").format(dateFormat);
                                     editDate.setText(siteDateFormat);
                                 }
-
                                 editStartTime.setText(cleaningSite.getStartTime());
                                 editEndTime.setText(cleaningSite.getEndTime());
 
@@ -303,16 +317,50 @@ public class MySiteEditFragment extends Fragment {
 
     /**
      * Function to update new site details to Firebase
+     * check condition of all data
      * if Success, finish the activity
      * if Failure, display Log debug
      *
      * @param cleaningSiteId cleaning siteId to get document
      */
+    @SuppressLint("SimpleDateFormat")
     private void updateSite(String cleaningSiteId) {
         String siteName = editName.getText().toString();
         String siteAddress = editAddress.getText().toString();
         Double latitude = Double.valueOf(editLatitude.getText().toString());
         Double longitude = Double.valueOf(editLongitude.getText().toString());
+        String siteDate = editDate.getText().toString();
+        String startTime = editStartTime.getText().toString();
+        String endTime = editEndTime.getText().toString();
+
+        if (TextUtils.isEmpty(siteName)) {
+            editName.setError("Required!");
+            return;
+        }
+        if (TextUtils.isEmpty(siteAddress)) {
+            editAddress.setError("Required!");
+            return;
+        }
+        if (TextUtils.isEmpty(startTime)) {
+            editStartTime.setError("Required!");
+            return;
+        }
+        if (TextUtils.isEmpty(endTime)) {
+            editEndTime.setError("Required!");
+            return;
+        }
+        if (TextUtils.isEmpty(siteDate)) {
+            editDate.setError("Required!");
+            return;
+        }
+
+        Date siteDateFormat = null;
+        try {
+            siteDateFormat = new SimpleDateFormat("dd/MM/yyyy").parse(siteDate);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        Timestamp timestampDateFormat = new Timestamp(siteDateFormat);
 
         // Set all detail to a HashMap to update
         Map<String, Object> updates = new HashMap<>();
@@ -320,8 +368,12 @@ public class MySiteEditFragment extends Fragment {
         updates.put("address", siteAddress);
         updates.put("lat", latitude);
         updates.put("lng", longitude);
-        updates.put("timestamp", FieldValue.serverTimestamp());
+        updates.put("updateTime", FieldValue.serverTimestamp());
+        updates.put("startTime", startTime);
+        updates.put("endTime", endTime);
+        updates.put("date", timestampDateFormat);
 
+        // Update site with new detail
         db.collection("cleaningSites")
                 .document(cleaningSiteId)
                 .update(updates)
@@ -330,7 +382,6 @@ public class MySiteEditFragment extends Fragment {
                     public void onSuccess(Void aVoid) {
                         Log.d(TAG, "DocumentSnapshot successfully updated!");
                         requireActivity().finish();
-
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {

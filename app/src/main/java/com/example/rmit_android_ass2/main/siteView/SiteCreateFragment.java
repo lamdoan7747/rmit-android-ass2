@@ -12,6 +12,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,7 +22,6 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TimePicker;
-import android.widget.Toast;
 
 import com.example.rmit_android_ass2.R;
 import com.example.rmit_android_ass2.model.CleaningSite;
@@ -73,11 +73,11 @@ public class SiteCreateFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
-            if (data != null){
+            if (data != null) {
                 Double latitude = (Double) data.getExtras().get("lat");
                 Double longitude = (Double) data.getExtras().get("lng");
                 editLatitude.setText(String.format("%s", latitude));
-                editLongitude.setText(String.format("%s",longitude));
+                editLongitude.setText(String.format("%s", longitude));
             }
         }
     }
@@ -110,7 +110,7 @@ public class SiteCreateFragment extends Fragment {
     }
 
     @SuppressLint("SimpleDateFormat")
-    private void onClickListener(){
+    private void onClickListener() {
         // Back button to return the previous fragment
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -120,25 +120,55 @@ public class SiteCreateFragment extends Fragment {
         });
 
         /*
-        *   Create site button will get all detail from UI update
-        *   Initiate CleaningSite object to set all detail
-        *   Then trigger createSite() function
-        * */
+         *   Create site button will get all detail from UI update
+         *   Check if all form is updated
+         *   Initiate CleaningSite object to set all detail
+         *   Then trigger createSite() function
+         * */
         createSiteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 // Get all value in the form
                 String siteName = editName.getText().toString();
                 String siteAddress = editAddress.getText().toString();
-                Double latitude = Double.valueOf(editLatitude.getText().toString());
-                Double longitude = Double.valueOf(editLongitude.getText().toString());
+                String latitudeString = editLatitude.getText().toString();
+                String longtitudeString = editLongitude.getText().toString();
                 String siteDate = editDate.getText().toString();
-                if (siteDate == null) {
-                    editDate.setError("Required!");
-                }
                 String startTime = editStartTime.getText().toString();
                 String endTime = editEndTime.getText().toString();
 
+                if (TextUtils.isEmpty(siteName)) {
+                    editName.setError("Required!");
+                    return;
+                }
+                if (TextUtils.isEmpty(latitudeString)) {
+                    editLatitude.setError("Required!");
+                    return;
+                }
+                if (TextUtils.isEmpty(longtitudeString)) {
+                    editLongitude.setError("Required!");
+                    return;
+                }
+                if (TextUtils.isEmpty(siteAddress)) {
+                    editAddress.setError("Required!");
+                    return;
+                }
+                if (TextUtils.isEmpty(startTime)) {
+                    editStartTime.setError("Required!");
+                    return;
+                }
+                if (TextUtils.isEmpty(endTime)) {
+                    editEndTime.setError("Required!");
+                    return;
+                }
+                if (TextUtils.isEmpty(siteDate)) {
+                    editDate.setError("Required!");
+                    return;
+                }
+
+                Double latitude = Double.valueOf(latitudeString);
+                Double longitude = Double.valueOf(longtitudeString);
                 try {
                     Date siteDateFormat = new SimpleDateFormat("dd/MM/yyyy").parse(siteDate);
                     Timestamp timestampDateFormat = new Timestamp(siteDateFormat);
@@ -167,7 +197,7 @@ public class SiteCreateFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getActivity(), GetLocationActivity.class);
-                startActivityForResult(intent,REQUEST_CODE);
+                startActivityForResult(intent, REQUEST_CODE);
             }
         });
 
@@ -184,7 +214,7 @@ public class SiteCreateFragment extends Fragment {
                     @SuppressLint("DefaultLocale")
                     @Override
                     public void onDateSet(DatePicker datePicker, int year, int month, int dayOfMonth) {
-                        editDate.setText(String.format("%d/%d/%d", dayOfMonth, month, year));
+                        editDate.setText(String.format("%d/%d/%d", dayOfMonth, month + 1, year));
                     }
                 });
             }
@@ -203,9 +233,15 @@ public class SiteCreateFragment extends Fragment {
                     @SuppressLint("DefaultLocale")
                     @Override
                     public void onTimeSet(TimePicker timePicker, int hourOfDay, int minute) {
-                        editStartTime.setText(String.format("%d:%d", hourOfDay, minute));
+                        if (minute == 0) {
+                            editStartTime.setText(String.format("%d:00", hourOfDay));
+                        } else if (minute < 10) {
+                            editStartTime.setText(String.format("%d:0%d", hourOfDay, minute));
+                        } else {
+                            editStartTime.setText(String.format("%d:%d", hourOfDay, minute));
+                        }
                     }
-                },hour,minute,android.text.format.DateFormat.is24HourFormat(getContext()));
+                }, hour, minute, android.text.format.DateFormat.is24HourFormat(getContext()));
                 timePickerDialog.show();
             }
         });
@@ -223,9 +259,15 @@ public class SiteCreateFragment extends Fragment {
                     @SuppressLint("DefaultLocale")
                     @Override
                     public void onTimeSet(TimePicker timePicker, int hourOfDay, int minute) {
-                        editEndTime.setText(String.format("%d:%d", hourOfDay, minute));
+                        if (minute == 0) {
+                            editEndTime.setText(String.format("%d:00", hourOfDay));
+                        } else if (minute < 10) {
+                            editEndTime.setText(String.format("%d:0%d", hourOfDay, minute));
+                        } else {
+                            editEndTime.setText(String.format("%d:%d", hourOfDay, minute));
+                        }
                     }
-                },hour,minute,android.text.format.DateFormat.is24HourFormat(getContext()));
+                }, hour, minute, android.text.format.DateFormat.is24HourFormat(getContext()));
                 timePickerDialog.show();
             }
         });
@@ -236,7 +278,7 @@ public class SiteCreateFragment extends Fragment {
      *
      * @param view view get from UI
      */
-    private void renderView(View view){
+    private void renderView(View view) {
         editName = view.findViewById(R.id.siteNameSiteCreate);
         editAddress = view.findViewById(R.id.siteAddressSiteCreate);
         editLatitude = view.findViewById(R.id.siteLatitudeSiteCreate);
@@ -252,10 +294,10 @@ public class SiteCreateFragment extends Fragment {
     }
 
     /**
-     *  Function to create new site to Firebase
-     *  if Success, return to previous fragment
-     *  if Failure, display Log debug
-     * */
+     * Function to create new site to Firebase
+     * if Success, return to previous fragment
+     * if Failure, display Log debug
+     */
     private void createSite(CleaningSite cleaningSite) {
         currentUser = mAuth.getCurrentUser();
         if (currentUser != null)
