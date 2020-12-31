@@ -28,3 +28,10 @@
   - Floatingsearchview from Github to search/ filter
   - Google Cloud Firebase (database) to store data and send notification
   - Google Map API to display map, get current location and direction
+
+# Resource
+    - Admin account: admin@gmail.com
+    - Admin password: admin123
+
+# APK file:
+    - app-debug.apk in debug folder
